@@ -71,8 +71,15 @@ test('OWASP·MITRE 근거 번호는 검증된 목록에 있고 url이 https', ()
     }
 })
 
-test('화공 규칙의 도메인 근거는 확인 필요로 표시', () => {
-  for (const r of RULES.filter((x) => x.category === 'chem')) expect(r.basis.some((b) => b.source === 'unverified'), r.id).toBe(true)
+test('화공 규칙은 공정·OT 분야 근거(ATT&CK for ICS, CISA, IEC 61511)를 최소 1개 가진다', () => {
+  for (const r of RULES.filter((x) => x.category === 'chem'))
+    expect(r.basis.some((b) => ['MITRE-ATTACK-ICS', 'CISA-AI-OT', 'IEC-61511'].includes(b.source)), r.id).toBe(true)
+})
+
+test('ATT&CK for ICS 근거는 확인한 기술 ID만 사용', () => {
+  const ok = ['T1692.002', 'T1692.001', 'T0836']
+  for (const r of RULES)
+    for (const b of r.basis.filter((x) => x.source === 'MITRE-ATTACK-ICS')) expect(ok.some((id) => b.ref?.includes(id)), `${r.id} ${b.ref}`).toBe(true)
 })
 
 test('원본 JSON과 검증 결과가 같은 개수', () => {

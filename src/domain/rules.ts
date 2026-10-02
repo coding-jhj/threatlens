@@ -11,7 +11,8 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   chem: '화공 특화',
 }
 
-export type BasisSource = 'OWASP-LLM' | 'MITRE-ATLAS' | 'unverified'
+export const BASIS_SOURCES = ['OWASP-LLM', 'MITRE-ATLAS', 'MITRE-ATTACK-ICS', 'CISA-AI-OT', 'IEC-61511', 'unverified'] as const
+export type BasisSource = (typeof BASIS_SOURCES)[number]
 
 export interface Basis {
   source: BasisSource
@@ -103,8 +104,8 @@ function validateOne(raw: unknown, index: number, errors: string[]): void {
     err('basis는 비어 있지 않은 배열이어야 합니다')
   } else {
     for (const b of raw.basis) {
-      if (!isObj(b) || !['OWASP-LLM', 'MITRE-ATLAS', 'unverified'].includes(b.source as string)) {
-        err('basis.source는 OWASP-LLM, MITRE-ATLAS, unverified 중 하나여야 합니다')
+      if (!isObj(b) || !(BASIS_SOURCES as readonly unknown[]).includes(b.source)) {
+        err(`basis.source는 ${BASIS_SOURCES.join(', ')} 중 하나여야 합니다`)
         continue
       }
       if (b.source !== 'unverified' && (!isStr(b.ref) || !isStr(b.url) || !(b.url as string).startsWith('https://'))) {

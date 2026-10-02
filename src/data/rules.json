@@ -381,8 +381,19 @@
     ],
     "basis": [
       {
-        "source": "unverified",
-        "ref": "화공 공정 안전 기준(IEC 61511, IEC 62443 등)과의 연결은 확인 필요"
+        "source": "MITRE-ATTACK-ICS",
+        "ref": "ATT&CK for ICS T1692.002 Unauthorized Message: Reporting Message (센서·보고 메시지 위조)",
+        "url": "https://attack.mitre.org/techniques/T1692/002"
+      },
+      {
+        "source": "CISA-AI-OT",
+        "ref": "CISA 등 공동 지침 「Principles for the Secure Integration of AI in OT」(2025.12): AI가 안전 판단을 자율로 하지 않고 사람이 개입해야 하며, 사람 없는 AI의 설비 능동 제어를 제한 (2차 자료로 확인)",
+        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+      },
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM06:2025 Excessive Agency",
+        "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
       }
     ]
   },
@@ -400,7 +411,7 @@
     "fixes": [
       {
         "id": "interlock",
-        "label": "안전 인터록을 AI 밖에 독립 구성",
+        "label": "안전 인터록(SIS)을 AI·기본 제어와 분리된 독립 구성으로 유지",
         "score": -35,
         "sets": "interlock.external"
       },
@@ -418,18 +429,24 @@
     ],
     "basis": [
       {
+        "source": "IEC-61511",
+        "ref": "IEC 61511 안전계측시스템(SIS)은 기본 공정 제어 시스템과 구조적으로 분리·독립 (2차 자료로 확인, 원문은 유료)",
+        "url": "https://en.wikipedia.org/wiki/IEC_61511"
+      },
+      {
+        "source": "CISA-AI-OT",
+        "ref": "CISA 등 공동 지침(2025.12): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (2차 자료로 확인)",
+        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+      },
+      {
+        "source": "MITRE-ATTACK-ICS",
+        "ref": "ATT&CK for ICS T1692.001 Unauthorized Message: Command Message",
+        "url": "https://attack.mitre.org/techniques/T1692/001"
+      },
+      {
         "source": "OWASP-LLM",
         "ref": "LLM01:2025 Prompt Injection",
         "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
-      },
-      {
-        "source": "OWASP-LLM",
-        "ref": "LLM06:2025 Excessive Agency",
-        "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
-      },
-      {
-        "source": "unverified",
-        "ref": "화공 공정 안전 기준(IEC 61511, IEC 62443 등)과의 연결은 확인 필요"
       }
     ]
   },
@@ -447,28 +464,34 @@
       {
         "id": "deidentify",
         "label": "공정 조건·수치 비식별화",
-        "score": -25
+        "score": -20
       },
       {
         "id": "private_model",
         "label": "사내 모델 사용",
-        "score": -30
+        "score": -25
       },
       {
         "id": "field_allowlist",
         "label": "전송 항목 허용 목록",
+        "score": -10
+      },
+      {
+        "id": "vendor_no_reuse",
+        "label": "벤더의 운영 데이터 재사용·학습 금지 설정과 계약",
         "score": -15
       }
     ],
     "basis": [
       {
+        "source": "CISA-AI-OT",
+        "ref": "CISA 등 공동 지침(2025.12): 벤더의 운영 데이터 재사용 방지와 데이터 거버넌스 점검 (2차 자료로 확인)",
+        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+      },
+      {
         "source": "OWASP-LLM",
         "ref": "LLM02:2025 Sensitive Information Disclosure",
         "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
-      },
-      {
-        "source": "unverified",
-        "ref": "화공 공정 안전 기준(IEC 61511, IEC 62443 등)과의 연결은 확인 필요"
       }
     ]
   },
@@ -497,19 +520,25 @@
       },
       {
         "id": "safe_state",
-        "label": "AI 중단 시 안전 상태로 전환",
+        "label": "AI 성능·안전 지표 기준 미달 시 비AI 제어로 복귀",
         "score": -15
       }
     ],
     "basis": [
       {
+        "source": "CISA-AI-OT",
+        "ref": "CISA 등 공동 지침 「Principles for the Secure Integration of AI in OT」(2025.12): AI가 안전 판단을 자율로 하지 않고 사람이 개입해야 하며, 사람 없는 AI의 설비 능동 제어를 제한 (2차 자료로 확인)",
+        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+      },
+      {
+        "source": "CISA-AI-OT",
+        "ref": "CISA 등 공동 지침(2025.12): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (2차 자료로 확인)",
+        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+      },
+      {
         "source": "OWASP-LLM",
         "ref": "LLM06:2025 Excessive Agency",
         "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
-      },
-      {
-        "source": "unverified",
-        "ref": "화공 공정 안전 기준(IEC 61511, IEC 62443 등)과의 연결은 확인 필요"
       }
     ]
   },
@@ -542,13 +571,14 @@
     ],
     "basis": [
       {
+        "source": "MITRE-ATTACK-ICS",
+        "ref": "ATT&CK for ICS T0836 Modify Parameter (제어 장치 설정값 변경)",
+        "url": "https://attack.mitre.org/techniques/T0836"
+      },
+      {
         "source": "OWASP-LLM",
         "ref": "LLM01:2025 Prompt Injection",
         "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
-      },
-      {
-        "source": "unverified",
-        "ref": "화공 공정 안전 기준(IEC 61511, IEC 62443 등)과의 연결은 확인 필요"
       }
     ]
   },

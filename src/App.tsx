@@ -1,0 +1,8 @@
+export default function App() {
+  return (
+    <main>
+      <h1>ThreatLens</h1>
+      <p>AI 서비스 구조를 그리면 공격 경로를 찾아 줍니다.</p>
+    </main>
+  )
+}

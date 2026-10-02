@@ -77,7 +77,7 @@ test('reportToMarkdown: 제목·요약 점수·경로·체크박스·근거 링�
 test('reportDate: YYYY-MM-DD', () => expect(reportDate(NOW.toISOString())).toBe('2026-10-02'))
 
 const ws = (g: Graph, applied: string[] = []): Workspace =>
-  ({ state: { ...EMPTY_STATE, graph: g as never }, dispatch: () => {}, applied: new Set(applied), setApplied: () => {} }) as Workspace
+  ({ state: { ...EMPTY_STATE, graph: g as never }, dispatch: () => {}, applied: new Set(applied), setApplied: () => {} }) as unknown as Workspace
 
 test('ReportPage: 구조가 없으면 안내와 위협 지도 링크', () => {
   render(<ReportPage ws={ws({ nodes: [], edges: [] })} />)

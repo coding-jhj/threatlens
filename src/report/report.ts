@@ -137,8 +137,8 @@ export function reportToMarkdown(r: Report): string {
   return L.join('\n')
 }
 
-export function downloadText(filename: string, text: string): void {
-  const url = URL.createObjectURL(new Blob([text], { type: 'text/markdown;charset=utf-8' }))
+export function downloadText(filename: string, text: string, mime = 'text/markdown'): void {
+  const url = URL.createObjectURL(new Blob([text], { type: `${mime};charset=utf-8` }))
   const a = document.createElement('a')
   a.href = url
   a.download = filename

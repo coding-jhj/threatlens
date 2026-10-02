@@ -1,0 +1,24 @@
+.tl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: var(--radius-sm); border: 1px solid transparent; font-size: 13px; font-weight: 600; }
+.tl-btn--primary { background: var(--accent); color: var(--accent-ink); }
+.tl-btn--secondary { background: transparent; color: var(--text); border-color: var(--line); font-weight: 500; }
+.tl-btn--inverse { background: var(--text); color: var(--accent-ink); }
+.tl-btn--lg { height: 40px; }
+.tl-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.tl-chip { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 11px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.tl-chip--high { color: var(--red); background: var(--red-bg); }
+.tl-chip--medium { color: var(--amber); background: var(--amber-bg); }
+.tl-chip--low { color: var(--green); background: var(--green-bg); }
+.tl-chip--chem { color: var(--purple); background: var(--purple-bg); }
+.tl-chip--neutral { color: var(--muted); background: var(--panel-2); }
+
+.tl-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 14px 16px; }
+.tl-card--danger { border-color: var(--red); }
+
+.tl-fix { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; border: 1px solid var(--line); background: var(--panel-2); border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; }
+.tl-fix:has(input:checked) { border-color: var(--accent); background: var(--selected-bg); }
+.tl-fix input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); }
+.tl-fix__label { flex: 1; }
+.tl-fix__delta { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--green); }
+
+.tl-mono { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }

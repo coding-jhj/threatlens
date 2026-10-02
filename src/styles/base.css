@@ -1,0 +1,6 @@
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 14px; line-height: 1.5; }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: none; box-shadow: var(--focus); }
+h1, h2, h3, p { margin: 0; }

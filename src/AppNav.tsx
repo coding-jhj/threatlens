@@ -12,6 +12,9 @@ export function AppNav({ route }: { route: Route }) {
       <a href="#/rules" aria-current={cur('rules')}>
         규칙 라이브러리
       </a>
+      <a href="#/report" aria-current={cur('report')}>
+        보고서
+      </a>
     </nav>
   )
 }

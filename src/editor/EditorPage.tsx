@@ -1,5 +1,5 @@
 import { ReactFlowProvider, useReactFlow } from '@xyflow/react'
-import { useMemo, useReducer, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { RULES } from '../data'
 import { analyze } from '../domain/analyze'
 import { isAiNode } from '../domain/graph'
@@ -8,22 +8,20 @@ import { Button } from '../ui/components'
 import { Brand } from '../AppNav'
 import { Canvas } from './Canvas'
 import { Inspector } from './Inspector'
-import { EMPTY_STATE, reducer } from './model'
 import { Palette } from './Palette'
 import { Summary } from './Summary'
 import { ThreatPanel } from './ThreatPanel'
-import { findingKey, highlightEdges, pruneApplied } from './threat'
+import { findingKey, highlightEdges } from './threat'
+import type { Workspace } from '../workspace'
 import './editor.css'
 
-function Inner({ nav }: { nav: ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, EMPTY_STATE)
+function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
+  const { state, dispatch, applied, setApplied } = ws
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const { screenToFlowPosition } = useReactFlow()
 
-  const [appliedRaw, setApplied] = useState<ReadonlySet<string>>(new Set())
   const [activeKey, setActiveKey] = useState<string | null>(null)
 
-  const applied = useMemo(() => pruneApplied(appliedRaw, state.graph), [appliedRaw, state.graph])
   const analysis = useMemo(() => analyze(state.graph, RULES, applied), [state.graph, applied])
   const score = useMemo(() => scoreGraph(state.graph, RULES, applied).overall, [state.graph, applied])
   const before = useMemo(() => scoreGraph(state.graph, RULES).overall, [state.graph])
@@ -81,11 +79,11 @@ function Inner({ nav }: { nav: ReactNode }) {
   )
 }
 
-export default function EditorPage({ nav }: { nav?: ReactNode }) {
+export default function EditorPage({ nav, ws }: { nav?: ReactNode; ws: Workspace }) {
   return (
     <div className="tl-app">
       <ReactFlowProvider>
-        <Inner nav={nav} />
+        <Inner nav={nav} ws={ws} />
       </ReactFlowProvider>
     </div>
   )

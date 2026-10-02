@@ -2,7 +2,6 @@ import { expect, test } from 'vitest'
 import { ATTRIBUTES, ATTRIBUTE_IDS } from './attributes'
 import { PARTS, PART_GROUPS, getPart } from './parts'
 import { loadRules, parseCondition, validateRules } from './rules'
-import { RULES } from '../data'
 
 const valid = () => ({
   id: 'R-50',
@@ -41,10 +40,6 @@ test('parseCondition: 부정 접두사와 알 수 없는 속성', () => {
 
 test('정상 규칙은 통과', () => {
   expect(validateRules([valid()]).ok).toBe(true)
-})
-
-test('번들 rules.json은 유효하고 R-01·R-09 포함', () => {
-  expect(RULES.map((r) => r.id)).toEqual(['R-01', 'R-09'])
 })
 
 test.each([

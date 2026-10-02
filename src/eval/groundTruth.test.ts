@@ -1,5 +1,5 @@
-import { readFileSync } from 'node:fs'
 import { expect, test } from 'vitest'
+import raw from '../../docs/eval/ground-truth.json?raw'
 import { SAMPLES } from '../samples/samples'
 
 interface Threat {
@@ -13,7 +13,7 @@ interface GT {
   status: string
   structures: Record<string, { threats: Threat[]; applicability: Record<string, { applies: boolean; reason: string }> }>
 }
-const gt = JSON.parse(readFileSync('docs/eval/ground-truth.json', 'utf8')) as GT
+const gt = JSON.parse(raw) as GT
 const TAG = /^(LLM(0[1-9]|10)|T\d{4}(\.\d{3})?|SIS-INDEPENDENCE|OT-HUMAN-OVERSIGHT)$/
 
 test('정답 목록: 구조가 예시 5개와 일치한다', () => {

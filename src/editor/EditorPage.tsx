@@ -1,11 +1,11 @@
 import { ReactFlowProvider, useReactFlow } from '@xyflow/react'
-import { useMemo, useReducer, useState } from 'react'
+import { useMemo, useReducer, useState, type ReactNode } from 'react'
 import { RULES } from '../data'
 import { analyze } from '../domain/analyze'
 import { isAiNode } from '../domain/graph'
 import { scoreGraph } from '../domain/score'
 import { Button } from '../ui/components'
-import { Icon } from '../ui/Icon'
+import { Brand } from '../AppNav'
 import { Canvas } from './Canvas'
 import { Inspector } from './Inspector'
 import { EMPTY_STATE, reducer } from './model'
@@ -15,7 +15,7 @@ import { ThreatPanel } from './ThreatPanel'
 import { findingKey, highlightEdges, pruneApplied } from './threat'
 import './editor.css'
 
-function Inner() {
+function Inner({ nav }: { nav: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, EMPTY_STATE)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const { screenToFlowPosition } = useReactFlow()
@@ -50,12 +50,8 @@ function Inner() {
   return (
     <>
       <header className="tl-header">
-        <div className="tl-logo">
-          <span className="tl-logo__mark">
-            <Icon name="shield" size={18} />
-          </span>
-          ThreatLens
-        </div>
+        <Brand />
+        {nav}
         <div style={{ flex: 1 }} />
         <Summary score={score} analysis={analysis} hasAi={hasAi} />
         <Button variant="primary" disabled>
@@ -85,11 +81,11 @@ function Inner() {
   )
 }
 
-export default function EditorPage() {
+export default function EditorPage({ nav }: { nav?: ReactNode }) {
   return (
     <div className="tl-app">
       <ReactFlowProvider>
-        <Inner />
+        <Inner nav={nav} />
       </ReactFlowProvider>
     </div>
   )

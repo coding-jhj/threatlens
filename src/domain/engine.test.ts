@@ -152,4 +152,21 @@ describe('엔진 일반 동작', () => {
     expect(fired(g)).not.toContain('R-10')
     expect(fired(g)).toContain('R-09')
   })
+
+  test('R-10: 믿을 수 없는 입력이 없어도, 센서만으로 AI가 제어에 닿으면 인터록 부재를 알린다', () => {
+    const g: Graph = {
+      nodes: [
+        { id: 'ai', partId: 'ai_agent', attributes: [] },
+        { id: 's', partId: 'sensor', attributes: ['input.sensor'] },
+        { id: 'c', partId: 'control_api', attributes: ['tool.write', 'link.control'] },
+      ],
+      edges: [
+        { id: '1', from: 's', to: 'ai' },
+        { id: '2', from: 'ai', to: 'c' },
+      ],
+    }
+    expect(fired(g)).toContain('R-10')
+    expect(fired(g)).not.toContain('R-13') // 믿을 수 없는 입력이 없으므로 R-13은 그대로 미발동
+    expect(fired(g, new Set([appliedKey('ai', 'R-10', 'interlock')]))).not.toContain('R-10')
+  })
 })

@@ -77,7 +77,7 @@ test('화공 규칙은 공정·OT 분야 근거(ATT&CK for ICS, CISA, IEC 61511)
 })
 
 test('ATT&CK for ICS 근거는 확인한 기술 ID만 사용', () => {
-  const ok = ['T1692.002', 'T1692.001', 'T0836']
+  const ok = ['T1692.002', 'T1692.001', 'T0836', 'T0880']
   for (const r of RULES)
     for (const b of r.basis.filter((x) => x.source === 'MITRE-ATTACK-ICS')) expect(ok.some((id) => b.ref?.includes(id)), `${r.id} ${b.ref}`).toBe(true)
 })

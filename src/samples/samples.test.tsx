@@ -35,7 +35,7 @@ test('예시별 점수와 발동 규칙이 고정되어 있다 (규칙·점수 �
     'support-bot': [63, 'R-01,R-02,R-05,R-06,R-14,R-16,R-17,R-20,R-22,R-24'],
     'code-agent': [61, 'R-03,R-04,R-07,R-08,R-15,R-17,R-25,R-28'],
     'mail-assistant': [51, 'R-01,R-02,R-14,R-17,R-22,R-24'],
-    'process-assistant': [33, 'R-04,R-09,R-12'],
+    'process-assistant': [43, 'R-04,R-09,R-10,R-12'],
   })
 })
 

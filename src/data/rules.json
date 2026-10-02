@@ -399,13 +399,12 @@
   },
   {
     "id": "R-10",
-    "title": "안전 인터록 없이 숨은 지시가 제어에 닿습니다",
-    "summary": "AI 밖에 독립된 인터록이 없으면 믿을 수 없는 입력의 지시가 설비 제어까지 이어질 수 있습니다.",
+    "title": "독립된 안전 인터록 없이 AI가 설비 제어에 닿습니다",
+    "summary": "AI 밖에 독립된 안전 인터록(SIS)이 없으면, AI의 오판이나 침해가 보호 장치 없이 설비 운전까지 이어질 수 있습니다. 믿을 수 없는 입력이 없어도 성립합니다.",
     "category": "chem",
     "severity": "high",
     "when": [
       "link.control",
-      "input.untrusted",
       "!interlock.external"
     ],
     "fixes": [
@@ -444,9 +443,14 @@
         "url": "https://attack.mitre.org/techniques/T1692/001"
       },
       {
+        "source": "MITRE-ATTACK-ICS",
+        "ref": "ATT&CK for ICS T0880 Loss of Safety",
+        "url": "https://attack.mitre.org/techniques/T0880/"
+      },
+      {
         "source": "OWASP-LLM",
-        "ref": "LLM01:2025 Prompt Injection",
-        "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+        "ref": "LLM06:2025 Excessive Agency",
+        "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
       }
     ]
   },

@@ -54,3 +54,11 @@ test('사용법 버튼으로 안내를 다시 연다', () => {
   fireEvent.click(screen.getByRole('button', { name: '사용법' }))
   expect(screen.getByRole('dialog')).toBeTruthy()
 })
+
+test('평가표 화면으로 이동할 수 있다', async () => {
+  localStorage.setItem('threatlens.onboarded.v1', '1')
+  location.hash = '#/eval'
+  render(<App />)
+  expect(await screen.findByRole('heading', { name: '평가표' })).toBeTruthy()
+  location.hash = ''
+})

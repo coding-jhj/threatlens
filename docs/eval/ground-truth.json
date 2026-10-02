@@ -1,6 +1,7 @@
 {
-  "status": "draft-unconfirmed",
-  "about": "참조 구조 5개의 정답 위협 목록. 규칙(rules.json)과 엔진을 보지 않은 별도 에이전트가 공개 표준만 보고 작성한 초안이며, 사용자 확인 전에는 평가 기준으로 쓰지 않는다.",
+  "status": "confirmed-no-edits",
+  "confirmation": "2026-10-02 사용자가 핵심 위협 표를 본 뒤 수정 요청 없이 다음 단계(E3) 진행을 지시했다. 명시적인 '이상 없음' 답변은 아니므로 그렇게 기록한다.",
+  "about": "참조 구조 5개의 정답 위협 목록. 규칙(rules.json)과 엔진을 보지 않은 별도 에이전트가 공개 표준만 보고 작성한 초안이며, 작성자는 AI이며 사람 전문가의 검수는 거치지 않았다.",
   "sources_checked": [
     { "name": "OWASP Top 10 for LLM Applications 2025", "url": "https://genai.owasp.org/llm-top-10/", "fetched": true, "note": "열 개 항목의 제목만 확인(LLM01 Prompt Injection ~ LLM10 Unbounded Consumption). 항목별 상세 페이지는 읽지 않아 적용 여부 이유는 제목과 일반 지식에 기반한다." },
     { "name": "MITRE ATT&CK for ICS 기법 목록", "url": "https://attack.mitre.org/techniques/ics/", "fetched": true, "note": "T0831, T0832, T0836, T0880, T0878, T1692.001을 목록에서 확인. T0836과 T1692.001은 개별 페이지가 아니라 목록으로만 확인." },

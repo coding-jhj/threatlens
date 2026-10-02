@@ -37,6 +37,7 @@ test('countByCategory: 합이 전체와 같다', () => {
 test('routeFromHash', () => {
   expect(routeFromHash('#/rules')).toBe('rules')
   expect(routeFromHash('#/report')).toBe('report')
+  expect(routeFromHash('#/eval')).toBe('eval')
   expect(routeFromHash('#/styleguide')).toBe('styleguide')
   expect(routeFromHash('')).toBe('editor')
   expect(routeFromHash('#/모르는길')).toBe('editor')

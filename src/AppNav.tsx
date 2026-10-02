@@ -15,6 +15,9 @@ export function AppNav({ route }: { route: Route }) {
       <a href="#/report" aria-current={cur('report')}>
         보고서
       </a>
+      <a href="#/eval" aria-current={cur('eval')}>
+        평가표
+      </a>
     </nav>
   )
 }

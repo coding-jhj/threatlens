@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AppNav, Brand } from './AppNav'
 import EditorPage from './editor/EditorPage'
+import EvalPage from './eval/EvalPage'
 import RuleLibrary from './library/RuleLibrary'
 import ReportPage from './report/ReportPage'
 import { routeFromHash } from './route'
@@ -38,13 +39,13 @@ export default function App() {
       <div style={{ display: route === 'editor' ? 'contents' : 'none' }}>
         <EditorPage nav={<AppNav route={route} />} ws={ws} />
       </div>
-      {(route === 'rules' || route === 'report') && (
+      {(route === 'rules' || route === 'report' || route === 'eval') && (
         <div className="tl-app">
           <header className="tl-header">
             <Brand />
             <AppNav route={route} />
           </header>
-          {route === 'rules' ? <RuleLibrary /> : <ReportPage ws={ws} />}
+          {route === 'rules' ? <RuleLibrary /> : route === 'eval' ? <EvalPage /> : <ReportPage ws={ws} />}
         </div>
       )}
     </>

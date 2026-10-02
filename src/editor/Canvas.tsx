@@ -12,7 +12,7 @@ import {
   type NodeChange,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { useCallback, useEffect, useState, type DragEvent, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type DragEvent, type KeyboardEvent } from 'react'
 import { Button } from '../ui/components'
 import type { Action, EditorState } from './model'
 import { DRAG_MIME } from './Palette'
@@ -39,11 +39,27 @@ const toFlowEdges = (state: EditorState, prev: Edge[]): Edge[] =>
     selected: prev.find((p) => p.id === e.id)?.selected ?? false,
   }))
 
-export function Canvas({ state, dispatch, onSelect }: { state: EditorState; dispatch: (a: Action) => void; onSelect?: (nodeId: string | null) => void }) {
+const RISK_MARKER = { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#f87171' }
+
+export function Canvas({
+  state,
+  dispatch,
+  onSelect,
+  riskEdgeIds,
+}: {
+  state: EditorState
+  dispatch: (a: Action) => void
+  onSelect?: (nodeId: string | null) => void
+  riskEdgeIds?: ReadonlySet<string>
+}) {
   const { screenToFlowPosition, fitView } = useReactFlow()
   const [nodes, setNodes] = useState<PartFlowNode[]>(() => toFlowNodes(state, []))
   const [edges, setEdges] = useState<Edge[]>(() => toFlowEdges(state, []))
   const [layoutTick, setLayoutTick] = useState(0)
+  const shownEdges = useMemo(
+    () => (riskEdgeIds && riskEdgeIds.size > 0 ? edges.map((e) => (riskEdgeIds.has(e.id) ? { ...e, className: 'tl-risk', markerEnd: RISK_MARKER } : e)) : edges),
+    [edges, riskEdgeIds],
+  )
 
   // 편집 상태가 바뀌면 렌더 중에 React Flow용 노드·간선을 다시 만든다 (선택 상태는 유지)
   const [seenNodes, setSeenNodes] = useState(state.graph.nodes)
@@ -123,7 +139,7 @@ export function Canvas({ state, dispatch, onSelect }: { state: EditorState; disp
       )}
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={shownEdges}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}

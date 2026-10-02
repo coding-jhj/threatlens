@@ -48,3 +48,24 @@
 .tl-summary__label { font-size: 12px; font-weight: 600; }
 .tl-summary__chips { display: flex; gap: 6px; margin-top: 4px; }
 .tl-summary__hint { font-size: 11px; color: var(--muted); }
+
+.tl-threats { width: 360px; flex: none; display: flex; flex-direction: column; background: var(--panel); border-left: 1px solid var(--line); min-height: 0; }
+.tl-threats__head { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.tl-threats__title { font-size: 14px; font-weight: 700; }
+.tl-threats__compare { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+.tl-threats__compare b { font-size: 18px; color: var(--text); }
+.tl-threats__list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.tl-threats__empty { margin: 8px 4px; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.tl-threats .tl-card { padding: 0; background: var(--panel-2); }
+.tl-threat__head { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; padding: 12px 14px; background: none; border: 0; color: var(--text); text-align: left; cursor: pointer; font: inherit; }
+.tl-threat__top { display: flex; align-items: center; gap: 6px; width: 100%; }
+.tl-threat__id { margin-left: auto; font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.tl-threat__title { font-size: 13px; font-weight: 600; line-height: 1.5; }
+.tl-threat__where { font-size: 11px; color: var(--muted); }
+.tl-threat__body { padding: 0 14px 14px; }
+.tl-threat__summary { margin: 0 0 12px; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.tl-threat__sub { margin: 10px 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .4px; color: var(--muted); }
+.tl-threat__fixes { display: flex; flex-direction: column; gap: 6px; }
+.tl-threat__basis { margin: 0; padding-left: 16px; font-size: 11px; line-height: 1.7; color: var(--muted); }
+.tl-threat__basis a { color: var(--accent); }
+.tl-canvas .react-flow__edge.tl-risk .react-flow__edge-path { stroke: var(--red); stroke-width: 3; }

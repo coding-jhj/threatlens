@@ -1,0 +1,30 @@
+[
+  {
+    "id": "R-01",
+    "title": "외부 문서 속 숨은 명령으로 도구가 악용됩니다",
+    "summary": "믿을 수 없는 입력에 숨은 지시를 AI가 따르면, 전송 도구로 내용이 밖으로 나갈 수 있습니다.",
+    "category": "prompt-injection",
+    "severity": "high",
+    "when": ["input.untrusted", "tool.send"],
+    "fixes": [
+      { "id": "human_approval", "label": "전송 전 사람 승인 단계 추가", "score": -30, "sets": "human.approval" },
+      { "id": "least_privilege", "label": "도구 권한 최소화", "score": -20 },
+      { "id": "source_label", "label": "입력 출처를 AI에게 구분해서 전달", "score": -15 }
+    ],
+    "basis": [{ "source": "unverified" }]
+  },
+  {
+    "id": "R-09",
+    "title": "조작된 센서값으로 설비가 잘못 제어됩니다",
+    "summary": "센서 값이 틀리거나 조작되면 AI가 잘못된 판단으로 밸브·펌프 제어 명령을 낼 수 있습니다.",
+    "category": "chem",
+    "severity": "high",
+    "when": ["input.sensor", "link.control"],
+    "fixes": [
+      { "id": "range_check", "label": "값 범위·변화율 검사", "score": -25 },
+      { "id": "interlock", "label": "안전 인터록은 AI 밖에서 유지", "score": -30, "sets": "interlock.external" },
+      { "id": "human_confirm", "label": "제어 명령 전 담당자 확인", "score": -15, "sets": "human.approval" }
+    ],
+    "basis": [{ "source": "unverified" }]
+  }
+]

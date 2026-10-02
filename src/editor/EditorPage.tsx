@@ -5,10 +5,14 @@ import { analyze } from '../domain/analyze'
 import { isAiNode } from '../domain/graph'
 import { scoreGraph } from '../domain/score'
 import { Button } from '../ui/components'
+import { SAMPLES, type Sample } from '../samples/samples'
 import { Brand } from '../AppNav'
 import { Canvas } from './Canvas'
 import { Inspector } from './Inspector'
+import { Onboarding } from './Onboarding'
+import { hasOnboarded, markOnboarded } from './onboardingStore'
 import { Palette } from './Palette'
+import { SampleList } from './SampleMenu'
 import { Summary } from './Summary'
 import { ThreatPanel } from './ThreatPanel'
 import { findingKey, highlightEdges } from './threat'
@@ -35,6 +39,25 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
       else next.delete(key)
       return next
     })
+  const [showHelp, setShowHelp] = useState(() => !hasOnboarded())
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [notice, setNotice] = useState<string | null>(null)
+  const flash = (msg: string) => {
+    setNotice(msg)
+    window.setTimeout(() => setNotice((cur) => (cur === msg ? null : cur)), 3500)
+  }
+  const closeHelp = () => {
+    markOnboarded()
+    setShowHelp(false)
+  }
+  const loadSample = (s: Sample) => {
+    dispatch({ type: 'replace', graph: s.graph })
+    setApplied(new Set())
+    setSelectedId(null)
+    setActiveKey(null)
+    setMenuOpen(false)
+    closeHelp()
+  }
   const hasAi = state.graph.nodes.some(isAiNode)
   const selected = state.graph.nodes.find((n) => n.id === selectedId) ?? null
 
@@ -52,6 +75,7 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
         {nav}
         <div style={{ flex: 1 }} />
         <Summary score={score} analysis={analysis} hasAi={hasAi} />
+        <Button onClick={() => setShowHelp(true)}>사용법</Button>
         <Button variant="primary" disabled>
           분석 다시 실행
         </Button>
@@ -59,7 +83,29 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
       <div className="tl-editor">
         <Palette onAdd={addAtCenter} />
         <div style={{ position: 'relative', flex: 1, minWidth: 0, display: 'flex' }}>
-          <Canvas state={state} dispatch={dispatch} onSelect={setSelectedId} riskEdgeIds={riskEdgeIds} />
+          <Canvas
+            state={state}
+            dispatch={dispatch}
+            onSelect={setSelectedId}
+            riskEdgeIds={riskEdgeIds}
+            onNotice={flash}
+            toolbarExtra={
+              <Button onClick={() => setMenuOpen((o) => !o)} aria-expanded={menuOpen}>
+                예시 불러오기
+              </Button>
+            }
+            emptyExtra={<SampleList onPick={loadSample} />}
+          />
+          {menuOpen && (
+            <div className="tl-samplemenu" role="menu" aria-label="예시 구조">
+              <SampleList onPick={loadSample} />
+            </div>
+          )}
+          {notice && (
+            <div className="tl-toast" role="status">
+              {notice}
+            </div>
+          )}
           {selected && <Inspector node={selected} onChange={(attributes) => dispatch({ type: 'setAttributes', nodeId: selected.id, attributes })} />}
         </div>
         <ThreatPanel
@@ -75,6 +121,7 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
           onToggleFix={toggleFix}
         />
       </div>
+      {showHelp && <Onboarding onClose={closeHelp} onSample={() => loadSample(SAMPLES.find((x) => x.id === 'mail-assistant')!)} />}
     </>
   )
 }

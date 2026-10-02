@@ -29,6 +29,7 @@ export type Action =
   | { type: 'setAttributes'; nodeId: string; attributes: GraphNode['attributes'] }
   | { type: 'autoLayout' }
   | { type: 'load'; graph: EditorGraph }
+  | { type: 'replace'; graph: EditorGraph }
   | { type: 'undo' }
   | { type: 'redo' }
 
@@ -80,6 +81,11 @@ export function reducer(state: EditorState, action: Action): EditorState {
     case 'load': {
       const maxId = Math.max(0, ...action.graph.nodes.map((n) => Number(n.id.replace(/\D/g, '')) || 0), ...action.graph.edges.map((e) => Number(e.id.replace(/\D/g, '')) || 0))
       return { graph: action.graph, past: [], future: [], seq: maxId + 1 }
+    }
+    case 'replace': {
+      // 예시 불러오기 등: 지금 구조를 통째로 바꾸되 되돌리기로 복원할 수 있다
+      const maxId = Math.max(0, ...action.graph.nodes.map((n) => Number(n.id.replace(/\D/g, '')) || 0), ...action.graph.edges.map((e) => Number(e.id.replace(/\D/g, '')) || 0))
+      return commit(state, action.graph, Math.max(state.seq, maxId + 1))
     }
     case 'undo': {
       if (state.past.length === 0) return state

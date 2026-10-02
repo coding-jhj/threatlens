@@ -12,7 +12,7 @@ import {
   type NodeChange,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { useCallback, useEffect, useMemo, useState, type DragEvent, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState, type DragEvent, type KeyboardEvent, type ReactNode } from 'react'
 import { Button } from '../ui/components'
 import type { Action, EditorState } from './model'
 import { DRAG_MIME } from './Palette'
@@ -46,11 +46,17 @@ export function Canvas({
   dispatch,
   onSelect,
   riskEdgeIds,
+  toolbarExtra,
+  emptyExtra,
+  onNotice,
 }: {
   state: EditorState
   dispatch: (a: Action) => void
   onSelect?: (nodeId: string | null) => void
   riskEdgeIds?: ReadonlySet<string>
+  toolbarExtra?: ReactNode
+  emptyExtra?: ReactNode
+  onNotice?: (msg: string) => void
 }) {
   const { screenToFlowPosition, fitView } = useReactFlow()
   const [nodes, setNodes] = useState<PartFlowNode[]>(() => toFlowNodes(state, []))
@@ -128,12 +134,14 @@ export function Canvas({
         >
           자동 정렬
         </Button>
+        {toolbarExtra}
       </div>
       {state.graph.nodes.length === 0 && (
         <div className="tl-canvas__empty">
-          <div>
+          <div className="tl-canvas__start">
             <strong>부품을 끌어다 놓아 보세요</strong>
-            왼쪽 목록에서 부품을 캔버스로 끌어 놓고, 점에서 점으로 이어 서비스 구조를 그립니다.
+            왼쪽 목록에서 부품을 캔버스로 끌어 놓고, 점에서 점으로 이어 서비스 구조를 그립니다. 막막하면 아래 예시로 시작해 보세요.
+            {emptyExtra}
           </div>
         </div>
       )}
@@ -143,7 +151,12 @@ export function Canvas({
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onConnect={(c) => c.source && c.target && dispatch({ type: 'connect', from: c.source, to: c.target })}
+        onConnect={(c) => {
+          if (!c.source || !c.target) return
+          if (c.source === c.target) return onNotice?.('같은 부품끼리는 이을 수 없습니다.')
+          if (state.graph.edges.some((e) => e.from === c.source && e.to === c.target)) return onNotice?.('이미 같은 방향으로 이어져 있습니다.')
+          dispatch({ type: 'connect', from: c.source, to: c.target })
+        }}
         onNodeDragStop={(_e, _n, dragged) => {
           const positions: Record<string, { x: number; y: number }> = {}
           for (const d of dragged) positions[d.id] = { x: Math.round(d.position.x), y: Math.round(d.position.y) }

@@ -1,0 +1,34 @@
+import { ATTRIBUTES, ATTRIBUTE_IDS, type AttributeId } from '../domain/attributes'
+import { getPart } from '../domain/parts'
+import { Icon } from '../ui/Icon'
+import type { EditorNode } from './model'
+import './editor.css'
+
+export function Inspector({ node, onChange }: { node: EditorNode; onChange: (attributes: AttributeId[]) => void }) {
+  const part = getPart(node.partId)
+  if (!part) return null
+  const toggle = (id: AttributeId, on: boolean) => {
+    const next = on ? [...node.attributes, id] : node.attributes.filter((a) => a !== id)
+    onChange(ATTRIBUTE_IDS.filter((a) => next.includes(a)))
+  }
+  return (
+    <section className="tl-inspector" aria-label={`선택한 부품 속성: ${part.label}`}>
+      <div className="tl-inspector__head">
+        <span style={{ color: 'var(--accent)', display: 'flex' }}>
+          <Icon name={part.icon} />
+        </span>
+        선택한 부품 · {part.label}
+        <span className="tl-inspector__hint">속성을 체크하면 규칙이 바로 다시 계산됩니다</span>
+      </div>
+      <div className="tl-inspector__grid">
+        {ATTRIBUTES.map((a) => (
+          <label key={a.id} className="tl-inspector__item">
+            <input type="checkbox" checked={node.attributes.includes(a.id)} onChange={(e) => toggle(a.id, e.target.checked)} />
+            {a.label}
+            {a.kind === 'mitigation' && <span className="tl-inspector__tag">대응</span>}
+          </label>
+        ))}
+      </div>
+    </section>
+  )
+}

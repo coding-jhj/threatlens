@@ -149,7 +149,7 @@ export function Canvas({ state, dispatch, onSelect }: { state: EditorState; disp
         fitViewOptions={{ padding: 0.2 }}
       >
         <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#243350" />
-        <Controls position="bottom-left" showInteractive={false} />
+        <Controls position="top-right" showInteractive={false} />
       </ReactFlow>
     </div>
   )

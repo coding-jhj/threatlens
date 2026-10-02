@@ -1,0 +1,36 @@
+.tl-node { min-width: 176px; max-width: 220px; padding: 10px 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius-md); color: var(--text); }
+.tl-node--selected { border: 2px solid var(--accent); padding: 9px 11px; box-shadow: 0 0 0 4px rgba(56, 189, 248, .22); }
+.tl-node__head { display: flex; align-items: center; gap: 8px; }
+.tl-node__icon { display: flex; color: var(--accent); }
+.tl-node__title { font-size: 14px; font-weight: 600; }
+.tl-node__sub { margin-top: 3px; font-size: 11px; color: var(--muted); }
+.tl-node__chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.tl-node .react-flow__handle { width: 10px; height: 10px; background: var(--accent); border: 2px solid var(--bg); }
+
+.tl-editor { display: flex; flex: 1; min-height: 0; }
+.tl-palette { width: 232px; flex: none; padding: 16px; overflow-y: auto; background: var(--panel); border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+.tl-palette__group { margin: 16px 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .6px; color: var(--muted); }
+.tl-palette__group:first-child { margin-top: 0; }
+.tl-palette__item { display: flex; align-items: center; gap: 10px; width: 100%; height: 40px; padding: 0 10px; margin-bottom: 6px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2); color: var(--text); font-size: 13px; font-weight: 500; text-align: left; cursor: grab; }
+.tl-palette__item:hover { border-color: var(--accent); }
+.tl-palette__icon { display: flex; }
+.tl-palette__grip { margin-left: auto; color: var(--muted); letter-spacing: 2px; font-size: 12px; }
+.tl-palette__foot { margin-top: auto; padding-top: 16px; font-size: 11px; line-height: 1.5; color: var(--muted); }
+
+.tl-canvas { position: relative; flex: 1; min-width: 0; background: var(--bg); outline: none; }
+.tl-canvas .react-flow { --xy-background-color: var(--bg); --xy-edge-stroke: var(--muted); --xy-attribution-background-color: transparent; }
+.tl-canvas .react-flow__node { cursor: grab; }
+.tl-canvas .react-flow__edge-path { stroke-width: 2; }
+.tl-canvas .react-flow__edge.selected .react-flow__edge-path { stroke: var(--accent); }
+.tl-canvas .react-flow__controls-button { background: var(--panel); color: var(--text); border-bottom: 1px solid var(--line); fill: var(--text); }
+.tl-canvas .react-flow__controls-button:hover { background: var(--panel-2); }
+.tl-toolbar { position: absolute; z-index: 5; left: 16px; top: 14px; display: flex; gap: 8px; }
+.tl-toolbar .tl-btn { height: 32px; padding: 0 12px; background: var(--panel); }
+.tl-canvas__empty { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+.tl-canvas__empty div { max-width: 360px; padding: 20px 24px; text-align: center; border: 1px dashed var(--line); border-radius: var(--radius-md); color: var(--muted); font-size: 13px; line-height: 1.7; background: rgba(17, 26, 44, .8); }
+.tl-canvas__empty strong { display: block; margin-bottom: 4px; color: var(--text); font-size: 15px; }
+
+.tl-header { display: flex; align-items: center; gap: 28px; height: 56px; padding: 0 20px; background: var(--panel); border-bottom: 1px solid var(--line); }
+.tl-logo { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; }
+.tl-logo__mark { display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); }
+.tl-app { display: flex; flex-direction: column; height: 100%; }

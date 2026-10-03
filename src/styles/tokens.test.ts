@@ -79,3 +79,10 @@ describe('디자인 토큰', () => {
     expect(bad).toEqual([])
   })
 })
+
+describe('CSS 구문', () => {
+  it.each(Object.entries(files))('%s: 중괄호가 짝이 맞는다 (닫히지 않으면 뒤 규칙이 전부 무시된다)', (_p, text) => {
+    const code = text.replace(/\/\*[\s\S]*?\*\//g, '')
+    expect(code.split('{').length).toBe(code.split('}').length)
+  })
+})

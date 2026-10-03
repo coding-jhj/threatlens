@@ -70,3 +70,10 @@ test('자동 저장된 구조를 열어도 모든 부품이 화면 안에 들어
     expect(b.r).toBeLessThanOrEqual(pane.x + pane.width + 1)
   }
 })
+
+test('평가표 화면에도 스타일이 적용된다 (CSS가 깨지면 본문이 가운데 정렬 폭 제한을 잃는다)', async ({ page }) => {
+  await openApp(page, '#/eval')
+  const main = page.locator('main.tl-eval')
+  await expect(main).toBeVisible()
+  expect(await main.evaluate((e) => getComputedStyle(e).maxWidth)).toBe('980px')
+})

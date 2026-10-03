@@ -157,6 +157,6 @@
 .tl-inspector__defs { margin: 4px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 6px 16px; }
 .tl-inspector__defs dt { font-weight: 600; color: var(--text); }
 .tl-inspector__defs dd { margin: 0; color: var(--muted); line-height: 1.5; }
-@media (max-width: 900px) { .tl-onb__sub { margin: 16px 0 6px; font-size: var(--fs-sm); }
+.tl-onb__sub { margin: 16px 0 6px; font-size: var(--fs-sm); }
 .tl-onb__keys { margin: 0; padding-left: 18px; font-size: var(--fs-xs); line-height: 1.7; color: var(--muted); }
 .tl-onb__keys b { color: var(--text); margin-right: 6px; }

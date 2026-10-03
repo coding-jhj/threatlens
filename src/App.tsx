@@ -37,7 +37,7 @@ export default function App() {
     <>
       {/* 화면을 오가도 그리던 구조가 사라지지 않도록 편집기는 숨기기만 한다 */}
       <div style={{ display: route === 'editor' ? 'contents' : 'none' }}>
-        <EditorPage nav={<AppNav route={route} />} ws={ws} />
+        <EditorPage nav={<AppNav route={route} />} ws={ws} active={route === 'editor'} />
       </div>
       {(route === 'rules' || route === 'report' || route === 'eval') && (
         <div className="tl-app">

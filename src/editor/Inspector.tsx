@@ -12,9 +12,10 @@ interface Props {
   onChange: (attributes: AttributeId[]) => void
   onConnect: (to: string) => void
   onRemoveLink: (edgeId: string) => void
+  onDelete: () => void
 }
 
-export function Inspector({ node, others, links, onChange, onConnect, onRemoveLink }: Props) {
+export function Inspector({ node, others, links, onChange, onConnect, onRemoveLink, onDelete }: Props) {
   const [target, setTarget] = useState('')
   const part = getPart(node.partId)
   if (!part) return null
@@ -30,6 +31,9 @@ export function Inspector({ node, others, links, onChange, onConnect, onRemoveLi
         </span>
         선택한 부품 · {part.label}
         <span className="tl-inspector__hint">속성을 체크하면 규칙이 바로 다시 계산됩니다</span>
+        <button type="button" className="tl-btn tl-btn--secondary tl-inspector__delete" onClick={onDelete}>
+          이 부품 삭제
+        </button>
       </div>
       <div className="tl-inspector__grid">
         {ATTRIBUTES.map((a) => (

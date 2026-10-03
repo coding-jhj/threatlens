@@ -12,7 +12,7 @@ import {
   type NodeChange,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { useCallback, useEffect, useMemo, useState, type DragEvent, type KeyboardEvent, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useState, type DragEvent, type ReactNode } from 'react'
 import { Button } from '../ui/components'
 import type { Action, EditorState } from './model'
 import { DRAG_MIME } from './Palette'
@@ -49,6 +49,8 @@ export function Canvas({
   toolbarExtra,
   emptyExtra,
   onNotice,
+  onClearAll,
+  active = true,
 }: {
   state: EditorState
   dispatch: (a: Action) => void
@@ -57,6 +59,8 @@ export function Canvas({
   toolbarExtra?: ReactNode
   emptyExtra?: ReactNode
   onNotice?: (msg: string) => void
+  onClearAll?: () => void
+  active?: boolean
 }) {
   const { screenToFlowPosition, fitView } = useReactFlow()
   const [nodes, setNodes] = useState<PartFlowNode[]>(() => toFlowNodes(state, []))
@@ -103,21 +107,42 @@ export function Canvas({
     dispatch({ type: 'addNode', partId, x: Math.round(p.x - 88), y: Math.round(p.y - 30) })
   }
 
-  const onKeyDown = (e: KeyboardEvent) => {
-    const mod = e.ctrlKey || e.metaKey
-    if (!mod) return
-    const key = e.key.toLowerCase()
-    if (key === 'z' && !e.shiftKey) {
-      e.preventDefault()
-      dispatch({ type: 'undo' })
-    } else if ((key === 'z' && e.shiftKey) || key === 'y') {
-      e.preventDefault()
-      dispatch({ type: 'redo' })
-    }
+  const selectedNodeIds = nodes.filter((n) => n.selected).map((n) => n.id)
+  const selectedEdgeIds = edges.filter((e) => e.selected).map((e) => e.id)
+  const hasSelection = selectedNodeIds.length + selectedEdgeIds.length > 0
+  const deleteSelected = () => {
+    if (!hasSelection) return
+    dispatch({ type: 'remove', nodeIds: selectedNodeIds, edgeIds: selectedEdgeIds })
+    onSelect?.(null)
   }
 
+  // 단축키는 포커스가 어디 있든(메뉴를 누른 뒤에도) 편집 화면이 보일 때 작동한다. 입력 칸에서는 건드리지 않는다.
+  useEffect(() => {
+    if (!active) return
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      const mod = e.ctrlKey || e.metaKey
+      if (!mod) return
+      const t = e.target as HTMLElement | null
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return
+      const key = e.key.toLowerCase()
+      if (key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        dispatch({ type: 'undo' })
+      } else if ((key === 'z' && e.shiftKey) || key === 'y') {
+        e.preventDefault()
+        dispatch({ type: 'redo' })
+      } else if (key === 'a') {
+        e.preventDefault()
+        setNodes((prev) => prev.map((n) => ({ ...n, selected: true })))
+        setEdges((prev) => prev.map((x) => ({ ...x, selected: true })))
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [active, dispatch])
+
   return (
-    <div className="tl-canvas" onKeyDown={onKeyDown} tabIndex={-1} data-testid="canvas">
+    <div className="tl-canvas" tabIndex={-1} data-testid="canvas">
       <div className="tl-toolbar" role="toolbar" aria-label="캔버스 도구">
         <Button onClick={() => dispatch({ type: 'undo' })} disabled={state.past.length === 0} aria-label="되돌리기">
           되돌리기
@@ -133,6 +158,12 @@ export function Canvas({
           disabled={state.graph.nodes.length === 0}
         >
           자동 정렬
+        </Button>
+        <Button onClick={deleteSelected} disabled={!hasSelection} aria-label="선택한 것 삭제">
+          선택 삭제
+        </Button>
+        <Button onClick={onClearAll} disabled={state.graph.nodes.length === 0}>
+          모두 지우기
         </Button>
         {toolbarExtra}
       </div>

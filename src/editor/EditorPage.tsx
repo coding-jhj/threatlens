@@ -22,7 +22,7 @@ import { parseSaved, serialize, shareHash } from '../share/serialize'
 import type { Workspace } from '../workspace'
 import './editor.css'
 
-function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
+function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boolean }) {
   const { state, dispatch, applied, setApplied, replaceAll, notice, flash } = ws
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const { screenToFlowPosition } = useReactFlow()
@@ -96,6 +96,19 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
     setActiveKey(null)
     setMenuOpen(false)
     closeHelp()
+    flash(`"${s.title}" 예시를 불러왔습니다. 되돌리려면 Ctrl+Z 또는 [되돌리기]를 누르세요.`)
+  }
+  const clearAll = () => {
+    if (state.graph.nodes.length === 0) return
+    dispatch({ type: 'replace', graph: { nodes: [], edges: [] } })
+    setApplied(new Set())
+    setSelectedId(null)
+    setActiveKey(null)
+    flash('모두 지웠습니다. 되돌리려면 Ctrl+Z 또는 [되돌리기]를 누르세요.')
+  }
+  const deleteSelectedNode = (id: string) => {
+    dispatch({ type: 'remove', nodeIds: [id], edgeIds: [] })
+    setSelectedId(null)
   }
   const hasAi = state.graph.nodes.some(isAiNode)
   const selected = state.graph.nodes.find((n) => n.id === selectedId) ?? null
@@ -128,6 +141,8 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
             onSelect={setSelectedId}
             riskEdgeIds={riskEdgeIds}
             onNotice={flash}
+            onClearAll={clearAll}
+            active={active}
             toolbarExtra={
               <>
                 <Button onClick={() => setMenuOpen((o) => !o)} aria-expanded={menuOpen}>
@@ -187,6 +202,7 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
                   const name = (id: string) => getPart(state.graph.nodes.find((n) => n.id === id)?.partId ?? '')?.label ?? id
                   return { id: e.id, text: `${name(e.from)} → ${name(e.to)}` }
                 })}
+              onDelete={() => deleteSelectedNode(selected.id)}
               onRemoveLink={(id) => dispatch({ type: 'remove', nodeIds: [], edgeIds: [id] })}
             />
           )}
@@ -209,11 +225,11 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
   )
 }
 
-export default function EditorPage({ nav, ws }: { nav?: ReactNode; ws: Workspace }) {
+export default function EditorPage({ nav, ws, active = true }: { nav?: ReactNode; ws: Workspace; active?: boolean }) {
   return (
     <div className="tl-app">
       <ReactFlowProvider>
-        <Inner nav={nav} ws={ws} />
+        <Inner nav={nav} ws={ws} active={active} />
       </ReactFlowProvider>
     </div>
   )

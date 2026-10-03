@@ -1,0 +1,70 @@
+import { expect, test } from '@playwright/test'
+import { loadSample, openApp } from './helpers.ts'
+
+const nodes = (page: import('@playwright/test').Page) => page.locator('.react-flow__node')
+
+test('처음 쓰는 사람: 예시를 불러온 뒤 메뉴를 눌렀어도 Ctrl+Z로 취소된다', async ({ page }) => {
+  await openApp(page)
+  await page.getByRole('button', { name: '웹 페이지 추가' }).click()
+  await page.getByRole('button', { name: '예시 불러오기' }).click()
+  await page.getByRole('menu', { name: '예시 구조' }).getByRole('button', { name: /메일 비서/ }).click()
+  await expect(nodes(page)).toHaveCount(5)
+  await expect(page.getByRole('status')).toContainText('되돌리려면 Ctrl+Z')
+  await page.keyboard.press('Control+z')
+  await expect(nodes(page)).toHaveCount(1)
+})
+
+test('부품 삭제: 클릭 후 속성 창의 "이 부품 삭제" 버튼', async ({ page }) => {
+  await openApp(page)
+  await loadSample(page, '메일 비서')
+  await nodes(page).first().click()
+  await page.getByRole('button', { name: '이 부품 삭제' }).click()
+  await expect(nodes(page)).toHaveCount(4)
+  await expect(page.locator('.tl-inspector')).toHaveCount(0)
+})
+
+test('선택 삭제: 부품을 클릭하면 도구줄의 "선택 삭제"가 켜지고, 누르면 지워진다', async ({ page }) => {
+  await openApp(page)
+  await loadSample(page, '메일 비서')
+  const btn = page.getByRole('button', { name: '선택한 것 삭제' })
+  await expect(btn).toBeDisabled()
+  await nodes(page).first().click()
+  await expect(btn).toBeEnabled()
+  await btn.click()
+  await expect(nodes(page)).toHaveCount(4)
+})
+
+test('전체 선택(Ctrl+A) 후 삭제, 되돌리기로 복원', async ({ page }) => {
+  await openApp(page)
+  await loadSample(page, '메일 비서')
+  await page.mouse.click(700, 650)
+  await page.keyboard.press('Control+a')
+  await page.getByRole('button', { name: '선택한 것 삭제' }).click()
+  await expect(nodes(page)).toHaveCount(0)
+  await page.keyboard.press('Control+z')
+  await expect(nodes(page)).toHaveCount(5)
+})
+
+test('모두 지우기: 초기 화면(빈 캔버스 안내)으로 돌아가고, 새로고침해도 비어 있으며, Ctrl+Z로 복원된다', async ({ page }) => {
+  await openApp(page)
+  await loadSample(page, '메일 비서')
+  await page.getByRole('button', { name: '모두 지우기' }).click()
+  await expect(nodes(page)).toHaveCount(0)
+  await expect(page.getByText('부품을 끌어다 놓아 보세요')).toBeVisible()
+  await expect(page.getByRole('button', { name: '모두 지우기' })).toBeDisabled()
+  await page.reload()
+  await expect(page.getByText('부품을 끌어다 놓아 보세요')).toBeVisible()
+  await page.getByRole('button', { name: '웹 페이지 추가' }).click()
+  await page.getByRole('button', { name: '모두 지우기' }).click()
+  await page.keyboard.press('Control+z')
+  await expect(nodes(page)).toHaveCount(1)
+})
+
+test('속성 창의 체크 칸에서 Ctrl+Z는 부품 되돌리기를 건드리지 않는다', async ({ page }) => {
+  await openApp(page)
+  await loadSample(page, '메일 비서')
+  await page.locator('.react-flow__node:has-text("AI 에이전트")').click()
+  await page.locator('.tl-inspector input[type=checkbox]').first().focus()
+  await page.keyboard.press('Control+z')
+  await expect(nodes(page)).toHaveCount(5)
+})

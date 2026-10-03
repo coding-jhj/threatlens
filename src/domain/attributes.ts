@@ -35,7 +35,7 @@ export const ATTRIBUTES: readonly AttributeDef[] = [
   { id: 'store.writable', label: '저장소에 AI가 쓸 수 있음', kind: 'risk', hint: 'AI가 사내 문서 저장소에 글을 쓸 수 있어, 잘못된 내용이 퍼질 수 있습니다.' },
   { id: 'input.sensor', label: '설비 센서 값이 입력됨', kind: 'risk', hint: '반응기 온도·압력 같은 설비 센서 값이 AI의 입력으로 들어옵니다. 값이 조작되면 판단이 틀어집니다.' },
   { id: 'link.control', label: '설비 제어에 연결됨', kind: 'risk', hint: 'AI의 출력이 밸브·펌프 같은 설비 제어 명령으로 이어집니다.' },
-  { id: 'interlock.external', label: '안전 인터록이 AI 밖에 독립 존재', kind: 'mitigation', hint: 'AI와 별개로 동작하는 안전 장치(IEC 61511 개념)가 있어 AI가 틀려도 설비가 안전 상태로 갑니다. 위험을 줄이는 대응입니다.' },
+  { id: 'interlock.external', label: '검증된 SIS가 AI·기본 제어(BPCS)와 독립으로 존재', kind: 'mitigation', hint: 'AI와 별개로 동작하는 안전계측시스템(SIS)이 있고, 위험성 평가에서 식별된 위험에 대해 SIL 검증을 받았다고 확인한 경우에만 체크합니다. 이 도구는 SIS의 적합성·SIL을 평가하지 않으며, 체크해도 식별되지 않은 위험이나 품질 문제는 막지 못합니다. 위험을 줄이는 대응입니다.' },
 ]
 
 export function isAttributeId(v: string): v is AttributeId {

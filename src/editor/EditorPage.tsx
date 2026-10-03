@@ -158,7 +158,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
         <ThemeToggle />
         <Button onClick={() => setShowHelp(true)}>사용법</Button>
       </header>
-      <div className="tl-editor">
+      <main className="tl-editor">
         <Palette onAdd={addAtCenter} />
         <div style={{ position: 'relative', flex: 1, minWidth: 0, display: 'flex' }}>
           <Canvas
@@ -268,7 +268,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           onApplyKeys={(keys) => setApplied((prev) => new Set([...prev, ...keys]))}
           onClearApplied={() => setApplied(new Set())}
         />
-      </div>
+      </main>
       <footer className="tl-status">
         <div className="tl-status__msg" role="status">
           {notice}

@@ -44,12 +44,12 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -105,12 +105,12 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0057 LLM Data Leakage (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0057 LLM Data Leakage (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -160,7 +160,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -210,7 +210,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -357,7 +357,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0070 RAG Poisoning (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0070 RAG Poisoning (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -412,19 +412,19 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
   },
   {
     "id": "R-09",
-    "title": "조작된 센서값으로 설비가 잘못 제어됩니다",
+    "title": "틀린 센서값이나 조작된 센서값으로 설비가 잘못 제어됩니다",
     "summary": "센서 값이 틀리거나 조작되면 AI가 잘못된 판단으로 밸브·펌프 제어 명령을 낼 수 있습니다.",
     "story": [
       "센서가 고장 나거나 누군가 조작해서 실제와 다른 값이 들어옵니다.",
       "AI가 그 값을 믿고 밸브·펌프 같은 설비에 제어 명령을 냅니다.",
-      "공정이 잘못된 조건으로 운전되어 품질 불량이나 안전 문제가 생길 수 있습니다."
+      "공정이 의도하지 않은 조건으로 운전되어 품질 불량, 설비 손상, 또는 안전 사고로 이어질 수 있습니다."
     ],
     "category": "chem",
     "hazard": "plant",
@@ -436,13 +436,13 @@
     "fixes": [
       {
         "id": "range_check",
-        "label": "값 범위·변화율 검사",
+        "label": "값 범위·변화율·품질 플래그·갱신 시각 검사(AI 밖의 고정 코드 또는 DCS에서 수행)",
         "score": -15,
         "effort": "mid"
       },
       {
         "id": "interlock",
-        "label": "안전 인터록은 AI 밖에서 유지",
+        "label": "안전 인터록(SIS)은 AI·기본 제어와 분리하고, 전용 독립 센서를 사용",
         "score": -30,
         "effort": "high",
         "sets": "interlock.external"
@@ -456,7 +456,7 @@
       },
       {
         "id": "sensor_crosscheck",
-        "label": "중복 센서·물리 모델과 교차 검증",
+        "label": "중복 센서·물리 모델과 교차 검증(진단·알람용이며 안전 기능을 대체하지 않음)",
         "score": -25,
         "effort": "mid"
       }
@@ -469,8 +469,8 @@
       },
       {
         "source": "CISA-AI-OT",
-        "ref": "CISA 등 공동 지침 「Principles for the Secure Integration of AI in OT」(2025.12): AI가 안전 판단을 자율로 하지 않고 사람이 개입해야 하며, 사람 없는 AI의 설비 능동 제어를 제한 (2차 자료로 확인)",
-        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+        "ref": "CISA·ASD ACSC·NSA·FBI 등 공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 사람 개입 없는 AI의 OT 능동 제어를 제한 (§2.4) (ic3.gov PDF 원문 확인)",
+        "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
         "source": "OWASP-LLM",
@@ -482,11 +482,11 @@
   {
     "id": "R-10",
     "title": "독립된 안전 인터록 없이 AI가 설비 제어에 닿습니다",
-    "summary": "AI 밖에 독립된 안전 인터록(SIS)이 없으면, AI의 오판이나 침해가 보호 장치 없이 설비 운전까지 이어질 수 있습니다. 믿을 수 없는 입력이 없어도 성립합니다.",
+    "summary": "AI가 설비 제어에 연결되어 있는데, 위험성 평가에서 요구된 독립 안전계측시스템(SIS)이 확인되지 않으면 AI의 오판이나 침해가 보호 계층 없이 공정 이상으로 이어질 수 있습니다. 믿을 수 없는 입력이 없어도 성립합니다.",
     "story": [
       "AI가 오판하거나 침해당합니다. 믿을 수 없는 입력이 없어도 오판은 일어날 수 있습니다.",
-      "AI 밖에 독립된 안전 인터록(SIS)이 없어 위험한 명령을 막을 장치가 없습니다.",
-      "AI의 잘못된 판단이 보호 장치 없이 설비 운전까지 이어집니다."
+      "위험성 평가에서 요구된 독립 안전계측시스템(SIS)이 확인되지 않아, 공정이 위험 조건으로 가도 안전 상태로 보내는 마지막 보호 계층이 없습니다.",
+      "AI의 잘못된 판단이 보호 계층 없이 설비 운전 이상으로 이어질 수 있습니다."
     ],
     "category": "chem",
     "hazard": "plant",
@@ -498,14 +498,14 @@
     "fixes": [
       {
         "id": "interlock",
-        "label": "안전 인터록(SIS)을 AI·기본 제어와 분리된 독립 구성으로 유지",
+        "label": "독립 SIS 확보 또는 확인(AI·기본 제어와 분리된 센서·로직·최종요소, SIL은 위험성 평가에 따름)",
         "score": -30,
         "effort": "high",
         "sets": "interlock.external"
       },
       {
         "id": "command_allowlist",
-        "label": "제어 명령 허용 목록",
+        "label": "제어 명령 허용 목록(AI 앱이 아닌 DCS/PLC 또는 게이트웨이에서 강제)",
         "score": -15,
         "effort": "mid"
       },
@@ -526,13 +526,13 @@
     "basis": [
       {
         "source": "IEC-61511",
-        "ref": "IEC 61511 안전계측시스템(SIS)은 기본 공정 제어 시스템과 구조적으로 분리·독립 (2차 자료로 확인, 원문은 유료)",
-        "url": "https://en.wikipedia.org/wiki/IEC_61511"
+        "ref": "IEC 61511: SIS는 기본 공정 제어 시스템(BPCS)과의 독립성을 요구 위험 감소 수준에 맞게 확보해야 함 (2차 자료로 확인, 조항 번호는 원문 미확인·원문은 유료)",
+        "url": "https://industrialmonitordirect.com/blogs/knowledgebase/why-safety-systems-and-process-control-must-remain-independent"
       },
       {
         "source": "CISA-AI-OT",
-        "ref": "CISA 등 공동 지침(2025.12): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (2차 자료로 확인)",
-        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (ic3.gov PDF 원문 확인)",
+        "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
         "source": "MITRE-ATTACK-ICS",
@@ -554,7 +554,7 @@
   {
     "id": "R-11",
     "title": "공정 데이터가 외부 업체 모델로 전송됩니다",
-    "summary": "공정 조건과 수치는 영업비밀일 수 있어, 외부 업체 모델로 보내면 기술 정보가 유출될 수 있습니다.",
+    "summary": "공정 조건과 수치는 영업비밀일 수 있고, 외부 업체 모델로 보내는 경로는 OT 경계를 넓힙니다. 그대로 보내면 기술 정보가 유출될 수 있습니다.",
     "story": [
       "공정 조건과 수치(온도, 압력, 배합 등)가 AI의 입력으로 들어옵니다.",
       "AI가 그 데이터를 외부 업체의 모델 서버로 보내 처리합니다.",
@@ -570,7 +570,7 @@
     "fixes": [
       {
         "id": "deidentify",
-        "label": "공정 조건·수치 비식별화",
+        "label": "공정 조건·수치 비식별화(비율·추세로 복원되지 않도록 범위 변환·집계 포함)",
         "score": -20,
         "effort": "mid"
       },
@@ -596,8 +596,8 @@
     "basis": [
       {
         "source": "CISA-AI-OT",
-        "ref": "CISA 등 공동 지침(2025.12): 벤더의 운영 데이터 재사용 방지와 데이터 거버넌스 점검 (2차 자료로 확인)",
-        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 벤더의 운영 데이터 재사용 방지와 데이터 거버넌스 점검 (ic3.gov PDF 원문 확인)",
+        "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
         "source": "OWASP-LLM",
@@ -613,7 +613,7 @@
     "story": [
       "AI가 센서 값이나 지시를 잘못 해석해 설비 설정을 바꾸려 합니다.",
       "제어 쓰기 권한이 있는 AI의 명령이 담당자 확인 없이 그대로 실행됩니다.",
-      "오판이 곧바로 공정 이상으로 이어지고, 사람이 개입할 틈이 없습니다."
+      "오판이 곧바로 공정 이상으로 이어질 수 있고, 사람이 알아채고 개입할 시간이 짧거나 없을 수 있습니다."
     ],
     "category": "chem",
     "hazard": "plant",
@@ -626,20 +626,20 @@
     "fixes": [
       {
         "id": "human_confirm",
-        "label": "제어 명령 전 담당자 확인",
+        "label": "제어 명령 전 담당자 확인(현재값·변경 후 값·허용 범위를 함께 표시하고 거부 가능, 보호 계층으로 계산하지 않음)",
         "score": -25,
         "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "change_limit",
-        "label": "1회 변경폭·속도 제한",
+        "label": "1회 변경폭·속도 제한(AI가 아닌 DCS/PLC에서 강제)",
         "score": -20,
         "effort": "mid"
       },
       {
         "id": "safe_state",
-        "label": "AI 성능·안전 지표 기준 미달 시 비AI 제어로 복귀",
+        "label": "AI와 독립된 감시가 AI 이상을 감지하면 AI 쓰기를 차단하고 기존 제어(BPCS)·수동 운전으로 복귀(SIS를 대체하지 않음)",
         "score": -10,
         "effort": "high"
       },
@@ -653,13 +653,13 @@
     "basis": [
       {
         "source": "CISA-AI-OT",
-        "ref": "CISA 등 공동 지침 「Principles for the Secure Integration of AI in OT」(2025.12): AI가 안전 판단을 자율로 하지 않고 사람이 개입해야 하며, 사람 없는 AI의 설비 능동 제어를 제한 (2차 자료로 확인)",
-        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+        "ref": "CISA·ASD ACSC·NSA·FBI 등 공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 사람 개입 없는 AI의 OT 능동 제어를 제한 (§2.4) (ic3.gov PDF 원문 확인)",
+        "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
         "source": "CISA-AI-OT",
-        "ref": "CISA 등 공동 지침(2025.12): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (2차 자료로 확인)",
-        "url": "https://www.cisa.gov/resources-tools/resources/principles-secure-integration-artificial-intelligence-operational-technology"
+        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (ic3.gov PDF 원문 확인)",
+        "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
         "source": "OWASP-LLM",
@@ -687,19 +687,19 @@
     "fixes": [
       {
         "id": "separate_setpoint",
-        "label": "설정값 변경 경로를 문서 읽는 AI와 분리",
+        "label": "설정값 변경은 문서를 읽는 AI와 분리된 별도 경로·권한으로만 가능(문서 처리 AI에는 쓰기 자격 증명 미부여)",
         "score": -25,
         "effort": "high"
       },
       {
         "id": "range_check",
-        "label": "변경 전 허용 범위 검사",
+        "label": "변경 전 허용 범위 검사(LLM 판단이 아닌 고정 코드 또는 DCS 설정값 제한으로 강제)",
         "score": -15,
         "effort": "mid"
       },
       {
         "id": "change_alert",
-        "label": "변경 기록과 담당자 알림",
+        "label": "변경 기록과 담당자 알림(사후 탐지용이며 변경을 막지 않음, 공정 알람과 구분)",
         "score": -10,
         "effort": "low"
       },
@@ -779,7 +779,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0057 LLM Data Leakage (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0057 LLM Data Leakage (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -834,12 +834,12 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0101 Data Destruction via AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0101 Data Destruction via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -888,7 +888,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0080.000 AI Agent Context Poisoning: Memory (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0080.000 AI Agent Context Poisoning: Memory (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -938,7 +938,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -994,12 +994,12 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -1141,7 +1141,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0057 LLM Data Leakage (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0057 LLM Data Leakage (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -1197,7 +1197,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -1251,7 +1251,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0085.000 Data from AI Services: RAG Databases (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0085.000 RAG Databases (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -1301,7 +1301,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -1351,7 +1351,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]
@@ -1500,7 +1500,7 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0070 RAG Poisoning (ATLAS v5.6.0 데이터 기준)",
+        "ref": "AML.T0070 RAG Poisoning (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
         "url": "https://atlas.mitre.org/"
       }
     ]

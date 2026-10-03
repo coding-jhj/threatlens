@@ -32,7 +32,7 @@ const WORDS: Record<string, RegExp> = {
 }
 const ABSENT_WORDS: Record<string, RegExp> = {
   'human.approval': /없이|않|아무도|검수/,
-  'interlock.external': /인터록|보호 장치/,
+  'interlock.external': /인터록|보호 장치|보호 계층|SIS/,
 }
 
 describe.each(RULES.map((r) => [r.id, r] as const))('%s 일관성', (_id, rule) => {

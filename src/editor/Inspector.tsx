@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ATTRIBUTES, ATTRIBUTE_IDS, type AttributeId } from '../domain/attributes'
+import { USER_ATTRIBUTES, ATTRIBUTE_IDS, type AttributeId } from '../domain/attributes'
 import { getPart } from '../domain/parts'
 import { Icon } from '../ui/Icon'
 import type { EditorNode } from './model'
@@ -36,7 +36,7 @@ export function Inspector({ node, others, links, onChange, onConnect, onRemoveLi
         </button>
       </div>
       <div className="tl-inspector__grid">
-        {ATTRIBUTES.map((a) => (
+        {USER_ATTRIBUTES.map((a) => (
           <label key={a.id} className="tl-inspector__item" title={a.hint}>
             <input type="checkbox" checked={node.attributes.includes(a.id)} onChange={(e) => toggle(a.id, e.target.checked)} />
             {a.label}
@@ -47,7 +47,7 @@ export function Inspector({ node, others, links, onChange, onConnect, onRemoveLi
       <details className="tl-inspector__more">
         <summary>속성 설명 (각 항목이 무슨 뜻인지)</summary>
         <dl className="tl-inspector__defs">
-          {ATTRIBUTES.map((a) => (
+          {USER_ATTRIBUTES.map((a) => (
             <div key={a.id}>
               <dt>{a.label}</dt>
               <dd>{a.hint}</dd>

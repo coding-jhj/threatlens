@@ -88,6 +88,10 @@ export default function EvalPage() {
         AI 판정자 3명이 따로 판정해 2명 이상이 동의한 보충 정답 7개를 넣은 <b>v2 기준</b>(정답 {v2.threatTotal}개): 재현율 느슨 {pct(v2.found, v2.threatTotal)} ({v2.found}/{v2.threatTotal}), 엄격 {pct(v2.strict, v2.threatTotal)} ({v2.strict}/{v2.threatTotal}). 위 숫자(v1)는 처음 쓴 정답 {result.threatTotal}개 기준입니다.
       </p>
 
+      <p className="tl-eval__muted" aria-label="규칙 확장 전후">
+        <b>규칙 28개 → 40개(G6) 전후 비교</b>, 정답표(v1)는 그대로 두었습니다: 재현율 느슨 21/29 (72%) → {result.found}/{result.threatTotal} ({pct(result.found, result.threatTotal)}), 엄격 15/29 (52%) → {result.strict}/{result.threatTotal} ({pct(result.strict, result.threatTotal)}), 경보 적중률 29/32 (91%) → {result.matchedFired}/{result.comparable} ({pct(result.matchedFired, result.comparable)}). 새 규칙 12개 중 정답표와 겹친 것은 8개이고, 나머지 3개(R-32, R-33, R-40, 구조별 발동 4건)는 정답표에 해당 위협이 없어 <b>정답표 확장 필요</b>로 분류합니다. 오탐으로 단정하지 않습니다.
+      </p>
+
       <h2>구조별 결과</h2>
       <div className="tl-eval__scroll">
         <table className="tl-eval__table">

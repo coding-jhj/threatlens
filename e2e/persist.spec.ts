@@ -5,9 +5,9 @@ import { loadSample, openApp, score } from './helpers.ts'
 test('자동 저장: 새로고침해도 구조가 남는다', async ({ page }) => {
   await openApp(page)
   await loadSample(page, '코드 에이전트')
-  await expect(score(page)).toHaveText('61')
+  await expect(score(page)).toHaveText('69')
   await page.reload()
-  await expect(score(page)).toHaveText('61')
+  await expect(score(page)).toHaveText('69')
   await expect(page.locator('.react-flow__node')).toHaveCount(6)
 })
 
@@ -25,7 +25,7 @@ test('공유 링크: 복사한 링크를 새 브라우저 세션에서 열면 �
   const p2 = await other.newPage()
   await p2.addInitScript(() => localStorage.setItem('threatlens.onboarded.v1', '1'))
   await p2.goto(link)
-  await expect(score(p2)).toHaveText('51')
+  await expect(score(p2)).toHaveText('55')
   await expect(p2.locator('.react-flow__node')).toHaveCount(5)
   expect(p2.url()).not.toContain('#/s/') // 주소창에서 링크가 지워진다
   await other.close()
@@ -48,10 +48,10 @@ test('JSON 저장 → 불러오기: 파일로 내려받아 빈 화면에서 복�
   await p2.goto('/')
   await expect(p2.getByRole('button', { name: '공유·저장' })).toBeVisible() // 화면이 다 그려진 뒤에 파일을 고른다
   await p2.locator('input[type=file]').setInputFiles({ name: 'saved.json', mimeType: 'application/json', buffer: saved })
-  await expect(score(p2)).toHaveText('63')
+  await expect(score(p2)).toHaveText('67')
 
   await p2.locator('input[type=file]').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{"version":1,"nodes":[{"id":"a","part":"zzz","attributes":[],"x":0,"y":0}],"edges":[]}') })
   await expect(p2.locator('.tl-status__msg')).toContainText('알 수 없는 부품 "zzz"')
-  await expect(score(p2)).toHaveText('63') // 실패해도 지금 구조는 그대로
+  await expect(score(p2)).toHaveText('67') // 실패해도 지금 구조는 그대로
   await other.close()
 })

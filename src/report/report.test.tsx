@@ -34,13 +34,13 @@ test('nodeNames: 같은 부품이 여럿이면 번호를 붙이고, 하나면 �
   expect(n.get('a')).toBe('웹 페이지')
 })
 
-test('buildReport: 점수·경로·위협이 분석과 같다 (대응 전 51, 경로 1개)', () => {
+test('buildReport: 점수·경로·위협이 분석과 같다 (대응 전 55, 경로 1개)', () => {
   const r = buildReport(graph, RULES, new Set(), NOW)
   expect(r.hasAi).toBe(true)
-  expect(r.before).toBe(51)
-  expect(r.after).toBe(51)
+  expect(r.before).toBe(55)
+  expect(r.after).toBe(55)
   expect(r.paths.map((p) => p.text)).toEqual(['웹 페이지 → AI 에이전트 → 메일 전송 → 외부 수신자'])
-  expect(r.findings).toHaveLength(6)
+  expect(r.findings).toHaveLength(8)
   expect(r.appliedCount).toBe(0)
   expect(r.findings.every((f) => !f.resolved)).toBe(true)
 })
@@ -66,7 +66,7 @@ test('reportToMarkdown: 제목·요약 점수·경로·체크박스·근거 링�
   const md = reportToMarkdown(buildReport(graph, RULES, new Set([appliedKey('b', 'R-01', 'human_approval')]), NOW))
   expect(md).toContain('# ThreatLens 위협 분석 보고서')
   expect(md).toContain('작성일: 2026-10-02')
-  expect(md).toMatch(/위험 점수: \*\*51\*\* \(대응 전\) → \*\*\d+\*\* \(대응 후\)/)
+  expect(md).toMatch(/위험 점수: \*\*55\*\* \(대응 전\) → \*\*\d+\*\* \(대응 후\)/)
   expect(md).toContain('- [높음] 웹 페이지 → AI 에이전트 → 메일 전송 → 외부 수신자')
   expect(md).toContain('- [x] 전송 전 사람 승인 단계 추가 (-30)')
   expect(md).toContain('- [ ] 도구 권한 최소화 (-20)')
@@ -88,8 +88,8 @@ test('ReportPage: 구조가 없으면 안내와 위협 지도 링크', () => {
 test('ReportPage: 보고서 본문이 렌더링되고 점수가 보인다', () => {
   render(<ReportPage ws={ws(graph)} />)
   expect(screen.getByRole('article', { name: '위협 분석 보고서' })).toBeTruthy()
-  expect(screen.getAllByText('51').length).toBeGreaterThan(0)
-  expect(screen.getByText(/발견된 위협 6개/)).toBeTruthy()
+  expect(screen.getAllByText('55').length).toBeGreaterThan(0)
+  expect(screen.getByText(/발견된 위협 8개/)).toBeTruthy()
 })
 
 test('ReportPage: Markdown 저장 버튼은 파일명 threatlens-report-날짜.md 로 내려받는다', () => {

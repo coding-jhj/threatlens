@@ -29,6 +29,12 @@ export const PARTS: readonly PartDef[] = [
   { id: 'sensor', label: '센서 값', description: '반응기 온도·압력 등', group: '화공 설비', kind: 'input', icon: 'sensor', defaults: ['input.sensor'] },
   { id: 'control_api', label: '제어 API', description: '밸브·펌프 명령', group: '화공 설비', kind: 'tool', icon: 'bolt', defaults: ['tool.write', 'link.control'] },
   { id: 'plc', label: 'PLC·DCS', description: '실제 설비 제어기', group: '화공 설비', kind: 'equipment', icon: 'plc', defaults: [] },
+  { id: 'vector_db', label: '벡터 DB', description: '검색용 문서 조각 저장소', group: 'AI·데이터', kind: 'store', icon: 'search', defaults: [] },
+  { id: 'internal_wiki', label: '사내 위키', description: '직원이 고치는 사내 문서', group: 'AI·데이터', kind: 'store', icon: 'doc', defaults: [] },
+  { id: 'plugin', label: '플러그인', description: '외부에서 가져온 확장 도구', group: '외부 도구', kind: 'tool', icon: 'bolt', defaults: ['tool.send'] },
+  { id: 'model_server', label: '외부 모델 서버', description: '회사 밖에서 도는 AI 서버', group: '외부 도구', kind: 'external', icon: 'globe', defaults: ['model.external', 'zone.outside'] },
+  { id: 'approval_gate', label: '승인 단계', description: '사람이 확인하는 관문', group: '외부 도구', kind: 'tool', icon: 'check', defaults: ['human.approval'] },
+  { id: 'plant_alarm', label: '설비 경보', description: '이상 신호를 알리는 장치', group: '화공 설비', kind: 'equipment', icon: 'shield', defaults: [] },
 ]
 
 export const PART_GROUPS: readonly PartGroup[] = ['입력·사람', 'AI·데이터', '외부 도구', '화공 설비']

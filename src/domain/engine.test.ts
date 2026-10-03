@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { RULES } from '../data'
 import type { AttributeId } from './attributes'
-import { appliedKey, evaluate } from './engine'
+import { appliedKey, crossingEdgeIds, evaluate } from './engine'
 import type { Graph } from './graph'
 import { parseCondition, type Rule } from './rules'
 
@@ -168,5 +168,39 @@ describe('엔진 일반 동작', () => {
     expect(fired(g)).toContain('R-10')
     expect(fired(g)).not.toContain('R-13') // 믿을 수 없는 입력이 없으므로 R-13은 그대로 미발동
     expect(fired(g, new Set([appliedKey('ai', 'R-10', 'interlock')]))).not.toContain('R-10')
+  })
+})
+
+describe('신뢰 경계 (zone.outside → boundary.cross)', () => {
+  const mk = (outsideIds: string[]): Graph => ({
+    nodes: [
+      { id: 'ai', partId: 'ai_agent', attributes: [] },
+      { id: 'db', partId: 'doc_store', attributes: ['data.sensitive'] },
+      { id: 'srv', partId: 'model_server', attributes: ['model.external', ...(outsideIds.includes('srv') ? (['zone.outside'] as AttributeId[]) : [])] },
+    ],
+    edges: [
+      { id: 'e1', from: 'db', to: 'ai' },
+      { id: 'e2', from: 'ai', to: 'srv' },
+    ],
+  })
+
+  test('사외 부품이 없으면 경계를 넘는 연결도 없고 R-35는 발동하지 않는다', () => {
+    expect(crossingEdgeIds(mk([]))).toEqual([])
+    expect(fired(mk([]))).not.toContain('R-35')
+  })
+
+  test('사외 부품과 사내 부품을 잇는 연결만 경계를 넘는 연결이다', () => {
+    expect(crossingEdgeIds(mk(['srv']))).toEqual(['e2'])
+  })
+
+  test('경계를 넘는 AI가 민감정보에 접근하면 R-35가 발동한다', () => {
+    expect(fired(mk(['srv']))).toContain('R-35')
+  })
+
+  test('양 끝이 모두 사외이면 경계를 넘지 않는다', () => {
+    const g = mk(['srv'])
+    g.nodes[0].attributes = ['zone.outside']
+    g.edges = [{ id: 'e2', from: 'ai', to: 'srv' }]
+    expect(crossingEdgeIds(g)).toEqual([])
   })
 })

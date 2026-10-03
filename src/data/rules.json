@@ -1504,5 +1504,491 @@
         "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
+  },
+  {
+    "id": "R-29",
+    "title": "저장소에 쓴 내용이 출처 없이 다시 쓰입니다",
+    "summary": "AI가 저장소에 쓴 답이 출처 표시 없이 쌓이면, 틀린 내용이 사실처럼 굳어 퍼집니다.",
+    "story": [
+      "AI가 저장소에 쓴 요약이나 답변이 다른 질문의 자료로 다시 쓰입니다.",
+      "AI가 어느 문서에서 가져온 말인지 출처 없이 답을 내놓습니다.",
+      "틀린 내용이 근거 없이 사실처럼 퍼지고 아무도 원본을 대조하지 못합니다."
+    ],
+    "category": "store-log",
+    "hazard": "misuse",
+    "severity": "medium",
+    "when": [
+      "store.writable",
+      "!source.cite"
+    ],
+    "fixes": [
+      {
+        "id": "source_cite",
+        "label": "답변마다 근거 문서 출처 표시",
+        "score": -15,
+        "effort": "low",
+        "sets": "source.cite"
+      },
+      {
+        "id": "review_before_write",
+        "label": "저장소에 쓰기 전 검토 단계 추가",
+        "score": -25,
+        "effort": "mid"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM09:2025 Misinformation",
+        "url": "https://genai.owasp.org/llmrisk/llm092025-misinformation/"
+      }
+    ]
+  },
+  {
+    "id": "R-30",
+    "title": "민감정보가 담긴 답을 검사 없이 내보냅니다",
+    "summary": "AI 답변에 섞인 민감정보를 내보내기 전에 걸러 내지 않으면 그대로 노출됩니다.",
+    "story": [
+      "AI가 고객 정보나 내부 기밀이 섞인 자료를 읽고 답을 만듭니다.",
+      "답변에 담긴 민감한 내용을 보내기 전에 검사하는 단계가 없습니다.",
+      "민감정보가 그대로 화면과 기록에 노출되고, 권한 없는 사람도 볼 수 있습니다."
+    ],
+    "category": "data-leak",
+    "hazard": "leak",
+    "severity": "medium",
+    "when": [
+      "data.sensitive",
+      "!output.filter"
+    ],
+    "fixes": [
+      {
+        "id": "output_filter",
+        "label": "내보내기 전 출력 내용 검사·차단",
+        "score": -20,
+        "effort": "mid",
+        "sets": "output.filter"
+      },
+      {
+        "id": "masking",
+        "label": "민감정보 가리기(마스킹)",
+        "score": -15,
+        "effort": "mid"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM02:2025 Sensitive Information Disclosure",
+        "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+      }
+    ]
+  },
+  {
+    "id": "R-31",
+    "title": "AI가 만든 코드를 검사 없이 실행합니다",
+    "summary": "AI가 만든 명령을 확인하지 않고 실행하면 잘못된 명령이 그대로 시스템에 영향을 줍니다.",
+    "story": [
+      "AI가 만든 코드를 실행 환경이 그대로 받아들입니다.",
+      "생성된 명령에 위험한 내용이 없는지 검사하는 단계가 없습니다.",
+      "엉뚱하거나 위험한 명령이 실행되어 시스템 파일이나 설정이 손상됩니다."
+    ],
+    "category": "tool-abuse",
+    "hazard": "misuse",
+    "severity": "medium",
+    "when": [
+      "tool.exec",
+      "!output.filter"
+    ],
+    "fixes": [
+      {
+        "id": "output_filter",
+        "label": "실행 전 출력 내용 검사·차단",
+        "score": -20,
+        "effort": "mid",
+        "sets": "output.filter"
+      },
+      {
+        "id": "command_allowlist",
+        "label": "실행 가능한 명령을 목록으로 제한",
+        "score": -20,
+        "effort": "mid"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM05:2025 Improper Output Handling",
+        "url": "https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/"
+      }
+    ]
+  },
+  {
+    "id": "R-32",
+    "title": "보내는 횟수와 양에 상한이 없습니다",
+    "summary": "외부로 보내는 횟수나 양에 상한이 없으면 오류 한 번이 대량 전송으로 번집니다.",
+    "story": [
+      "AI가 메일이나 API 호출로 밖으로 내용을 보낼 수 있습니다.",
+      "하루에 몇 번, 얼마나 많이 보낼 수 있는지 상한이 없습니다.",
+      "오류나 조작으로 같은 전송이 수천 번 반복되어 스팸과 비용 폭주로 이어집니다."
+    ],
+    "category": "tool-abuse",
+    "hazard": "misuse",
+    "severity": "low",
+    "when": [
+      "tool.send",
+      "!rate.limit"
+    ],
+    "fixes": [
+      {
+        "id": "rate_limit",
+        "label": "전송 횟수·양에 상한 설정",
+        "score": -15,
+        "effort": "low",
+        "sets": "rate.limit"
+      },
+      {
+        "id": "recipient_allowlist",
+        "label": "보낼 수 있는 주소를 목록으로 제한",
+        "score": -10,
+        "effort": "low"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM10:2025 Unbounded Consumption",
+        "url": "https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/"
+      }
+    ]
+  },
+  {
+    "id": "R-33",
+    "title": "외부 모델 호출에 횟수 제한이 없습니다",
+    "summary": "외부 업체 모델을 제한 없이 호출하면 비용과 서비스 안정성이 한 번에 무너집니다.",
+    "story": [
+      "AI가 질문마다 외부 업체의 모델 서버를 호출합니다.",
+      "호출 횟수와 길이에 제한이 없어 반복 요청이 그대로 처리됩니다.",
+      "요청이 몰리면 업체 사용료가 급증하고 서비스가 느려지거나 멈춥니다."
+    ],
+    "category": "tool-abuse",
+    "hazard": "misuse",
+    "severity": "low",
+    "when": [
+      "model.external",
+      "!rate.limit"
+    ],
+    "fixes": [
+      {
+        "id": "rate_limit",
+        "label": "호출 횟수·길이에 상한 설정",
+        "score": -15,
+        "effort": "low",
+        "sets": "rate.limit"
+      },
+      {
+        "id": "budget_alert",
+        "label": "사용료 한도 알림 설정",
+        "score": -10,
+        "effort": "low"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM10:2025 Unbounded Consumption",
+        "url": "https://genai.owasp.org/llmrisk/llm102025-unbounded-consumption/"
+      }
+    ]
+  },
+  {
+    "id": "R-34",
+    "title": "변경 작업의 감사 기록이 남지 않습니다",
+    "summary": "AI의 변경 내역을 기록하지 않으면 사고 뒤에 원인을 찾을 수 없습니다.",
+    "story": [
+      "AI가 파일이나 데이터를 바꾸거나 지울 수 있습니다.",
+      "누가 언제 무엇을 바꿨는지 감사 기록이 남지 않습니다.",
+      "문제가 생겨도 원인을 추적하지 못해 같은 사고가 다시 일어납니다."
+    ],
+    "category": "tool-abuse",
+    "hazard": "misuse",
+    "severity": "medium",
+    "when": [
+      "tool.write",
+      "!audit.log"
+    ],
+    "fixes": [
+      {
+        "id": "audit_log",
+        "label": "변경 내용을 감사 기록으로 보관",
+        "score": -15,
+        "effort": "mid",
+        "sets": "audit.log"
+      },
+      {
+        "id": "undo_log",
+        "label": "변경 내역 기록과 되돌리기",
+        "score": -15,
+        "effort": "mid"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM06:2025 Excessive Agency",
+        "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+      }
+    ]
+  },
+  {
+    "id": "R-35",
+    "title": "민감정보가 회사 밖 연결로 넘어갑니다",
+    "summary": "민감정보를 다루는 AI가 회사 밖과 이어져 있으면 신뢰 경계를 넘어 자료가 나갑니다.",
+    "story": [
+      "AI가 고객 정보 같은 민감한 자료를 읽는데, 그 연결이 회사 밖과 이어져 있습니다.",
+      "AI의 질문과 자료가 신뢰 경계를 넘어 회사 밖 서버로 전달됩니다.",
+      "회사 밖에서는 통제할 수 없어 민감정보가 저장되거나 재사용될 수 있습니다."
+    ],
+    "category": "data-leak",
+    "hazard": "leak",
+    "severity": "high",
+    "when": [
+      "boundary.cross",
+      "data.sensitive"
+    ],
+    "fixes": [
+      {
+        "id": "masking",
+        "label": "경계를 넘기 전 민감정보 가리기",
+        "score": -25,
+        "effort": "mid"
+      },
+      {
+        "id": "private_model",
+        "label": "회사 안에서 도는 모델로 교체",
+        "score": -30,
+        "effort": "high"
+      },
+      {
+        "id": "vendor_terms",
+        "label": "업체와 데이터 재사용 금지 계약",
+        "score": -15,
+        "effort": "low"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM02:2025 Sensitive Information Disclosure",
+        "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+      }
+    ]
+  },
+  {
+    "id": "R-36",
+    "title": "회사 밖으로 나가는 전송을 승인 없이 보냅니다",
+    "summary": "신뢰 경계를 넘는 전송은 한 번 나가면 되돌리기 어려워 사람 확인이 필요합니다.",
+    "story": [
+      "AI가 회사 밖과 이어진 도구로 메일이나 API 요청을 보냅니다.",
+      "신뢰 경계를 넘는 전송인데 승인 없이 그대로 나갑니다.",
+      "잘못된 내용이 회사 밖으로 나가면 사람이 막을 방법이 없습니다."
+    ],
+    "category": "tool-abuse",
+    "hazard": "misuse",
+    "severity": "high",
+    "when": [
+      "boundary.cross",
+      "tool.send",
+      "!human.approval"
+    ],
+    "fixes": [
+      {
+        "id": "human_approval",
+        "label": "경계를 넘는 전송 전 사람 승인",
+        "score": -30,
+        "effort": "mid",
+        "sets": "human.approval"
+      },
+      {
+        "id": "recipient_allowlist",
+        "label": "보낼 수 있는 주소를 목록으로 제한",
+        "score": -20,
+        "effort": "low"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM06:2025 Excessive Agency",
+        "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+      }
+    ]
+  },
+  {
+    "id": "R-37",
+    "title": "회사 밖에서 온 글이 안쪽 글과 섞입니다",
+    "summary": "신뢰 경계를 넘어 들어온 글을 안쪽 자료와 구분하지 않으면 숨은 명령이 통합니다.",
+    "story": [
+      "AI가 회사 밖과 이어진 연결로 믿을 수 없는 글을 받아 읽습니다.",
+      "경계를 넘어 들어온 글에 숨은 명령이 있어도 안쪽 글과 구분하지 않습니다.",
+      "숨은 명령이 사내 자료와 같은 신뢰 수준으로 처리되어 AI의 판단이 바뀝니다."
+    ],
+    "category": "prompt-injection",
+    "hazard": "inject",
+    "severity": "medium",
+    "when": [
+      "boundary.cross",
+      "input.untrusted"
+    ],
+    "fixes": [
+      {
+        "id": "source_label",
+        "label": "들어온 글에 출처 표시를 붙여 구분",
+        "score": -10,
+        "effort": "low"
+      },
+      {
+        "id": "source_isolation",
+        "label": "바깥에서 온 글을 따로 분리해 처리",
+        "score": -15,
+        "effort": "mid"
+      },
+      {
+        "id": "inbound_scan",
+        "label": "경계에서 들어오는 글 검사",
+        "score": -20,
+        "effort": "mid"
+      }
+    ],
+    "basis": [
+      {
+        "source": "OWASP-LLM",
+        "ref": "LLM01:2025 Prompt Injection",
+        "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+      }
+    ]
+  },
+  {
+    "id": "R-38",
+    "title": "설비 제어 명령의 감사 기록이 남지 않습니다",
+    "summary": "AI가 낸 제어 명령을 기록하지 않으면 설비 이상의 원인을 가릴 수 없습니다.",
+    "story": [
+      "AI의 출력이 밸브나 펌프 같은 설비 제어로 이어집니다.",
+      "AI가 어떤 제어 명령을 냈는지 감사 기록이 남지 않습니다.",
+      "설비 이상이 생겨도 AI 때문인지 가려내지 못해 사고 원인을 추적할 수 없습니다."
+    ],
+    "category": "chem",
+    "hazard": "plant",
+    "severity": "medium",
+    "when": [
+      "link.control",
+      "!audit.log"
+    ],
+    "fixes": [
+      {
+        "id": "audit_log",
+        "label": "제어 명령을 감사 기록으로 보관",
+        "score": -15,
+        "effort": "mid",
+        "sets": "audit.log"
+      },
+      {
+        "id": "change_alert",
+        "label": "설정 변경 시 담당자 알림",
+        "score": -10,
+        "effort": "low"
+      }
+    ],
+    "basis": [
+      {
+        "source": "MITRE-ATTACK-ICS",
+        "ref": "ATT&CK for ICS T0831 Manipulation of Control",
+        "url": "https://attack.mitre.org/techniques/T0831/"
+      }
+    ]
+  },
+  {
+    "id": "R-39",
+    "title": "회사 밖 연결을 통한 명령이 설비까지 닿습니다",
+    "summary": "설비 제어가 신뢰 경계 밖과 이어져 있으면 외부에서 조작한 명령이 공정에 영향을 줍니다.",
+    "story": [
+      "AI의 제어 출력이 회사 밖과 이어진 연결을 거쳐 설비까지 닿습니다.",
+      "경계를 넘는 연결로 들어온 명령도 사내 명령과 똑같이 설비에 전달됩니다.",
+      "외부에서 조작된 명령이 밸브 설정을 바꿔 공정이 위험한 상태가 됩니다."
+    ],
+    "category": "chem",
+    "hazard": "plant",
+    "severity": "high",
+    "when": [
+      "link.control",
+      "boundary.cross"
+    ],
+    "fixes": [
+      {
+        "id": "network_segmentation",
+        "label": "설비망과 외부망을 분리",
+        "score": -35,
+        "effort": "high"
+      },
+      {
+        "id": "command_allowlist",
+        "label": "허용된 제어 명령만 통과",
+        "score": -15,
+        "effort": "mid"
+      },
+      {
+        "id": "human_confirm",
+        "label": "설비 명령 전 사람 확인",
+        "score": -15,
+        "effort": "mid",
+        "sets": "human.approval"
+      }
+    ],
+    "basis": [
+      {
+        "source": "MITRE-ATTACK-ICS",
+        "ref": "ATT&CK for ICS T0886 Remote Services",
+        "url": "https://attack.mitre.org/techniques/T0886/"
+      }
+    ]
+  },
+  {
+    "id": "R-40",
+    "title": "경보 기준 변경이 기록 없이 이루어집니다",
+    "summary": "AI가 경보 기준을 바꿀 수 있는데 기록이 없으면 경보 무력화를 알아채지 못합니다.",
+    "story": [
+      "AI가 센서 수치를 보고 경보 기준이나 설정을 변경할 수 있습니다.",
+      "기준이 바뀐 내용이 감사 기록으로 남지 않아 아무도 알아채지 못합니다.",
+      "경보가 울려야 할 때 울리지 않아 이상 상황이 늦게 발견됩니다."
+    ],
+    "category": "chem",
+    "hazard": "misuse",
+    "severity": "medium",
+    "when": [
+      "input.sensor",
+      "tool.write",
+      "!audit.log"
+    ],
+    "fixes": [
+      {
+        "id": "audit_log",
+        "label": "경보 기준 변경을 감사 기록으로 보관",
+        "score": -15,
+        "effort": "mid",
+        "sets": "audit.log"
+      },
+      {
+        "id": "change_alert",
+        "label": "경보 기준 변경 시 담당자 알림",
+        "score": -10,
+        "effort": "low"
+      }
+    ],
+    "basis": [
+      {
+        "source": "MITRE-ATTACK-ICS",
+        "ref": "ATT&CK for ICS T0878 Alarm Suppression",
+        "url": "https://attack.mitre.org/techniques/T0878/"
+      }
+    ]
   }
 ]

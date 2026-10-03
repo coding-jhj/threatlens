@@ -45,9 +45,9 @@ describe.each(SAMPLES.map((s) => [s.title, s] as const))('행동 계획: %s', (_
   })
 })
 
-test('메일 비서: 1단계는 점수를 가장 크게 낮추는 쉬운 대응이고 표시 점수가 51에서 시작한다', () => {
+test('메일 비서: 1단계는 점수를 가장 크게 낮추는 쉬운 대응이고 표시 점수가 55에서 시작한다', () => {
   const plan = planActions(mail.graph, RULES)
-  expect(plan.before).toBe(51)
+  expect(plan.before).toBe(55)
   expect(plan.steps).toHaveLength(3)
   expect(plan.steps[0].gain).toBeGreaterThanOrEqual(plan.steps[2].gain - 1e-9) // 효과가 큰 순
 })

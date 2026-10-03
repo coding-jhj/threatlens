@@ -11,7 +11,7 @@ test('filterRules: 조건 없으면 전부, 순서 유지', () => {
 
 test('filterRules: 카테고리 필터는 해당 카테고리만', () => {
   const chem = filterRules(RULES, 'chem', '')
-  expect(chem).toHaveLength(5)
+  expect(chem).toHaveLength(8)
   expect(chem.every((r) => r.category === 'chem')).toBe(true)
 })
 
@@ -52,7 +52,7 @@ test('RuleLibrary: 처음에는 전체 규칙 카드가 나온다', () => {
 test('RuleLibrary: 카테고리 탭을 누르면 걸러진다', () => {
   render(<RuleLibrary />)
   fireEvent.click(screen.getByRole('tab', { name: /화공 특화/ }))
-  expect(screen.getAllByRole('article')).toHaveLength(5)
+  expect(screen.getAllByRole('article')).toHaveLength(8)
   expect(screen.getByRole('tab', { name: /화공 특화/ }).getAttribute('aria-selected')).toBe('true')
 })
 

@@ -96,13 +96,13 @@ test('앱: 구조를 불러오면 자동 저장되고, 다시 열면 그대로 �
   await waitFor(() => expect(loadAutosave()?.graph.nodes).toHaveLength(5))
   first.unmount()
   render(<App />)
-  expect(screen.getByLabelText('위험 점수 51')).toBeTruthy()
+  expect(screen.getByLabelText('위험 점수 55')).toBeTruthy()
 })
 
 test('앱: 공유 링크로 열면 그 구조가 보이고 주소창에서 링크가 사라진다', () => {
   history.replaceState(null, '', shareHash(graph, new Set()))
   render(<App />)
-  expect(screen.getByLabelText('위험 점수 51')).toBeTruthy()
+  expect(screen.getByLabelText('위험 점수 55')).toBeTruthy()
   expect(screen.getByText('공유 링크의 구조를 불러왔습니다.')).toBeTruthy()
   expect(location.hash).toBe('#/')
 })
@@ -152,6 +152,6 @@ test('앱: JSON 불러오기 성공/실패 안내', async () => {
   expect((await screen.findByRole('status')).textContent).toMatch(/불러올 수 없습니다: nodes와 edges/)
 
   pick(serialize(SAMPLES[3].graph, new Set()), 'mail.json')
-  expect(await screen.findByLabelText('위험 점수 51')).toBeTruthy()
+  expect(await screen.findByLabelText('위험 점수 55')).toBeTruthy()
   expect(await screen.findByText(/"mail.json"을 불러왔습니다/)).toBeTruthy()
 })

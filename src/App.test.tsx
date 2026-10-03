@@ -42,8 +42,8 @@ test('예시 불러오기: 빈 캔버스의 예시 버튼으로 구조와 점수
   location.hash = ''
   render(<App />)
   fireEvent.click(screen.getByRole('button', { name: /메일 비서/ }))
-  expect(screen.getByLabelText('위험 점수 51')).toBeTruthy()
-  expect(screen.getByText(/발견된 위협 6개/)).toBeTruthy()
+  expect(screen.getByLabelText('위험 점수 55')).toBeTruthy()
+  expect(screen.getByText(/발견된 위협 8개/)).toBeTruthy()
 })
 
 test('사용법 버튼으로 안내를 다시 연다', () => {

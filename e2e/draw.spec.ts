@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 import { connect, openApp, score, threatTitle } from './helpers.ts'
 
-test('직접 그리기: 부품 4개를 놓고 이은 뒤 속성을 켜고 끄면 점수가 26 → 51 → 34로 바뀐다', async ({ page }) => {
+test('직접 그리기: 부품 4개를 놓고 이은 뒤 속성을 켜고 끄면 점수가 28 → 55 → 40으로 바뀐다', async ({ page }) => {
   const errors = await openApp(page)
   for (const n of ['웹 페이지', 'AI 에이전트', '메일 전송', '외부 수신자']) await page.getByRole('button', { name: new RegExp(`^${n}`) }).first().click()
   await expect(page.locator('.react-flow__node')).toHaveCount(4)
@@ -13,17 +13,17 @@ test('직접 그리기: 부품 4개를 놓고 이은 뒤 속성을 켜고 끄면
   await connect(page, 'AI 에이전트', '메일 전송')
   await connect(page, '메일 전송', '외부 수신자')
   await expect(page.locator('.react-flow__edge')).toHaveCount(3)
-  await expect(score(page)).toHaveText('26')
-  await expect(threatTitle(page)).toHaveText('발견된 위협 3개')
+  await expect(score(page)).toHaveText('28')
+  await expect(threatTitle(page)).toHaveText('발견된 위협 4개')
   await expect(page.locator('.react-flow__edge.tl-risk')).toHaveCount(3) // 위험 경로가 빨갛게 칠해진다
 
   await page.locator('.react-flow__node:has-text("AI 에이전트")').click()
   await page.getByLabel('민감정보에 접근').check()
-  await expect(score(page)).toHaveText('51')
+  await expect(score(page)).toHaveText('55')
   await page.getByLabel('사람 승인 단계 있음').check()
-  await expect(score(page)).toHaveText('34')
+  await expect(score(page)).toHaveText('40')
   await page.getByLabel('사람 승인 단계 있음').uncheck()
-  await expect(score(page)).toHaveText('51')
+  await expect(score(page)).toHaveText('55')
 
   expect(errors).toEqual([])
 })
@@ -53,4 +53,18 @@ test('첫 방문 안내: 화살표 방향을 설명하고, 닫으면 다시 뜨�
   await expect(dialog).toBeHidden()
   await page.getByRole('button', { name: '사용법' }).click()
   await expect(dialog).toBeVisible()
+})
+
+test('신뢰 경계: 사외 부품과 이은 연결이 점선으로 표시되고 사외 영역이 그려진다', async ({ page }) => {
+  const errors = await openApp(page)
+  for (const n of ['AI 에이전트', '외부 모델 서버']) await page.getByRole('button', { name: new RegExp(`^${n}`) }).first().click()
+  await expect(page.locator('.react-flow__node')).toHaveCount(2)
+  await page.getByRole('button', { name: '자동 정렬' }).click()
+  await page.waitForTimeout(400)
+  await connect(page, 'AI 에이전트', '외부 모델 서버')
+  await expect(page.locator('.react-flow__edge.tl-cross')).toHaveCount(1)
+  await expect(page.locator('.tl-zone')).toHaveCount(1)
+  await expect(page.locator('.tl-zone__label')).toHaveText('사외 (회사 밖)')
+  await expect(page.getByLabel('신뢰 경계를 넘는 연결 있음')).toHaveCount(0) // 계산 속성은 직접 고르는 칸이 아니다
+  expect(errors).toEqual([])
 })

@@ -17,18 +17,18 @@ const OWASP_REFS = [
 ]
 const ATLAS_IDS = ['AML.T0051', 'AML.T0053', 'AML.T0057', 'AML.T0070', 'AML.T0080', 'AML.T0085.000', 'AML.T0086', 'AML.T0101']
 
-test('규칙 28개, id가 R-01부터 R-28까지 연속', () => {
-  expect(RULES).toHaveLength(28)
-  expect(RULES.map((r) => r.id)).toEqual(Array.from({ length: 28 }, (_, i) => `R-${String(i + 1).padStart(2, '0')}`))
+test('규칙 40개, id가 R-01부터 R-40까지 연속', () => {
+  expect(RULES).toHaveLength(40)
+  expect(RULES.map((r) => r.id)).toEqual(Array.from({ length: 40 }, (_, i) => `R-${String(i + 1).padStart(2, '0')}`))
 })
 
-test('분류별 개수: 프롬프트 주입 5, 데이터 유출 7, 도구·권한 7, 저장소·로그 4, 화공 5', () => {
+test('분류별 개수: 프롬프트 주입 6, 데이터 유출 9, 도구·권한 12, 저장소·로그 5, 화공 8', () => {
   const count = Object.fromEntries(CATEGORIES.map((c) => [c, RULES.filter((r) => r.category === c).length]))
-  expect(count).toEqual({ 'prompt-injection': 5, 'data-leak': 7, 'tool-abuse': 7, 'store-log': 4, chem: 5 })
+  expect(count).toEqual({ 'prompt-injection': 6, 'data-leak': 9, 'tool-abuse': 12, 'store-log': 5, chem: 8 })
 })
 
-test('화공 규칙은 R-09~R-13', () => {
-  expect(RULES.filter((r) => r.category === 'chem').map((r) => r.id)).toEqual(['R-09', 'R-10', 'R-11', 'R-12', 'R-13'])
+test('화공 규칙은 R-09~R-13, R-38~R-40', () => {
+  expect(RULES.filter((r) => r.category === 'chem').map((r) => r.id)).toEqual(['R-09', 'R-10', 'R-11', 'R-12', 'R-13', 'R-38', 'R-39', 'R-40'])
 })
 
 test('모든 규칙에 대응책 2개 이상, 설명 문장 존재', () => {
@@ -51,14 +51,14 @@ test('대응책 총합이 심각도에 비해 과하지 않다 (높음 ≤ 90, �
 })
 
 test('sets는 대응(mitigation) 속성만 가리킨다', () => {
-  for (const r of RULES) for (const f of r.fixes) if (f.sets) expect(['human.approval', 'interlock.external']).toContain(f.sets)
+  for (const r of RULES) for (const f of r.fixes) if (f.sets) expect(['human.approval', 'interlock.external', 'source.cite', 'output.filter', 'rate.limit', 'audit.log']).toContain(f.sets)
 })
 
 test('부정 조건은 대응 속성에만 사용', () => {
   for (const r of RULES)
     for (const w of r.when) {
       const c = parseCondition(w)
-      if (c?.negated) expect(['human.approval', 'interlock.external']).toContain(c.attribute)
+      if (c?.negated) expect(['human.approval', 'interlock.external', 'source.cite', 'output.filter', 'rate.limit', 'audit.log']).toContain(c.attribute)
     }
 })
 
@@ -77,7 +77,7 @@ test('화공 규칙은 공정·OT 분야 근거(ATT&CK for ICS, CISA, IEC 61511)
 })
 
 test('ATT&CK for ICS 근거는 확인한 기술 ID만 사용', () => {
-  const ok = ['T1692.002', 'T1692.001', 'T0836', 'T0880']
+  const ok = ['T1692.002', 'T1692.001', 'T0836', 'T0880', 'T0831', 'T0886', 'T0878']
   for (const r of RULES)
     for (const b of r.basis.filter((x) => x.source === 'MITRE-ATTACK-ICS')) expect(ok.some((id) => b.ref?.includes(id)), `${r.id} ${b.ref}`).toBe(true)
 })

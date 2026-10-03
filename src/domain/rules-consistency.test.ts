@@ -29,10 +29,15 @@ const WORDS: Record<string, RegExp> = {
   'store.writable': /저장소/,
   'input.sensor': /센서|공정 조건|수치/,
   'link.control': /설비|제어|밸브/,
+  'boundary.cross': /회사 밖|사외|경계/,
 }
 const ABSENT_WORDS: Record<string, RegExp> = {
   'human.approval': /없이|않|아무도|검수/,
   'interlock.external': /인터록|보호 장치|보호 계층|SIS/,
+  'source.cite': /출처|근거/,
+  'output.filter': /검사|걸러|필터/,
+  'rate.limit': /상한|제한|횟수/,
+  'audit.log': /감사|추적|기록/,
 }
 
 describe.each(RULES.map((r) => [r.id, r] as const))('%s 일관성', (_id, rule) => {

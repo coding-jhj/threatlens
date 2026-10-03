@@ -5,7 +5,7 @@ test('행동 계획: 메일 비서에서 상위 3개 대응과 점수 변화가 
   await openApp(page)
   await loadSample(page, '메일 비서')
   await expect(page.getByRole('tab', { name: '행동 계획', selected: true })).toBeVisible()
-  await expect(score(page)).toHaveText('51')
+  await expect(score(page)).toHaveText('55')
 
   const steps = page.locator('.tl-plan__step')
   await expect(steps).toHaveCount(3)
@@ -14,7 +14,7 @@ test('행동 계획: 메일 비서에서 상위 3개 대응과 점수 변화가 
   const m = text.match(/\((\d+) → (\d+)\)/)
   expect(m).not.toBeNull()
   const [before, after] = [Number(m![1]), Number(m![2])]
-  expect(before).toBe(51)
+  expect(before).toBe(55)
   expect(after).toBeLessThan(before)
 
   // 단계마다 점수가 올라가지 않는다
@@ -27,7 +27,7 @@ test('행동 계획: 메일 비서에서 상위 3개 대응과 점수 변화가 
 
   // 모두 해제하면 처음 점수로 돌아온다
   await page.getByRole('button', { name: '모두 해제' }).click()
-  await expect(score(page)).toHaveText('51')
+  await expect(score(page)).toHaveText('55')
 })
 
 test('행동 계획: 한 단계만 적용하면 그 단계의 점수가 되고 다음 계획이 다시 계산된다', async ({ page }) => {

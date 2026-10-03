@@ -11,6 +11,13 @@ export interface Finding {
   sources: Partial<Record<AttributeId, string[]>>
 }
 
+/** 양 끝 부품의 사외(zone.outside) 여부가 다른 연결 = 신뢰 경계를 넘는 연결 */
+export function crossingEdgeIds(graph: Graph): string[] {
+  const outside = new Set(graph.nodes.filter((n) => n.attributes.includes('zone.outside')).map((n) => n.id))
+  const ids = new Set(graph.nodes.map((n) => n.id))
+  return graph.edges.filter((e) => ids.has(e.from) && ids.has(e.to) && outside.has(e.from) !== outside.has(e.to)).map((e) => e.id)
+}
+
 export const appliedKey = (nodeId: string, ruleId: string, fixId: string) => `${nodeId}|${ruleId}|${fixId}`
 
 const SEVERITY_ORDER: Record<Severity, number> = { high: 0, medium: 1, low: 2 }
@@ -22,6 +29,7 @@ const SEVERITY_ORDER: Record<Severity, number> = { high: 0, medium: 1, low: 2 }
 export function evaluate(graph: Graph, rules: readonly Rule[], applied: ReadonlySet<string> = new Set()): Finding[] {
   const byId = new Map(graph.nodes.map((n) => [n.id, n]))
   const findings: Finding[] = []
+  const crossing = new Set(crossingEdgeIds(graph))
 
   for (const ai of graph.nodes.filter(isAiNode)) {
     const holders = new Map<AttributeId, string[]>()
@@ -31,6 +39,7 @@ export function evaluate(graph: Graph, rules: readonly Rule[], applied: Readonly
       const n = byId.get(nid)
       if (n) for (const a of n.attributes) add(a, n.id)
     }
+    if (graph.edges.some((e) => crossing.has(e.id) && (e.from === ai.id || e.to === ai.id))) add('boundary.cross', ai.id)
     for (const rule of rules) {
       for (const fix of rule.fixes) {
         if (fix.sets && applied.has(appliedKey(ai.id, rule.id, fix.id)) && !holders.get(fix.sets)?.includes(ai.id)) add(fix.sets, ai.id)

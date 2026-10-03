@@ -3,11 +3,11 @@ import { loadSample, goTo, openApp, score, threatTitle } from './helpers.ts'
 
 // 규칙·점수를 바꾸면 이 표도 함께 바뀐다 (src/samples/samples.test.tsx와 같은 값)
 const SAMPLES = [
-  { title: '사내 문서 질의응답 봇', score: 25, findings: 4, id: 'doc-qa' },
-  { title: '고객상담 챗봇', score: 63, findings: 10, id: 'support-bot' },
-  { title: '코드 에이전트', score: 61, findings: 8, id: 'code-agent' },
-  { title: '메일 비서', score: 51, findings: 6, id: 'mail-assistant' },
-  { title: '공정 운전 보조', score: 43, findings: 4, id: 'process-assistant' },
+  { title: '사내 문서 질의응답 봇', score: 30, findings: 5, id: 'doc-qa' },
+  { title: '고객상담 챗봇', score: 67, findings: 13, id: 'support-bot' },
+  { title: '코드 에이전트', score: 69, findings: 11, id: 'code-agent' },
+  { title: '메일 비서', score: 55, findings: 8, id: 'mail-assistant' },
+  { title: '공정 운전 보조', score: 54, findings: 7, id: 'process-assistant' },
 ] as const
 
 for (const s of SAMPLES) {
@@ -46,10 +46,10 @@ for (const s of SAMPLES) {
 test('예시를 바꿔 불러와도 되돌리기로 이전 예시가 돌아온다', async ({ page }) => {
   await openApp(page)
   await loadSample(page, '메일 비서')
-  await expect(score(page)).toHaveText('51')
+  await expect(score(page)).toHaveText('55')
   await page.getByRole('button', { name: '예시 불러오기' }).click()
   await page.getByRole('menu', { name: '예시 구조' }).getByRole('button', { name: /공정 운전 보조/ }).click()
-  await expect(score(page)).toHaveText('43')
+  await expect(score(page)).toHaveText('54')
   await page.getByRole('button', { name: '되돌리기' }).click()
-  await expect(score(page)).toHaveText('51')
+  await expect(score(page)).toHaveText('55')
 })

@@ -20,10 +20,10 @@ const errorsOf = (r: unknown) => {
   return res.ok ? [] : res.errors
 }
 
-test('속성 12개, 라벨·종류 정의 일치', () => {
-  expect(ATTRIBUTE_IDS).toHaveLength(12)
+test('속성 18개, 라벨·종류 정의 일치', () => {
+  expect(ATTRIBUTE_IDS).toHaveLength(18)
   expect(ATTRIBUTES.map((a) => a.id)).toEqual([...ATTRIBUTE_IDS])
-  expect(ATTRIBUTES.filter((a) => a.kind === 'mitigation').map((a) => a.id)).toEqual(['human.approval', 'interlock.external'])
+  expect(ATTRIBUTES.filter((a) => a.kind === 'mitigation').map((a) => a.id)).toEqual(['human.approval', 'interlock.external', 'source.cite', 'output.filter', 'rate.limit', 'audit.log'])
 })
 
 test('부품: id 유일, 그룹 소속, 기본 속성은 유효', () => {

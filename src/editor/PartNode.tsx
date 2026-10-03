@@ -6,7 +6,7 @@ import { PartSymbol } from './PartSymbol'
 import { partTag } from './partTag'
 import './editor.css'
 
-export type PartFlowNode = Node<{ partId: string; attributes: AttributeId[]; badge?: number; dim?: boolean; warn?: boolean }, 'part'>
+export type PartFlowNode = Node<{ partId: string; attributes: AttributeId[]; badge?: number; dim?: boolean; warn?: boolean; outside?: boolean }, 'part'>
 
 const SHORT: Record<AttributeId, string> = {
   'input.untrusted': '믿을 수 없는 입력',
@@ -21,6 +21,12 @@ const SHORT: Record<AttributeId, string> = {
   'input.sensor': '센서 입력',
   'link.control': '설비 제어',
   'interlock.external': '독립 인터록',
+  'source.cite': '출처 표시',
+  'output.filter': '출력 검사',
+  'rate.limit': '호출 상한',
+  'audit.log': '감사 기록',
+  'zone.outside': '사외',
+  'boundary.cross': '경계 넘음',
 }
 const kindOf = (id: AttributeId) => ATTRIBUTES.find((a) => a.id === id)?.kind
 
@@ -28,7 +34,7 @@ export function PartNode({ id, data, selected }: NodeProps<PartFlowNode>) {
   const part = getPart(data.partId)
   if (!part) return null
   return (
-    <div className={`tl-node tl-node--${part.kind}${selected ? ' tl-node--selected' : ''}${data.dim ? ' tl-node--dim' : ''}`}>
+    <div className={`tl-node tl-node--${part.kind}${selected ? ' tl-node--selected' : ''}${data.dim ? ' tl-node--dim' : ''}${data.outside ? ' tl-node--outside' : ''}`}>
       {data.badge !== undefined && (
         <span className="tl-node__badge" role="img" aria-label={`위협 경로 ${data.badge}번째 부품`}>
           {data.badge}

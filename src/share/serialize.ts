@@ -61,7 +61,7 @@ export function parseSaved(text: string): ParseResult {
     if (bad) return fail(`${where}: 알 수 없는 속성 "${bad}"입니다.`)
     if (typeof n.x !== 'number' || typeof n.y !== 'number' || !Number.isFinite(n.x) || !Number.isFinite(n.y)) return fail(`${where}: 위치(x, y)가 숫자가 아닙니다.`)
     ids.add(n.id)
-    nodes.push({ id: n.id, partId: n.part, attributes: [...new Set(n.attributes)].filter(isAttributeId), x: n.x, y: n.y })
+    nodes.push({ id: n.id, partId: n.part, attributes: [...new Set(n.attributes)].filter((a) => isAttributeId(a) && a !== 'boundary.cross'), x: n.x, y: n.y })
   }
 
   const edgeIds = new Set<string>()

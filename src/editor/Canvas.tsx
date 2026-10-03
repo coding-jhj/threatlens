@@ -4,6 +4,7 @@ import {
   Controls,
   MarkerType,
   ReactFlow,
+  ViewportPortal,
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
@@ -13,6 +14,7 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useCallback, useEffect, useMemo, useState, type DragEvent, type ReactNode } from 'react'
+import { crossingEdgeIds } from '../domain/engine'
 import { getPart } from '../domain/parts'
 import { Button } from '../ui/components'
 import { RISK_COLOR, useTheme } from '../theme'
@@ -102,26 +104,51 @@ export function Canvas({
 }) {
   const theme = useTheme()
   const riskMarker = useMemo(() => ({ type: MarkerType.ArrowClosed, width: 18, height: 18, color: RISK_COLOR[theme] }), [theme])
-  const { screenToFlowPosition, fitView } = useReactFlow()
+  const { screenToFlowPosition, fitView, getNodesBounds } = useReactFlow()
   const [nodes, setNodes] = useState<PartFlowNode[]>(() => toFlowNodes(state, []))
   const [edges, setEdges] = useState<Edge[]>(() => toFlowEdges(state, []))
   const [layoutTick, setLayoutTick] = useState(0)
   const hasBadges = !!badges && Object.keys(badges).length > 0
   const hasWarn = !!warnIds && warnIds.size > 0
+  const crossIds = useMemo(() => new Set(crossingEdgeIds(state.graph)), [state.graph])
+  const outsideIds = useMemo(() => state.graph.nodes.filter((n) => n.attributes.includes('zone.outside')).map((n) => n.id), [state.graph.nodes])
   const shownNodes = useMemo(
     () =>
-      hasBadges || hasWarn
+      hasBadges || hasWarn || outsideIds.length > 0
         ? nodes.map((n) => ({
             ...n,
-            data: { ...n.data, ...(hasBadges ? { badge: badges![n.id], dim: badges![n.id] === undefined } : {}), ...(hasWarn && warnIds!.has(n.id) ? { warn: true } : {}) },
+            data: {
+              ...n.data,
+              ...(hasBadges ? { badge: badges![n.id], dim: badges![n.id] === undefined } : {}),
+              ...(hasWarn && warnIds!.has(n.id) ? { warn: true } : {}),
+              ...(outsideIds.includes(n.id) ? { outside: true } : {}),
+            },
           }))
         : nodes,
-    [nodes, badges, hasBadges, warnIds, hasWarn],
+    [nodes, badges, hasBadges, warnIds, hasWarn, outsideIds],
   )
   const shownEdges = useMemo(
-    () => (riskEdgeIds && riskEdgeIds.size > 0 ? edges.map((e) => (riskEdgeIds.has(e.id) ? { ...e, className: 'tl-risk', markerEnd: riskMarker } : e)) : edges),
-    [edges, riskEdgeIds, riskMarker],
+    () =>
+      edges.map((e) => {
+        const cross = crossIds.has(e.id)
+        const risk = !!riskEdgeIds && riskEdgeIds.has(e.id)
+        if (!cross && !risk) return e
+        return {
+          ...e,
+          className: [cross ? 'tl-cross' : '', risk ? 'tl-risk' : ''].filter(Boolean).join(' '),
+          ...(risk ? { markerEnd: riskMarker } : {}),
+          ...(cross ? { ariaLabel: `${e.ariaLabel ?? ''} (신뢰 경계를 넘는 연결)` } : {}),
+        }
+      }),
+    [edges, riskEdgeIds, riskMarker, crossIds],
   )
+  const zone = useMemo(() => {
+    if (outsideIds.length === 0 || nodes.length === 0) return null
+    const b = getNodesBounds(outsideIds)
+    if (!b || !Number.isFinite(b.x) || b.width <= 0) return null
+    const pad = 28
+    return { x: b.x - pad, y: b.y - pad - 18, w: b.width + pad * 2, h: b.height + pad * 2 + 18 }
+  }, [outsideIds, getNodesBounds, nodes])
 
   // 편집 상태가 바뀌면 렌더 중에 React Flow용 노드·간선을 다시 만든다 (선택 상태는 유지)
   const [seenNodes, setSeenNodes] = useState(state.graph.nodes)
@@ -235,7 +262,7 @@ export function Canvas({
         </div>
       )}
       <ul className="tl-sr" aria-label="연결 목록">
-        {state.graph.edges.length === 0 ? <li>이어진 부품이 없습니다</li> : state.graph.edges.map((e) => <li key={e.id}>{nameOf(state, e.from)}에서 {nameOf(state, e.to)}{toward(nameOf(state, e.to))} 이어짐</li>)}
+        {state.graph.edges.length === 0 ? <li>이어진 부품이 없습니다</li> : state.graph.edges.map((e) => <li key={e.id}>{nameOf(state, e.from)}에서 {nameOf(state, e.to)}{toward(nameOf(state, e.to))} 이어짐{crossIds.has(e.id) ? ' (신뢰 경계를 넘는 연결)' : ''}</li>)}
       </ul>
       <ReactFlow
         nodes={shownNodes}
@@ -285,6 +312,13 @@ export function Canvas({
       >
         <Background id="minor" variant={BackgroundVariant.Lines} gap={24} lineWidth={1} color="var(--grid-minor)" />
         <Background id="major" variant={BackgroundVariant.Lines} gap={120} lineWidth={1} color="var(--grid-major)" />
+        {zone && (
+          <ViewportPortal>
+            <div className="tl-zone" aria-hidden style={{ transform: `translate(${zone.x}px, ${zone.y}px)`, width: zone.w, height: zone.h }}>
+              <span className="tl-zone__label">사외 (회사 밖)</span>
+            </div>
+          </ViewportPortal>
+        )}
         <Controls position="top-right" showInteractive={false} />
       </ReactFlow>
     </div>

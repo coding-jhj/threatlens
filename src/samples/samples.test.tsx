@@ -31,11 +31,11 @@ test('예시별 점수와 발동 규칙이 고정되어 있다 (규칙·점수 �
     SAMPLES.map((s) => [s.id, [scoreGraph(s.graph, RULES).overall, analyze(s.graph, RULES).findings.map((f) => f.ruleId).sort().join(',')]]),
   )
   expect(got).toEqual({
-    'doc-qa': [25, 'R-06,R-14,R-16,R-17'],
-    'support-bot': [63, 'R-01,R-02,R-05,R-06,R-14,R-16,R-17,R-20,R-22,R-24'],
-    'code-agent': [61, 'R-03,R-04,R-07,R-08,R-15,R-17,R-25,R-28'],
-    'mail-assistant': [51, 'R-01,R-02,R-14,R-17,R-22,R-24'],
-    'process-assistant': [43, 'R-04,R-09,R-10,R-12'],
+    'doc-qa': [30, 'R-06,R-14,R-16,R-17,R-30'],
+    'support-bot': [67, 'R-01,R-02,R-05,R-06,R-14,R-16,R-17,R-20,R-22,R-24,R-30,R-32,R-33'],
+    'code-agent': [69, 'R-03,R-04,R-07,R-08,R-15,R-17,R-25,R-28,R-29,R-31,R-34'],
+    'mail-assistant': [55, 'R-01,R-02,R-14,R-17,R-22,R-24,R-30,R-32'],
+    'process-assistant': [54, 'R-04,R-09,R-10,R-12,R-34,R-38,R-40'],
   })
 })
 

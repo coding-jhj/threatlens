@@ -9,9 +9,9 @@ import { Summary } from './Summary'
 
 const node = (attributes: EditorNode['attributes']): EditorNode => ({ id: 'n1', partId: 'ai_agent', attributes, x: 0, y: 0 })
 
-test('Inspector: 속성 12개가 모두 체크박스로 나온다', () => {
+test('Inspector: 속성 17개가 모두 체크박스로 나온다', () => {
   render(<Inspector node={node([])} others={[]} links={[]} onRemoveLink={() => {}} onDelete={() => {}} onConnect={() => {}} onChange={() => {}} />)
-  expect(screen.getAllByRole('checkbox')).toHaveLength(12)
+  expect(screen.getAllByRole('checkbox')).toHaveLength(17)
 })
 
 test('Inspector: 현재 속성이 체크되어 있다', () => {
@@ -36,7 +36,7 @@ test('Inspector: 체크를 풀면 해당 속성만 빠진다', () => {
 
 test('Inspector: 대응 속성에는 "대응" 표시', () => {
   render(<Inspector node={node([])} others={[]} links={[]} onRemoveLink={() => {}} onDelete={() => {}} onConnect={() => {}} onChange={() => {}} />)
-  expect(screen.getAllByText('대응')).toHaveLength(2)
+  expect(screen.getAllByText('대응')).toHaveLength(6)
 })
 
 test('Summary: AI 부품이 없으면 안내와 – 표시', () => {

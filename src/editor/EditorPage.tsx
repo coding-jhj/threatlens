@@ -18,6 +18,7 @@ import { hasOnboarded, markOnboarded } from './onboardingStore'
 import { Palette } from './Palette'
 import { SampleList } from './SampleMenu'
 import { Summary } from './Summary'
+import { lintStructure } from '../domain/lint'
 import { ThreatPanel } from './ThreatPanel'
 import { findingKey, highlightEdges, pathBadges } from './threat'
 import { downloadText, reportDate } from '../report/report'
@@ -38,6 +39,8 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
   const score = useMemo(() => scoreGraph(state.graph, RULES, applied).overall, [state.graph, applied])
   const before = useMemo(() => scoreGraph(state.graph, RULES).overall, [state.graph])
   const activeFinding = analysis.findings.find((f) => findingKey(f) === activeKey) ?? null
+  const lint = useMemo(() => lintStructure(state.graph), [state.graph])
+  const warnIds = useMemo(() => new Set(lint.map((w) => w.nodeId)), [lint])
   const levels = useMemo(() => hazardLevels(state.graph, RULES, applied), [state.graph, applied])
   const activeHazard = activeFinding ? (RULES.find((r) => r.id === activeFinding.ruleId)?.hazard ?? null) : null
   const badges = useMemo(() => pathBadges(analysis, activeFinding), [analysis, activeFinding])
@@ -187,6 +190,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
             active={active}
             fitSignal={fitSignal}
             badges={badges}
+            warnIds={warnIds}
             toolbarExtra={
               <>
                 <Button onClick={() => setShowWizard(true)}>질문으로 시작</Button>
@@ -284,6 +288,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           before={before}
           after={score}
           hasAi={hasAi}
+          lint={lint}
           activeKey={activeFinding ? activeKey : null}
           onToggleActive={(k) => setActiveKey((cur) => (cur === k ? null : k))}
           onToggleFix={toggleFix}

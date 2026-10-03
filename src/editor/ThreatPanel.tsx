@@ -4,6 +4,7 @@ import { appliedKey, type Finding } from '../domain/engine'
 import type { HazardLevels } from '../domain/hazard'
 import type { Graph } from '../domain/graph'
 import { getPart } from '../domain/parts'
+import type { LintWarning } from '../domain/lint'
 import { CATEGORY_LABEL, type Hazard, type Rule } from '../domain/rules'
 import { Card, Chip, FixRow, SeverityChip } from '../ui/components'
 import { PlanPanel } from './PlanPanel'
@@ -20,6 +21,7 @@ interface Props {
   before: number
   after: number
   hasAi: boolean
+  lint: readonly LintWarning[]
   activeKey: string | null
   onToggleActive: (key: string) => void
   onToggleFix: (key: string, on: boolean) => void
@@ -34,8 +36,30 @@ const partLabel = (graph: Graph, nodeId: string) => {
   return (n && getPart(n.partId)?.label) ?? '?'
 }
 
-export function ThreatPanel({ graph, analysis, rules, applied, before, after, hasAi, activeKey, onToggleActive, onToggleFix, levels, activeHazard, onApplyKeys, onClearApplied }: Props) {
-  const [tab, setTab] = useState<'plan' | 'threats'>('plan')
+function LintList({ graph, lint }: { graph: Graph; lint: readonly LintWarning[] }) {
+  if (lint.length === 0) return <p className="tl-threats__empty">구조에서 이상한 점을 찾지 못했습니다. 모든 부품이 이어져 있고 AI에 입력과 도구 경로가 있습니다.</p>
+  return (
+    <div className="tl-lint">
+      <h2 className="tl-plan__h">구조 점검 {lint.length}건</h2>
+      <p className="tl-plan__hint">위협 분석 전에 도면이 빠짐없이 그려졌는지 확인하는 목록입니다. 해당 부품에는 캔버스에서 노란 느낌표가 붙습니다. 경고가 있어도 분석은 계속됩니다.</p>
+      <ul className="tl-lint__list">
+        {lint.map((w) => (
+          <li key={w.key} className="tl-lint__item">
+            <div className="tl-lint__title">
+              <Chip tone="medium">점검</Chip> {w.title}
+            </div>
+            <p className="tl-lint__detail">{w.detail}</p>
+            <span className="tl-sr">대상 부품: {partLabel(graph, w.nodeId)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+export function ThreatPanel({ graph, analysis, rules, applied, before, after, hasAi, lint, activeKey, onToggleActive, onToggleFix, levels, activeHazard, onApplyKeys, onClearApplied }: Props) {
+  const [tab, setTab] = useState<'plan' | 'threats' | 'lint'>('plan')
+  const TABS = ['plan', 'threats', 'lint'] as const
   const ruleById = new Map(rules.map((r) => [r.id, r]))
   const delta = after - before
 
@@ -58,7 +82,7 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
 
       {hasAi && (
         <div className="tl-tabs" role="tablist" aria-label="위협 패널">
-          {(['plan', 'threats'] as const).map((t) => (
+          {TABS.map((t) => (
             <button
               key={t}
               type="button"
@@ -71,13 +95,13 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
               onClick={() => setTab(t)}
               onKeyDown={(e) => {
                 if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-                  const next = tab === 'plan' ? 'threats' : 'plan'
+                  const next = TABS[(TABS.indexOf(tab) + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length]
                   setTab(next)
                   requestAnimationFrame(() => document.getElementById(`tl-tab-${next}`)?.focus())
                 }
               }}
             >
-              {t === 'plan' ? '행동 계획' : `위협 ${analysis.findings.length}`}
+              {t === 'plan' ? '행동 계획' : t === 'threats' ? `위협 ${analysis.findings.length}` : `점검 ${lint.length}`}
             </button>
           ))}
         </div>
@@ -99,6 +123,8 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
           />
         )}
         {!hasAi && <p className="tl-threats__empty">AI 부품을 놓고 입력·도구와 이으면 위협이 여기에 나타납니다.</p>}
+        {!hasAi && lint.length > 0 && <LintList graph={graph} lint={lint} />}
+        {hasAi && tab === 'lint' && <LintList graph={graph} lint={lint} />}
         {hasAi && tab === 'threats' && analysis.findings.length === 0 && (
           <p className="tl-threats__empty">지금 구조에서 발견된 위협이 없습니다. 입력이나 도구를 이어 보세요.</p>
         )}

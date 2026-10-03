@@ -6,7 +6,7 @@ import { PartSymbol } from './PartSymbol'
 import { partTag } from './partTag'
 import './editor.css'
 
-export type PartFlowNode = Node<{ partId: string; attributes: AttributeId[]; badge?: number; dim?: boolean }, 'part'>
+export type PartFlowNode = Node<{ partId: string; attributes: AttributeId[]; badge?: number; dim?: boolean; warn?: boolean }, 'part'>
 
 const SHORT: Record<AttributeId, string> = {
   'input.untrusted': '믿을 수 없는 입력',
@@ -32,6 +32,11 @@ export function PartNode({ id, data, selected }: NodeProps<PartFlowNode>) {
       {data.badge !== undefined && (
         <span className="tl-node__badge" role="img" aria-label={`위협 경로 ${data.badge}번째 부품`}>
           {data.badge}
+        </span>
+      )}
+      {data.warn && (
+        <span className="tl-node__warn" role="img" aria-label="구조 점검 경고 있음">
+          !
         </span>
       )}
       <span className="tl-node__tag" aria-hidden>

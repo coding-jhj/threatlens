@@ -85,6 +85,7 @@ export function Canvas({
   active = true,
   fitSignal = 0,
   badges,
+  warnIds,
 }: {
   state: EditorState
   dispatch: (a: Action) => void
@@ -97,6 +98,7 @@ export function Canvas({
   active?: boolean
   fitSignal?: number
   badges?: Readonly<Record<string, number>>
+  warnIds?: ReadonlySet<string>
 }) {
   const theme = useTheme()
   const riskMarker = useMemo(() => ({ type: MarkerType.ArrowClosed, width: 18, height: 18, color: RISK_COLOR[theme] }), [theme])
@@ -105,9 +107,16 @@ export function Canvas({
   const [edges, setEdges] = useState<Edge[]>(() => toFlowEdges(state, []))
   const [layoutTick, setLayoutTick] = useState(0)
   const hasBadges = !!badges && Object.keys(badges).length > 0
+  const hasWarn = !!warnIds && warnIds.size > 0
   const shownNodes = useMemo(
-    () => (hasBadges ? nodes.map((n) => ({ ...n, data: { ...n.data, badge: badges![n.id], dim: badges![n.id] === undefined } })) : nodes),
-    [nodes, badges, hasBadges],
+    () =>
+      hasBadges || hasWarn
+        ? nodes.map((n) => ({
+            ...n,
+            data: { ...n.data, ...(hasBadges ? { badge: badges![n.id], dim: badges![n.id] === undefined } : {}), ...(hasWarn && warnIds!.has(n.id) ? { warn: true } : {}) },
+          }))
+        : nodes,
+    [nodes, badges, hasBadges, warnIds, hasWarn],
   )
   const shownEdges = useMemo(
     () => (riskEdgeIds && riskEdgeIds.size > 0 ? edges.map((e) => (riskEdgeIds.has(e.id) ? { ...e, className: 'tl-risk', markerEnd: riskMarker } : e)) : edges),

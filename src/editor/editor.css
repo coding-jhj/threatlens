@@ -203,7 +203,13 @@
 .tl-story li { display: flex; gap: 8px; }
 .tl-story__k { flex: none; width: 84px; font-weight: 700; color: var(--muted); }
 .tl-node__badge { position: absolute; z-index: 3; right: -12px; top: -14px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--red); color: var(--panel); border: 2px solid var(--panel); font-size: var(--fs-sm); font-weight: 800; }
+.tl-node__warn { position: absolute; z-index: 3; left: -12px; top: -14px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--amber-bg); color: var(--amber); border: 2px solid var(--amber); font-size: var(--fs-sm); font-weight: 800; }
 .tl-node--dim { opacity: .35; }
+.tl-lint { display: flex; flex-direction: column; gap: 8px; }
+.tl-lint__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.tl-lint__item { padding: 10px 12px; background: var(--amber-bg); border: 1px solid var(--amber); border-radius: var(--radius-md); }
+.tl-lint__title { font-size: var(--fs-sm); font-weight: 600; line-height: 1.5; }
+.tl-lint__detail { margin: 4px 0 0; font-size: var(--fs-xs); line-height: 1.6; color: var(--text); }
 .tl-canvas .react-flow__edge.tl-risk .react-flow__edge-path { stroke-dasharray: 10 8; animation: tl-flow 1s linear infinite; }
 @keyframes tl-flow { to { stroke-dashoffset: -18; } }
 @media (prefers-reduced-motion: reduce) { .tl-canvas .react-flow__edge.tl-risk .react-flow__edge-path { animation: none; stroke-dasharray: none; } }

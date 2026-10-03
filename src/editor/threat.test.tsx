@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
+import type { LintWarning } from '../domain/lint'
 import { describe, expect, test, vi } from 'vitest'
 import { RULES } from '../data'
 import { analyze } from '../domain/analyze'
@@ -62,6 +63,7 @@ const renderPanel = (over: Partial<Parameters<typeof ThreatPanel>[0]> = {}) => {
     before: scoreGraph(graph, RULES).overall,
     after: scoreGraph(graph, RULES, applied).overall,
     hasAi: true,
+    lint: [] as LintWarning[],
     activeKey: null,
     onToggleActive: vi.fn(),
     onToggleFix: vi.fn(),
@@ -176,4 +178,23 @@ test('pathBadges: 지나는 경로가 없으면 대상 AI와 조건을 만든 �
   const an = analyze(g, RULES)
   const f = an.findings.find((x) => x.ruleId === 'R-03')!
   expect(pathBadges(an, f)).toEqual({ b: 1 })
+})
+
+test('ThreatPanel: 점검 탭은 건수를 보이고 경고 목록을 나열한다', () => {
+  const lint: LintWarning[] = [{ key: 'isolated:n9', code: 'isolated', nodeId: 'n9', title: '메일 전송: 어디에도 이어져 있지 않습니다', detail: '이어 주세요.' }]
+  renderPanel({ lint })
+  fireEvent.click(screen.getByRole('tab', { name: '점검 1' }))
+  expect(screen.getByText('구조 점검 1건')).toBeTruthy()
+  expect(screen.getByText(/어디에도 이어져 있지 않습니다/)).toBeTruthy()
+})
+
+test('ThreatPanel: 경고가 없으면 점검 탭에 이상 없음 문구', () => {
+  renderPanel()
+  fireEvent.click(screen.getByRole('tab', { name: '점검 0' }))
+  expect(screen.getByText(/이상한 점을 찾지 못했습니다/)).toBeTruthy()
+})
+
+test('ThreatPanel: AI가 없어도 경고가 있으면 목록이 보인다', () => {
+  renderPanel({ hasAi: false, lint: [{ key: 'isolated:n1', code: 'isolated', nodeId: 'n1', title: '문서 저장소: 어디에도 이어져 있지 않습니다', detail: 'x' }] })
+  expect(screen.getByText('구조 점검 1건')).toBeTruthy()
 })

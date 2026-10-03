@@ -2,7 +2,8 @@ import { Handle, Position, type Node, type NodeProps } from '@xyflow/react'
 import { ATTRIBUTES, type AttributeId } from '../domain/attributes'
 import { getPart } from '../domain/parts'
 import { Chip } from '../ui/components'
-import { Icon } from '../ui/Icon'
+import { PartSymbol } from './PartSymbol'
+import { partTag } from './partTag'
 import './editor.css'
 
 export type PartFlowNode = Node<{ partId: string; attributes: AttributeId[] }, 'part'>
@@ -23,15 +24,18 @@ const SHORT: Record<AttributeId, string> = {
 }
 const kindOf = (id: AttributeId) => ATTRIBUTES.find((a) => a.id === id)?.kind
 
-export function PartNode({ data, selected }: NodeProps<PartFlowNode>) {
+export function PartNode({ id, data, selected }: NodeProps<PartFlowNode>) {
   const part = getPart(data.partId)
   if (!part) return null
   return (
-    <div className={`tl-node${selected ? ' tl-node--selected' : ''}`}>
+    <div className={`tl-node tl-node--${part.kind}${selected ? ' tl-node--selected' : ''}`}>
+      <span className="tl-node__tag" aria-hidden>
+        {partTag(part.kind, id)}
+      </span>
       <Handle type="target" position={Position.Left} aria-hidden />
       <div className="tl-node__head">
         <span className="tl-node__icon">
-          <Icon name={part.icon} size={20} />
+          <PartSymbol kind={part.kind} />
         </span>
         <span className="tl-node__title">{part.label}</span>
       </div>

@@ -17,7 +17,7 @@ test('공유 링크: 복사한 링크를 새 브라우저 세션에서 열면 �
   await loadSample(page, '메일 비서')
   await page.getByRole('button', { name: '공유·저장' }).click()
   await page.getByRole('menuitem', { name: /공유 링크 복사/ }).click()
-  await expect(page.locator('.tl-toast')).toContainText('공유 링크를 복사했습니다')
+  await expect(page.locator('.tl-status__msg')).toContainText('공유 링크를 복사했습니다')
   const link = await page.evaluate(() => navigator.clipboard.readText())
   expect(link).toContain('#/s/')
 
@@ -51,7 +51,7 @@ test('JSON 저장 → 불러오기: 파일로 내려받아 빈 화면에서 복�
   await expect(score(p2)).toHaveText('63')
 
   await p2.locator('input[type=file]').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from('{"version":1,"nodes":[{"id":"a","part":"zzz","attributes":[],"x":0,"y":0}],"edges":[]}') })
-  await expect(p2.locator('.tl-toast')).toContainText('알 수 없는 부품 "zzz"')
+  await expect(p2.locator('.tl-status__msg')).toContainText('알 수 없는 부품 "zzz"')
   await expect(score(p2)).toHaveText('63') // 실패해도 지금 구조는 그대로
   await other.close()
 })

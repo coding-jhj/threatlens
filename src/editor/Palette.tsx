@@ -1,5 +1,5 @@
 import { PARTS, PART_GROUPS } from '../domain/parts'
-import { Icon } from '../ui/Icon'
+import { PartSymbol } from './PartSymbol'
 
 export const DRAG_MIME = 'application/x-threatlens-part'
 
@@ -23,22 +23,14 @@ export function Palette({ onAdd }: { onAdd: (partId: string) => void }) {
                 e.dataTransfer.effectAllowed = 'move'
               }}
             >
-              <span className="tl-palette__icon" style={{ color: 'var(--accent)' }}>
-                <Icon name={p.icon} />
+              <span className="tl-palette__icon">
+                <PartSymbol kind={p.kind} size={28} />
               </span>
               {p.label}
-              <span className="tl-palette__grip" aria-hidden>
-                ⋮⋮
-              </span>
             </button>
           ))}
         </div>
       ))}
-      <div className="tl-palette__foot">
-        화살표는 정보·명령이 흘러가는 방향으로 연결합니다.
-        <br />
-        모든 계산은 이 브라우저 안에서만 실행됩니다.
-      </div>
     </aside>
   )
 }

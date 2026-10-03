@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { AppNav, Brand } from './AppNav'
+import { AppNav, Brand, ThemeToggle } from './AppNav'
 import EditorPage from './editor/EditorPage'
 import EvalPage from './eval/EvalPage'
 import RuleLibrary from './library/RuleLibrary'
@@ -44,6 +44,8 @@ export default function App() {
           <header className="tl-header">
             <Brand />
             <AppNav route={route} />
+            <div style={{ flex: 1 }} />
+            <ThemeToggle />
           </header>
           {route === 'rules' ? <RuleLibrary /> : route === 'eval' ? <EvalPage /> : <ReportPage ws={ws} />}
         </div>

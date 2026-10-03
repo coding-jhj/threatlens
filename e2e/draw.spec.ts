@@ -33,7 +33,7 @@ test('자기 자신에게 잇거나 지운 뒤 되돌리기를 해도 구조가 
   await page.getByRole("button", { name: /^AI 에이전트/ }).first().click()
   const node = page.locator('.react-flow__node').first()
   await connect(page, 'AI 에이전트', 'AI 에이전트')
-  await expect(page.locator('.tl-toast')).toContainText('같은 부품끼리는 이을 수 없습니다')
+  await expect(page.locator('.tl-status__msg')).toContainText('같은 부품끼리는 이을 수 없습니다')
   await expect(page.locator('.react-flow__edge')).toHaveCount(0)
 
   await node.click()

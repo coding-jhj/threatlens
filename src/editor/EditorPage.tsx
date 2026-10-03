@@ -7,7 +7,7 @@ import { getPart } from '../domain/parts'
 import { scoreGraph } from '../domain/score'
 import { Button } from '../ui/components'
 import { SAMPLES, type Sample } from '../samples/samples'
-import { Brand } from '../AppNav'
+import { Brand, ThemeToggle } from '../AppNav'
 import { Canvas } from './Canvas'
 import { Inspector } from './Inspector'
 import { Onboarding } from './Onboarding'
@@ -28,6 +28,8 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
   const { screenToFlowPosition } = useReactFlow()
 
   const [activeKey, setActiveKey] = useState<string | null>(null)
+  const [fitSignal, setFitSignal] = useState(0)
+  const refit = () => setFitSignal((n) => n + 1)
 
   const analysis = useMemo(() => analyze(state.graph, RULES, applied), [state.graph, applied])
   const score = useMemo(() => scoreGraph(state.graph, RULES, applied).overall, [state.graph, applied])
@@ -56,7 +58,9 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [menuOpen, fileMenuOpen])
-  const today = () => reportDate(new Date().toISOString())
+  const [todayStr] = useState(() => reportDate(new Date().toISOString()))
+  const today = () => todayStr
+  const drawingNo = `TL-${today().replace(/\D/g, '')}-${String(state.graph.nodes.length).padStart(2, '0')}`
 
   const copyLink = async () => {
     setFileMenuOpen(false)
@@ -81,6 +85,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
     const r = parseSaved(await file.text())
     if (!r.ok) return flash(`불러올 수 없습니다: ${r.error}`)
     replaceAll(r.graph, r.applied)
+    refit()
     setSelectedId(null)
     setActiveKey(null)
     flash(`"${file.name}"을 불러왔습니다.`)
@@ -91,6 +96,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
   }
   const loadSample = (s: Sample) => {
     dispatch({ type: 'replace', graph: s.graph })
+    refit()
     setApplied(new Set())
     setSelectedId(null)
     setActiveKey(null)
@@ -145,6 +151,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
         {nav}
         <div style={{ flex: 1 }} />
         <Summary score={score} analysis={analysis} hasAi={hasAi} />
+        <ThemeToggle />
         <Button onClick={() => setShowHelp(true)}>사용법</Button>
       </header>
       <div className="tl-editor">
@@ -158,6 +165,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
             onNotice={flash}
             onClearAll={clearAll}
             active={active}
+            fitSignal={fitSignal}
             toolbarExtra={
               <>
                 <Button onClick={() => setMenuOpen((o) => !o)} aria-expanded={menuOpen}>
@@ -201,14 +209,26 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           )}
           <input ref={fileInput} type="file" accept=".json,application/json" hidden onChange={importJson} aria-label="JSON 파일 선택" />
           {state.graph.nodes.length > 0 && (
-            <div className="tl-canvas__keys" aria-hidden>
-              삭제: 부품 클릭 후 Delete · 취소: Ctrl+Z · 전체 선택: Ctrl+A · 여러 개 선택: Shift+드래그 · 화면 이동: 빈 곳 드래그
-            </div>
-          )}
-          {notice && (
-            <div className="tl-toast" role="status">
-              {notice}
-            </div>
+            <dl className="tl-titleblock" aria-label="도면 표제란">
+              <div>
+                <dt>도면 번호</dt>
+                <dd>{drawingNo}</dd>
+              </div>
+              <div>
+                <dt>작성일</dt>
+                <dd>{today()}</dd>
+              </div>
+              <div>
+                <dt>부품·연결</dt>
+                <dd>
+                  {state.graph.nodes.length}개 · {state.graph.edges.length}개
+                </dd>
+              </div>
+              <div>
+                <dt>위험 점수</dt>
+                <dd>{hasAi ? score : '-'}</dd>
+              </div>
+            </dl>
           )}
           {selected && (
             <Inspector
@@ -240,6 +260,19 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           onToggleFix={toggleFix}
         />
       </div>
+      <footer className="tl-status">
+        <div className="tl-status__msg" role="status">
+          {notice}
+        </div>
+        {!notice && state.graph.nodes.length > 0 && (
+          <div className="tl-status__keys" aria-hidden>
+            삭제: 부품 클릭 후 Delete · 취소: Ctrl+Z · 전체 선택: Ctrl+A · 여러 개 선택: Shift+드래그 · 화면 이동: 빈 곳 드래그
+          </div>
+        )}
+        <div className="tl-status__meta">
+          부품 {state.graph.nodes.length} · 연결 {state.graph.edges.length}
+        </div>
+      </footer>
       {showHelp && <Onboarding onClose={closeHelp} onSample={() => loadSample(SAMPLES.find((x) => x.id === 'mail-assistant')!)} />}
     </>
   )

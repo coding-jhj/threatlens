@@ -14,6 +14,7 @@ import {
 import '@xyflow/react/dist/style.css'
 import { useCallback, useEffect, useMemo, useState, type DragEvent, type ReactNode } from 'react'
 import { Button } from '../ui/components'
+import { RISK_COLOR, useTheme } from '../theme'
 import type { Action, EditorState } from './model'
 import { DRAG_MIME } from './Palette'
 import { PartNode, type PartFlowNode } from './PartNode'
@@ -40,7 +41,6 @@ const toFlowEdges = (state: EditorState, prev: Edge[]): Edge[] =>
     selected: prev.find((p) => p.id === e.id)?.selected ?? false,
   }))
 
-const RISK_MARKER = { type: MarkerType.ArrowClosed, width: 18, height: 18, color: '#f87171' }
 
 export function Canvas({
   state,
@@ -52,6 +52,7 @@ export function Canvas({
   onNotice,
   onClearAll,
   active = true,
+  fitSignal = 0,
 }: {
   state: EditorState
   dispatch: (a: Action) => void
@@ -62,14 +63,17 @@ export function Canvas({
   onNotice?: (msg: string) => void
   onClearAll?: () => void
   active?: boolean
+  fitSignal?: number
 }) {
+  const theme = useTheme()
+  const riskMarker = useMemo(() => ({ type: MarkerType.ArrowClosed, width: 18, height: 18, color: RISK_COLOR[theme] }), [theme])
   const { screenToFlowPosition, fitView } = useReactFlow()
   const [nodes, setNodes] = useState<PartFlowNode[]>(() => toFlowNodes(state, []))
   const [edges, setEdges] = useState<Edge[]>(() => toFlowEdges(state, []))
   const [layoutTick, setLayoutTick] = useState(0)
   const shownEdges = useMemo(
-    () => (riskEdgeIds && riskEdgeIds.size > 0 ? edges.map((e) => (riskEdgeIds.has(e.id) ? { ...e, className: 'tl-risk', markerEnd: RISK_MARKER } : e)) : edges),
-    [edges, riskEdgeIds],
+    () => (riskEdgeIds && riskEdgeIds.size > 0 ? edges.map((e) => (riskEdgeIds.has(e.id) ? { ...e, className: 'tl-risk', markerEnd: riskMarker } : e)) : edges),
+    [edges, riskEdgeIds, riskMarker],
   )
 
   // 편집 상태가 바뀌면 렌더 중에 React Flow용 노드·간선을 다시 만든다 (선택 상태는 유지)
@@ -83,6 +87,12 @@ export function Canvas({
     setSeenEdges(state.graph.edges)
     setEdges(toFlowEdges(state, edges))
   }
+  useEffect(() => {
+    if (fitSignal === 0) return
+    // 새 부품의 크기가 측정된 뒤에 맞춰야 하므로 한 박자 늦춘다
+    const t = window.setTimeout(() => void fitView({ duration: 0, padding: 0.2 }), 60)
+    return () => window.clearTimeout(t)
+  }, [fitSignal, fitView])
   useEffect(() => {
     if (layoutTick > 0) void fitView({ duration: 250, padding: 0.2 })
   }, [layoutTick, fitView])
@@ -219,10 +229,12 @@ export function Canvas({
         deleteKeyCode={['Backspace', 'Delete']}
         minZoom={0.3}
         maxZoom={1.8}
-        colorMode="dark"
+        colorMode={theme}
+        fitView
         fitViewOptions={{ padding: 0.2 }}
       >
-        <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#243350" />
+        <Background id="minor" variant={BackgroundVariant.Lines} gap={24} lineWidth={1} color="var(--grid-minor)" />
+        <Background id="major" variant={BackgroundVariant.Lines} gap={120} lineWidth={1} color="var(--grid-major)" />
         <Controls position="top-right" showInteractive={false} />
       </ReactFlow>
     </div>

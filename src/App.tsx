@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AppNav, Brand, ThemeToggle } from './AppNav'
 import EditorPage from './editor/EditorPage'
 import EvalPage from './eval/EvalPage'
@@ -13,6 +13,7 @@ export default function App() {
   const ws = useWorkspace()
   const { replaceAll, flash } = ws
   const [route, setRoute] = useState(() => routeFromHash(location.hash))
+  const movedOnce = useRef(false)
   useEffect(() => {
     const onHash = () => {
       const shared = parseShareHash(location.hash)
@@ -31,6 +32,24 @@ export default function App() {
     window.addEventListener('hashchange', onHash)
     return () => window.removeEventListener('hashchange', onHash)
   }, [replaceAll, flash])
+
+  useEffect(() => {
+    const TITLES: Record<string, string> = { editor: '위협 지도', rules: '규칙 라이브러리', report: '보고서', eval: '평가표' }
+    document.title = `${TITLES[route] ?? 'ThreatLens'} · ThreatLens`
+    // 화면을 옮기면 스크린리더가 새 화면의 제목부터 읽도록 제목으로 포커스를 보낸다 (첫 로드에는 건드리지 않는다)
+    if (!movedOnce.current) {
+      movedOnce.current = true
+      return
+    }
+    requestAnimationFrame(() => {
+      const h = [...document.querySelectorAll<HTMLElement>('main h1')].find((x) => x.offsetParent !== null || x.classList.contains('tl-sr'))
+      if (route !== 'editor') {
+        const shown = [...document.querySelectorAll<HTMLElement>('main h1')].find((x) => !x.closest('[style*="display: none"]'))
+        shown?.setAttribute('tabindex', '-1')
+        shown?.focus()
+      } else h?.focus()
+    })
+  }, [route])
 
   if (route === 'styleguide') return <StyleGuide />
   return (

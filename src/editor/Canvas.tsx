@@ -13,6 +13,7 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useCallback, useEffect, useMemo, useState, type DragEvent, type ReactNode } from 'react'
+import { getPart } from '../domain/parts'
 import { Button } from '../ui/components'
 import { RISK_COLOR, useTheme } from '../theme'
 import type { Action, EditorState } from './model'
@@ -23,12 +24,41 @@ import './editor.css'
 const nodeTypes = { part: PartNode }
 const alreadyConnected = (state: EditorState, from: string, to: string) => state.graph.edges.some((e) => e.from === from && e.to === to)
 
+const ARIA_LABELS = {
+  'node.a11yDescription.default': '선택하려면 Enter나 Space를 누르세요. 삭제는 Delete, 취소는 Esc입니다.',
+  'node.a11yDescription.keyboardDisabled': '선택하려면 Enter나 Space를 누르세요. 선택한 뒤 방향키로 옮기고, 삭제는 Delete, 취소는 Esc입니다.',
+  'node.a11yDescription.ariaLiveMessage': ({ direction }: { direction: string; x: number; y: number }) => `선택한 부품을 ${direction} 방향으로 옮겼습니다.`,
+  'edge.a11yDescription.default': '선택하려면 Enter나 Space를 누르세요. 선택한 뒤 Delete로 지울 수 있고, 취소는 Esc입니다.',
+  'controls.ariaLabel': '화면 조절',
+  'controls.zoomIn.ariaLabel': '확대',
+  'controls.zoomOut.ariaLabel': '축소',
+  'controls.fitView.ariaLabel': '전체 보기',
+  'controls.interactive.ariaLabel': '조작 잠금 전환',
+}
+
+/** 받침 없거나 ㄹ 받침이면 '로', 그 외 받침이면 '으로' */
+const toward = (w: string) => {
+  const c = w.charCodeAt(w.length - 1) - 0xac00
+  return c < 0 || c > 11171 || c % 28 === 0 || c % 28 === 8 ? '로' : '으로'
+}
+
+const nameOf = (state: EditorState, id: string) => {
+  const n = state.graph.nodes.find((x) => x.id === id)
+  return (n && getPart(n.partId)?.label) ?? id
+}
+
+const nodeLabel = (partId: string) => {
+  const part = getPart(partId)
+  return `${part?.label ?? partId}. ${part?.description ?? ''}`
+}
+
 const toFlowNodes = (state: EditorState, prev: PartFlowNode[]): PartFlowNode[] =>
   state.graph.nodes.map((n) => ({
     id: n.id,
     type: 'part',
     position: { x: n.x, y: n.y },
     data: { partId: n.partId, attributes: n.attributes },
+    ariaLabel: nodeLabel(n.partId),
     selected: prev.find((p) => p.id === n.id)?.selected ?? false,
   }))
 
@@ -37,6 +67,7 @@ const toFlowEdges = (state: EditorState, prev: Edge[]): Edge[] =>
     id: e.id,
     source: e.from,
     target: e.to,
+    ariaLabel: `${nameOf(state, e.from)}에서 ${nameOf(state, e.to)}${toward(nameOf(state, e.to))} 이어지는 화살표`,
     markerEnd: { type: MarkerType.ArrowClosed, width: 18, height: 18 },
     selected: prev.find((p) => p.id === e.id)?.selected ?? false,
   }))
@@ -177,7 +208,7 @@ export function Canvas({
         >
           자동 정렬
         </Button>
-        <Button onClick={deleteSelected} disabled={!hasSelection} aria-label="선택한 것 삭제">
+        <Button onClick={deleteSelected} disabled={!hasSelection} >
           선택 삭제
         </Button>
         <Button onClick={onClearAll} disabled={state.graph.nodes.length === 0}>
@@ -194,6 +225,9 @@ export function Canvas({
           </div>
         </div>
       )}
+      <ul className="tl-sr" aria-label="연결 목록">
+        {state.graph.edges.length === 0 ? <li>이어진 부품이 없습니다</li> : state.graph.edges.map((e) => <li key={e.id}>{nameOf(state, e.from)}에서 {nameOf(state, e.to)}{toward(nameOf(state, e.to))} 이어짐</li>)}
+      </ul>
       <ReactFlow
         nodes={shownNodes}
         edges={shownEdges}
@@ -237,6 +271,7 @@ export function Canvas({
         minZoom={0.3}
         maxZoom={1.8}
         colorMode={theme}
+        ariaLabelConfig={ARIA_LABELS}
         fitViewOptions={{ padding: 0.2 }}
       >
         <Background id="minor" variant={BackgroundVariant.Lines} gap={24} lineWidth={1} color="var(--grid-minor)" />

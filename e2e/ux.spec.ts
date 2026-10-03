@@ -26,7 +26,7 @@ test('부품 삭제: 클릭 후 속성 창의 "이 부품 삭제" 버튼', async
 test('선택 삭제: 부품을 클릭하면 도구줄의 "선택 삭제"가 켜지고, 누르면 지워진다', async ({ page }) => {
   await openApp(page)
   await loadSample(page, '메일 비서')
-  const btn = page.getByRole('button', { name: '선택한 것 삭제' })
+  const btn = page.getByRole('button', { name: '선택 삭제' })
   await expect(btn).toBeDisabled()
   await nodes(page).first().click()
   await expect(btn).toBeEnabled()
@@ -39,7 +39,7 @@ test('전체 선택(Ctrl+A) 후 삭제, 되돌리기로 복원', async ({ page }
   await loadSample(page, '메일 비서')
   await page.mouse.click(700, 650)
   await page.keyboard.press('Control+a')
-  await page.getByRole('button', { name: '선택한 것 삭제' }).click()
+  await page.getByRole('button', { name: '선택 삭제' }).click()
   await expect(nodes(page)).toHaveCount(0)
   await page.keyboard.press('Control+z')
   await expect(nodes(page)).toHaveCount(5)

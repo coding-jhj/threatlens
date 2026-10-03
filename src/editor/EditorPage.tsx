@@ -159,6 +159,9 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
         <Button onClick={() => setShowHelp(true)}>사용법</Button>
       </header>
       <main className="tl-editor">
+        <h1 className="tl-sr" id="tl-editor-h1" tabIndex={-1}>
+          위협 지도
+        </h1>
         <Palette onAdd={addAtCenter} />
         <div style={{ position: 'relative', flex: 1, minWidth: 0, display: 'flex' }}>
           <Canvas
@@ -214,7 +217,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           )}
           <input ref={fileInput} type="file" accept=".json,application/json" hidden onChange={importJson} aria-label="JSON 파일 선택" />
           {state.graph.nodes.length > 0 && (
-            <dl className="tl-titleblock" aria-label="도면 표제란">
+            <dl className="tl-titleblock" aria-hidden>
               <div>
                 <dt>도면 번호</dt>
                 <dd>{drawingNo}</dd>
@@ -265,7 +268,12 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           onToggleFix={toggleFix}
           levels={levels}
           activeHazard={activeHazard}
-          onApplyKeys={(keys) => setApplied((prev) => new Set([...prev, ...keys]))}
+          onApplyKeys={(keys) => {
+            const next = new Set([...applied, ...keys])
+            const nextScore = scoreGraph(state.graph, RULES, next).overall
+            setApplied(next)
+            flash(`대응을 적용했습니다. 위험 점수 ${score}점에서 ${nextScore}점으로 낮아졌습니다.`)
+          }}
           onClearApplied={() => setApplied(new Set())}
         />
       </main>

@@ -2,11 +2,11 @@ import { AxeBuilder } from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 import { loadSample, openApp } from './helpers.ts'
 
-test('위험 마름모: 헤더와 행동 계획 탭에 네 칸 값이 보이고 표로도 읽을 수 있다', async ({ page }) => {
+test('위험 마름모: 행동 계획 탭에 네 칸 값이 보이고(헤더의 작은 마름모는 스크린리더에서 숨김) 표로도 읽을 수 있다', async ({ page }) => {
   await openApp(page)
   await loadSample(page, '메일 비서')
   const diamonds = page.getByRole('img', { name: /^위험 마름모/ })
-  await expect(diamonds).toHaveCount(2)
+  await expect(diamonds).toHaveCount(1)
   await expect(diamonds.first()).toHaveAttribute('aria-label', /주입 \d, 유출 \d, 오용 \d, 설비 \d/)
   const rows = page.locator('.tl-hz tbody tr')
   await expect(rows).toHaveCount(4)

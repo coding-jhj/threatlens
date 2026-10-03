@@ -15,7 +15,7 @@ const OWASP_REFS = [
   'LLM09:2025 Misinformation',
   'LLM10:2025 Unbounded Consumption',
 ]
-const ATLAS_IDS = ['AML.T0051', 'AML.T0053', 'AML.T0057', 'AML.T0070', 'AML.T0080.000', 'AML.T0085.000', 'AML.T0086', 'AML.T0101']
+const ATLAS_IDS = ['AML.T0051', 'AML.T0053', 'AML.T0057', 'AML.T0070', 'AML.T0080', 'AML.T0085.000', 'AML.T0086', 'AML.T0101']
 
 test('규칙 28개, id가 R-01부터 R-28까지 연속', () => {
   expect(RULES).toHaveLength(28)

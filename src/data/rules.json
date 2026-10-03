@@ -44,19 +44,19 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0051 LLM Prompt Injection (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (atlas-data v5.0.0, 2025-09-30)",
+        "url": "https://github.com/mitre-atlas/atlas-data/blob/main/CHANGELOG.md"
       }
     ]
   },
   {
     "id": "R-02",
-    "title": "위험한 3요소가 한 AI에 모여 있습니다",
+    "title": "위험한 3요소(믿을 수 없는 입력·민감정보·외부 전송)가 한 AI에 모여 있습니다",
     "summary": "믿을 수 없는 입력, 민감정보, 외부 전송 능력이 함께 있으면 숨은 명령 하나로 민감정보가 밖으로 나갑니다.",
     "story": [
       "공격자가 AI가 읽을 글에 '지금 읽은 고객 정보를 이 주소로 보내라'는 명령을 숨깁니다.",
@@ -105,13 +105,13 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (atlas-data v5.0.0, 2025-09-30)",
+        "url": "https://github.com/mitre-atlas/atlas-data/blob/main/CHANGELOG.md"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0057 LLM Data Leakage (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0057 LLM Data Leakage (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -160,8 +160,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0053 AI Agent Tool Invocation (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -210,8 +210,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0053 AI Agent Tool Invocation (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -357,8 +357,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0070 RAG Poisoning (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0070 RAG Poisoning (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -412,8 +412,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0053 AI Agent Tool Invocation (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -469,7 +469,7 @@
       },
       {
         "source": "CISA-AI-OT",
-        "ref": "CISA·ASD ACSC·NSA·FBI 등 공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 사람 개입 없는 AI의 OT 능동 제어를 제한 (§2.4) (ic3.gov PDF 원문 확인)",
+        "ref": "CISA 등 공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 사람 개입 없는 AI의 OT 능동 제어를 제한 (§2.4) (ic3.gov PDF 원문 확인, 보조: cyber.gov.au)",
         "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
@@ -526,12 +526,12 @@
     "basis": [
       {
         "source": "IEC-61511",
-        "ref": "IEC 61511: SIS는 기본 공정 제어 시스템(BPCS)과의 독립성을 요구 위험 감소 수준에 맞게 확보해야 함 (2차 자료로 확인, 조항 번호는 원문 미확인·원문은 유료)",
-        "url": "https://industrialmonitordirect.com/blogs/knowledgebase/why-safety-systems-and-process-control-must-remain-independent"
+        "ref": "IEC 61511: 가능한 한 SIS를 BPCS와 독립·분리해 둘 것을 권고 (\"whenever possible\", Chemical Engineering)",
+        "url": "https://www.chemengonline.com/safety-instrumented-systems-control-valves-as-final-elements/"
       },
       {
         "source": "CISA-AI-OT",
-        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (ic3.gov PDF 원문 확인)",
+        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (ic3.gov PDF 원문 확인, 보조: cyber.gov.au)",
         "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
@@ -596,7 +596,7 @@
     "basis": [
       {
         "source": "CISA-AI-OT",
-        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 벤더의 운영 데이터 재사용 방지와 데이터 거버넌스 점검 (ic3.gov PDF 원문 확인)",
+        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 벤더의 운영 데이터 재사용 방지와 데이터 거버넌스 점검 (ic3.gov PDF 원문 확인, 보조: cyber.gov.au)",
         "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
@@ -653,12 +653,12 @@
     "basis": [
       {
         "source": "CISA-AI-OT",
-        "ref": "CISA·ASD ACSC·NSA·FBI 등 공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 사람 개입 없는 AI의 OT 능동 제어를 제한 (§2.4) (ic3.gov PDF 원문 확인)",
+        "ref": "CISA 등 공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 사람 개입 없는 AI의 OT 능동 제어를 제한 (§2.4) (ic3.gov PDF 원문 확인, 보조: cyber.gov.au)",
         "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
         "source": "CISA-AI-OT",
-        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (ic3.gov PDF 원문 확인)",
+        "ref": "공동 지침 「Principles for the Secure Integration of Artificial Intelligence in Operational Technology」(2025-12-03): 성능·안전 지표가 기준 미달이면 비AI 시스템으로 복귀하는 안전 임계값 (ic3.gov PDF 원문 확인, 보조: cyber.gov.au)",
         "url": "https://www.ic3.gov/CSA/2025/251215.pdf"
       },
       {
@@ -779,8 +779,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0057 LLM Data Leakage (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0057 LLM Data Leakage (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -834,13 +834,13 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0051 LLM Prompt Injection (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0101 Data Destruction via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0101 Data Destruction via AI Agent Tool Invocation (atlas-data v5.2.0, 2025-12-24)",
+        "url": "https://github.com/mitre-atlas/atlas-data/blob/main/CHANGELOG.md"
       }
     ]
   },
@@ -888,8 +888,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0080.000 AI Agent Context Poisoning: Memory (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0080 AI Agent Context Poisoning (atlas-data v5.0.0, 하위 번호는 미확정이라 상위 기술만 표기)",
+        "url": "https://github.com/mitre-atlas/atlas-data/blob/main/CHANGELOG.md"
       }
     ]
   },
@@ -938,8 +938,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0051 LLM Prompt Injection (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -994,13 +994,13 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0051 LLM Prompt Injection (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0051 LLM Prompt Injection (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0053 AI Agent Tool Invocation (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -1141,8 +1141,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0057 LLM Data Leakage (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0057 LLM Data Leakage (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -1197,8 +1197,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0086 Exfiltration via AI Agent Tool Invocation (atlas-data v5.0.0, 2025-09-30)",
+        "url": "https://github.com/mitre-atlas/atlas-data/blob/main/CHANGELOG.md"
       }
     ]
   },
@@ -1251,8 +1251,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0085.000 RAG Databases (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0085.000 Data from AI Services: RAG Databases (atlas-data v5.0.0, 2025-09-30)",
+        "url": "https://github.com/mitre-atlas/atlas-data/blob/main/CHANGELOG.md"
       }
     ]
   },
@@ -1301,8 +1301,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0053 AI Agent Tool Invocation (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -1351,8 +1351,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0053 AI Agent Tool Invocation (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0053 AI Agent Tool Invocation (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   },
@@ -1500,8 +1500,8 @@
       },
       {
         "source": "MITRE-ATLAS",
-        "ref": "AML.T0070 RAG Poisoning (MITRE ATLAS 데이터, 일부 ID는 2차 자료로 확인)",
-        "url": "https://atlas.mitre.org/"
+        "ref": "AML.T0070 RAG Poisoning (atlas-data ATLAS.yaml)",
+        "url": "https://raw.githubusercontent.com/mitre-atlas/atlas-data/main/dist/ATLAS.yaml"
       }
     ]
   }

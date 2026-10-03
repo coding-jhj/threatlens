@@ -34,6 +34,7 @@ export function Onboarding({ onClose, onSample }: { onClose: () => void; onSampl
     <div className="tl-modal" role="dialog" aria-modal="true" aria-labelledby="tl-onb-title">
       <div className="tl-modal__box" ref={box}>
         <h2 id="tl-onb-title">처음이신가요? 3단계면 됩니다</h2>
+        <p>ThreatLens는 AI 서비스의 구조를 부품으로 그리면 보안 위협과 대응책을 알려주는 도구입니다. 서버 없이 이 브라우저 안에서만 계산합니다. 점수는 사고 확률이 아닌 참고 지표이며, 규칙과 정답 목록은 AI가 썼고 사람 전문가 검수 전입니다(평가표 참고).</p>
         <ol className="tl-onb__steps">
           <li>
             <b>부품을 놓습니다.</b> 왼쪽 목록의 부품을 클릭하거나 캔버스로 끌어 놓습니다. AI 부품을 꼭 하나 넣으세요.
@@ -51,7 +52,7 @@ export function Onboarding({ onClose, onSample }: { onClose: () => void; onSampl
           <li><b>삭제</b> 부품·화살표를 클릭하고 Delete 또는 [선택 삭제]. 전부 지우려면 [모두 지우기]</li>
           <li><b>취소</b> Ctrl+Z (다시 실행은 Ctrl+Shift+Z). [예시 불러오기]·[모두 지우기]도 되돌릴 수 있습니다</li>
           <li><b>여러 개 선택</b> Ctrl+A(전체), 또는 Shift를 누른 채 드래그</li>
-          <li><b>화살표</b> 오른쪽 점을 끌어 다른 부품의 점 또는 부품 위에 놓습니다</li>
+          <li><b>화살표</b> 오른쪽 점을 끌어 다른 부품의 점 또는 부품 위에 놓습니다. 키보드로는 부품을 선택(Enter)한 뒤 오른쪽 속성 창의 [화살표 관리]에서 대상을 고릅니다</li>
           <li><b>화면 이동·확대</b> 빈 곳을 끌면 이동, 마우스 휠로 확대·축소</li>
         </ul>
 

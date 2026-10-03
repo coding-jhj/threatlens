@@ -51,6 +51,7 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
               대응 후 <b style={{ color: scoreTone(after) }}>{after}</b>
             </span>
             {delta !== 0 && <Chip tone="low">{delta < 0 ? `−${-delta}` : `+${delta}`}</Chip>}
+            {delta === 0 && <span className="tl-plan__hint">(아직 적용한 대응이 없습니다)</span>}
           </div>
         )}
       </div>
@@ -108,7 +109,7 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
           const open = key === activeKey
           return (
             <Card key={key} danger={open && f.severity === 'high'}>
-              <button type="button" className="tl-threat__head" aria-expanded={open} onClick={() => onToggleActive(key)}>
+              <button type="button" className="tl-threat__head" aria-expanded={open} aria-controls={`tl-body-${key}`} onClick={() => onToggleActive(key)}>
                 <span className="tl-threat__top">
                   <SeverityChip severity={f.severity} />
                   <Chip tone={rule.category === 'chem' ? 'chem' : 'neutral'}>{CATEGORY_LABEL[rule.category]}</Chip>
@@ -118,7 +119,7 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
                 <span className="tl-threat__where">대상: {partLabel(graph, f.nodeId)}</span>
               </button>
               {open && (
-                <div className="tl-threat__body">
+                <div className="tl-threat__body" id={`tl-body-${key}`}>
                   <StoryLines story={rule.story} />
                   <p className="tl-threat__summary">{rule.summary}</p>
                   <div className="tl-threat__sub">이렇게 막을 수 있습니다</div>

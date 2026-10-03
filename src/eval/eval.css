@@ -23,3 +23,6 @@
 .tl-eval__toggle { padding: 0; background: none; border: 0; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; }
 .tl-eval__notes { margin: 8px 0 0; padding-left: 20px; font-size: var(--fs-sm); line-height: 1.8; color: var(--muted); }
 @media (max-width: 720px) { .tl-eval { padding: 16px; } }
+.tl-eval dt { margin-top: 8px; font-weight: 600; color: var(--text); }
+.tl-eval dd { margin: 0; }
+.tl-eval__stats + p { margin-top: 12px; }

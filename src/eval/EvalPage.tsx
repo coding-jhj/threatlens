@@ -1,12 +1,41 @@
 import { useMemo, useState } from 'react'
+import addRaw from '../../docs/eval/ground-truth-additions.json?raw'
 import raw from '../../docs/eval/ground-truth.json?raw'
 import { RULES } from '../data'
 import { Chip } from '../ui/components'
 import { SAMPLES } from '../samples/samples'
-import { evaluateAll, ratio, type GroundTruth } from './evaluate'
+import { evaluateAll, ratio, type GroundTruth, type GtThreat } from './evaluate'
 import './eval.css'
 
 const GT = JSON.parse(raw) as GroundTruth
+const ADD = (JSON.parse(addRaw) as { structures: Record<string, { threats: GtThreat[] }> }).structures
+const GT2: GroundTruth = {
+  ...GT,
+  structures: Object.fromEntries(Object.entries(GT.structures).map(([id, s]) => [id, { ...s, threats: [...s.threats, ...(ADD[id]?.threats ?? [])] }])),
+}
+const STATUS_LABEL: Record<string, string> = { 'confirmed-no-edits': '확정, 수정 없음' }
+const TAG_TITLE: Record<string, string> = {
+  LLM01: 'OWASP LLM01 프롬프트 주입',
+  LLM02: 'OWASP LLM02 민감정보 노출',
+  LLM03: 'OWASP LLM03 공급망',
+  LLM04: 'OWASP LLM04 데이터·모델 오염',
+  LLM05: 'OWASP LLM05 출력 처리 미흡',
+  LLM06: 'OWASP LLM06 과도한 권한(에이전시)',
+  LLM07: 'OWASP LLM07 시스템 프롬프트 노출',
+  LLM08: 'OWASP LLM08 벡터·임베딩 취약점',
+  LLM09: 'OWASP LLM09 잘못된 정보',
+  LLM10: 'OWASP LLM10 무제한 소비',
+  'OT-HUMAN-OVERSIGHT': 'CISA AI-OT 지침: 사람의 감독',
+  'SIS-INDEPENDENCE': 'IEC 61511: 안전계장시스템(SIS)의 독립성',
+}
+const tagTitle = (t: string) => TAG_TITLE[t] ?? (/^T\d{4}/.test(t) ? `MITRE ATT&CK for ICS 기법 ${t}` : t)
+function Tag({ t }: { t: string }) {
+  return (
+    <Chip tone="neutral">
+      <abbr title={tagTitle(t)}>{t}</abbr>
+    </Chip>
+  )
+}
 const pct = (n: number, d: number) => {
   const r = ratio(n, d)
   return r === null ? '–' : `${Math.round(r * 100)}%`
@@ -18,7 +47,12 @@ function Stat({ label, n, d, hint }: { label: string; n: number; d: number; hint
       <span className="tl-eval__label">{label}</span>
       <b>{pct(n, d)}</b>
       <span className="tl-eval__count">
-        {n} / {d}
+        <span aria-hidden>
+          {n} / {d}
+        </span>
+        <span className="tl-sr">
+          {d}개 중 {n}개
+        </span>
       </span>
       <p>{hint}</p>
     </div>
@@ -27,6 +61,7 @@ function Stat({ label, n, d, hint }: { label: string; n: number; d: number; hint
 
 export default function EvalPage() {
   const result = useMemo(() => evaluateAll(SAMPLES, RULES, GT), [])
+  const v2 = useMemo(() => evaluateAll(SAMPLES, RULES, GT2), [])
   const [showStrict, setShowStrict] = useState(false)
   const missed = result.structures.flatMap((s) => s.threats.filter((t) => !t.found).map((t) => ({ s, t })))
   const looseOnly = result.structures.flatMap((s) => s.threats.filter((t) => t.found && !t.strict).map((t) => ({ s, t })))
@@ -39,18 +74,24 @@ export default function EvalPage() {
         참조 구조 5개에서 ThreatLens가 <b>정답 위협 목록</b>을 얼마나 찾는지 잰 결과입니다. 점수는 대응책을 적용하지 않은 상태에서 계산했고, 이 화면의 숫자는 코드가 지금 규칙으로 직접 계산한 값입니다.
       </p>
       <div className="tl-eval__source" role="note">
-        <Chip tone="medium">정답 작성: AI</Chip> 규칙을 보지 않은 별도 AI 에이전트가 공개 표준(OWASP LLM Top 10 2025, ATT&CK for ICS, CISA AI-OT 지침)만 보고 썼고, 사람 전문가의 검수는 거치지 않았습니다. 상태: <code>{GT.status}</code>
+        <Chip tone="medium">정답 작성: AI</Chip> 규칙을 보지 않은 별도 AI 에이전트가 공개 표준(OWASP LLM Top 10 2025, ATT&CK for ICS, CISA AI-OT 지침)만 보고 썼고, 사람 전문가의 검수는 거치지 않았습니다. 상태: {STATUS_LABEL[GT.status] ?? GT.status}
       </div>
 
       <section className="tl-eval__stats" aria-label="요약">
+        <h2 className="tl-sr">요약</h2>
         <Stat label="재현율 (느슨)" n={result.found} d={result.threatTotal} hint="정답 위협마다, 근거 태그가 하나라도 겹치는 규칙이 발동했는가" />
         <Stat label="재현율 (엄격)" n={result.strict} d={result.threatTotal} hint="정답 위협의 근거 태그가 모두 발동한 규칙으로 덮였는가" />
         <Stat label="경보 적중률" n={result.matchedFired} d={result.comparable} hint="발동한 규칙(구조별) 중 정답 위협과 태그가 겹친 비율. 낮을수록 오탐이 많다는 뜻" />
       </section>
 
+      <p className="tl-eval__muted">
+        AI 판정자 3명이 따로 판정해 2명 이상이 동의한 보충 정답 7개를 넣은 <b>v2 기준</b>(정답 {v2.threatTotal}개): 재현율 느슨 {pct(v2.found, v2.threatTotal)} ({v2.found}/{v2.threatTotal}), 엄격 {pct(v2.strict, v2.threatTotal)} ({v2.strict}/{v2.threatTotal}). 위 숫자(v1)는 처음 쓴 정답 {result.threatTotal}개 기준입니다.
+      </p>
+
       <h2>구조별 결과</h2>
       <div className="tl-eval__scroll">
         <table className="tl-eval__table">
+          <caption className="tl-sr">구조별 결과</caption>
           <thead>
             <tr>
               <th>구조</th>
@@ -90,9 +131,7 @@ export default function EvalPage() {
             <div className="tl-eval__item-head">
               <b>{s.title}</b>
               {t.threat.tags.map((x) => (
-                <Chip key={x} tone="neutral">
-                  {x}
-                </Chip>
+                <Tag key={x} t={x} />
               ))}
             </div>
             <p>{t.threat.statement}</p>
@@ -110,9 +149,7 @@ export default function EvalPage() {
               <b>{s.title}</b>
               <Chip tone="neutral">{f.ruleId}</Chip>
               {f.tags.map((x) => (
-                <Chip key={x} tone="neutral">
-                  {x}
-                </Chip>
+                <Tag key={x} t={x} />
               ))}
             </div>
             <p>{f.title}</p>
@@ -121,12 +158,12 @@ export default function EvalPage() {
       </ul>
 
       <h2>
-        <button type="button" className="tl-eval__toggle" aria-expanded={showStrict} onClick={() => setShowStrict((v) => !v)}>
-          엄격 기준으로는 못 찾은 위협 ({looseOnly.length}개) {showStrict ? '▲' : '▼'}
+        <button type="button" className="tl-eval__toggle" aria-expanded={showStrict} aria-controls="tl-strict-list" onClick={() => setShowStrict((v) => !v)}>
+          엄격 기준으로는 못 찾은 위협 ({looseOnly.length}개) <span aria-hidden>{showStrict ? '▲' : '▼'}</span>
         </button>
       </h2>
       {showStrict && (
-        <ul className="tl-eval__list" aria-label="엄격 기준 미달">
+        <ul className="tl-eval__list" id="tl-strict-list" aria-label="엄격 기준 미달">
           {looseOnly.map(({ s, t }) => (
             <li key={t.threat.id}>
               <div className="tl-eval__item-head">
@@ -134,7 +171,7 @@ export default function EvalPage() {
                 <span className="tl-eval__muted">덮이지 않은 태그:</span>
                 {t.uncoveredTags.map((x) => (
                   <Chip key={x} tone="medium">
-                    {x}
+                    <abbr title={tagTitle(x)}>{x}</abbr>
                   </Chip>
                 ))}
               </div>
@@ -143,6 +180,18 @@ export default function EvalPage() {
           ))}
         </ul>
       )}
+
+      <h2>용어</h2>
+      <dl className="tl-eval__notes">
+        <dt>정답 위협</dt>
+        <dd>구조마다 AI 에이전트가 공개 표준만 보고 적어 둔 &quot;이 구조에 있어야 할 위협&quot; 목록입니다.</dd>
+        <dt>재현율</dt>
+        <dd>정답 위협 중 ThreatLens가 찾아낸 비율입니다. 높을수록 덜 놓칩니다. 100%에 가까울수록 좋지만, 이 표본은 작아서 참고용입니다.</dd>
+        <dt>경보 적중률</dt>
+        <dd>ThreatLens가 띄운 경보 중 정답 위협과 겹친 비율입니다. 낮으면 쓸데없는 경보(오탐)가 많다는 뜻입니다.</dd>
+        <dt>근거 태그</dt>
+        <dd>위협의 분류 번호입니다. LLM01~LLM10은 OWASP LLM Top 10 2025 항목, T로 시작하는 번호는 ATT&amp;CK for ICS 기법입니다. 마우스를 올리면 이름이 보입니다.</dd>
+      </dl>
 
       <h2>읽는 법과 한계</h2>
       <ul className="tl-eval__notes">

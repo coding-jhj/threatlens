@@ -5,14 +5,14 @@ import { MAX_LEVEL, type HazardLevels } from '../domain/hazard'
 const DIR: Record<Hazard, [number, number]> = { inject: [0, -1], leak: [1, 0], misuse: [0, 1], plant: [-1, 0] }
 const COLOR: Record<Hazard, string> = { inject: 'var(--hz-inject)', leak: 'var(--hz-leak)', misuse: 'var(--hz-misuse)', plant: 'var(--hz-plant)' }
 
-export function RiskDiamond({ levels, size = 56, labels = false, active = null }: { levels: HazardLevels; size?: number; labels?: boolean; active?: Hazard | null }) {
+export function RiskDiamond({ levels, size = 56, labels = false, active = null, decorative = false }: { levels: HazardLevels; size?: number; labels?: boolean; active?: Hazard | null; decorative?: boolean }) {
   const c = 50
   const r = 38
   const pt = (h: Hazard, lv: number) => `${c + DIR[h][0] * (r * lv) / MAX_LEVEL},${c + DIR[h][1] * (r * lv) / MAX_LEVEL}`
   const ring = (lv: number) => HAZARDS.map((h) => pt(h, lv)).join(' ')
   const summary = `위험 마름모: ${HAZARDS.map((h) => `${HAZARD_LABEL[h]} ${levels[h]}`).join(', ')} (각 0~${MAX_LEVEL})`
   return (
-    <svg className="tl-diamond" width={labels ? size * 1.4 : size} height={size} viewBox={labels ? '-20 -6 140 112' : '0 0 100 100'} role="img" aria-label={summary}>
+    <svg className="tl-diamond" width={labels ? size * 1.4 : size} height={size} viewBox={labels ? '-20 -6 140 112' : '0 0 100 100'} {...(decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': summary })}>
       {[1, 2, 3, 4].map((lv) => (
         <polygon key={lv} points={ring(lv)} fill="none" stroke="var(--line-strong)" strokeWidth={lv === MAX_LEVEL ? 1.5 : 0.6} opacity={lv === MAX_LEVEL ? 1 : 0.6} />
       ))}
@@ -50,6 +50,13 @@ export function HazardTable({ levels, active }: { levels: HazardLevels; active: 
   return (
     <table className="tl-hz">
       <caption className="tl-hz__cap">위험 종류별 수준 (0~{MAX_LEVEL})</caption>
+      <thead className="tl-sr">
+        <tr>
+          <th scope="col">종류</th>
+          <th scope="col">수준</th>
+          <th scope="col">뜻</th>
+        </tr>
+      </thead>
       <tbody>
         {HAZARDS.map((h) => (
           <tr key={h} className={active === h ? 'is-active' : ''}>

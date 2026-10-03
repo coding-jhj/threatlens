@@ -1,0 +1,41 @@
+{
+  "status": "ai-adjudicated-majority-of-3",
+  "about": "블라인드 재판정(blind-recheck.md)에서 나온 보충 후보를 AI 판정자 3명이 따로 판정해 2명 이상이 '추가'한 것만 담았습니다. 부분 일치 4건 중 '다른 위협'으로 판정된 P1·P2도 포함합니다(P3-a는 mail-X7과 같은 위협이라 한 번만 셉니다). 기존 정답(ground-truth.json)은 바꾸지 않습니다. 사람 전문가 판정이 아닙니다.",
+  "votes": {
+    "doc-qa-X1": "ADD 2/3 (LLM07)",
+    "doc-qa-X2": "ADD 3/3 (LLM10)",
+    "support-X3": "ADD 3/3 (LLM10)",
+    "code-X5": "ADD 2/3 (LLM06)",
+    "mail-X7": "ADD 2/3 (LLM02, LLM05) — 부분 일치 P3-a와 같은 위협",
+    "P1": "RELATED 3/3 — 과도한 호출 범위와 IDOR(식별자·세션 대조 누락)는 별개 위협",
+    "P2": "RELATED 3/3 — 검증 없는 실행과 최소 권한·위험 동작 승인 부재는 별개 통제",
+    "P3-b": "SAME 3/3 — 기존 정답에 포함, 추가 없음",
+    "P4": "SAME 2/3 — 기존 정답에 포함, 추가 없음",
+    "skipped": "support-X4, code-X6, mail-X8, mail-X9, process-X10, process-X11, process-X12, process-X13 (찬성 1명 이하)"
+  },
+  "structures": {
+    "doc-qa": {
+      "threats": [
+        { "id": "GT-doc-qa-X1", "statement": "유도 질문으로 시스템 프롬프트가 그대로 노출됩니다.", "tags": ["LLM07"], "why": "프롬프트 안의 규칙·내부 구조가 공격자에게 드러납니다. 영향은 작습니다.", "severity_guess": "low" },
+        { "id": "GT-doc-qa-X2", "statement": "긴 문서와 반복 질의로 비용과 자원이 소진됩니다.", "tags": ["LLM10"], "why": "업로드와 반복 질의가 구조에 있어 호출량이 무제한으로 늘 수 있습니다. 내부 사용자라 영향은 작습니다.", "severity_guess": "low" }
+      ]
+    },
+    "support-bot": {
+      "threats": [
+        { "id": "GT-support-bot-X3", "statement": "불특정 다수의 대량 자동화 요청으로 비용이 폭증하고 외부 API가 남용됩니다.", "tags": ["LLM10"], "why": "누구나 입력할 수 있고 외부 모델·API를 쓰는 구조입니다.", "severity_guess": "medium" },
+        { "id": "GT-support-bot-P1", "statement": "다른 고객의 식별자를 넣어 타인의 주문·개인정보를 조회합니다(IDOR).", "tags": ["LLM06"], "why": "AI가 만든 식별자를 로그인 세션과 대조하지 않으면 권한 검증이 비어 있습니다. 기존 '과도한 호출 범위'와 원인·대책이 다릅니다.", "severity_guess": "high" }
+      ]
+    },
+    "code-agent": {
+      "threats": [
+        { "id": "GT-code-agent-X5", "statement": "코드 실행 환경에서 호스트나 내부망으로 빠져나갑니다.", "tags": ["LLM06"], "why": "실행 부품이 있어 격리가 약하면 호스트·내부망으로 이동하는 경로가 구조에서 바로 나옵니다.", "severity_guess": "high" },
+        { "id": "GT-code-agent-P2", "statement": "과도한 저장소 권한으로 force push 같은 위험 동작을 승인 없이 합니다.", "tags": ["LLM06"], "why": "최소 권한과 위험 동작 승인 부재는 '검증 없는 실행'과 다른 통제 항목입니다.", "severity_guess": "high" }
+      ]
+    },
+    "mail-assistant": {
+      "threats": [
+        { "id": "GT-mail-assistant-X7", "statement": "메일 속 링크·이미지 로딩에 데이터를 실어 사용자 조작 없이 유출합니다(제로클릭).", "tags": ["LLM02", "LLM05"], "why": "수신자 유출과 다른 별개의 유출 경로입니다.", "severity_guess": "high" }
+      ]
+    }
+  }
+}

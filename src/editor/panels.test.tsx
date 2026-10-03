@@ -41,7 +41,7 @@ test('Inspector: 대응 속성에는 "대응" 표시', () => {
 
 test('Summary: AI 부품이 없으면 안내와 – 표시', () => {
   render(<Summary score={0} analysis={{ findings: [], paths: [] }} hasAi={false} />)
-  expect(screen.getByText('AI 부품을 놓으면 분석이 시작됩니다')).toBeTruthy()
+  expect(screen.getByText('아직 없음. AI 부품을 놓으면 분석이 시작됩니다')).toBeTruthy()
   expect(screen.getByText('–')).toBeTruthy()
 })
 

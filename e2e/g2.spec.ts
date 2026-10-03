@@ -18,7 +18,7 @@ test('행동 계획: 메일 비서에서 상위 3개 대응과 점수 변화가 
   expect(after).toBeLessThan(before)
 
   // 단계마다 점수가 올라가지 않는다
-  const nums = (await page.locator('.tl-plan__delta').allInnerTexts()).map((t) => t.split('→').map((x) => Number(x.trim())))
+  const nums = (await page.locator('.tl-plan__delta [aria-hidden]').allInnerTexts()).map((t) => t.split('→').map((x) => Number(x.trim())))
   for (const [b, a] of nums) expect(a).toBeLessThanOrEqual(b)
 
   await apply.click()
@@ -34,7 +34,7 @@ test('행동 계획: 한 단계만 적용하면 그 단계의 점수가 되고 �
   await openApp(page)
   await loadSample(page, '고객상담 챗봇')
   const first = page.locator('.tl-plan__step').first()
-  const delta = (await first.locator('.tl-plan__delta').innerText()).split('→').map((x) => Number(x.trim()))
+  const delta = (await first.locator('.tl-plan__delta [aria-hidden]').innerText()).split('→').map((x) => Number(x.trim()))
   await first.getByRole('button', { name: /적용$/ }).click()
   await expect(score(page)).toHaveText(String(delta[1]))
   await expect(page.locator('.tl-plan__step')).toHaveCount(3)

@@ -20,6 +20,7 @@ import { PartNode, type PartFlowNode } from './PartNode'
 import './editor.css'
 
 const nodeTypes = { part: PartNode }
+const alreadyConnected = (state: EditorState, from: string, to: string) => state.graph.edges.some((e) => e.from === from && e.to === to)
 
 const toFlowNodes = (state: EditorState, prev: PartFlowNode[]): PartFlowNode[] =>
   state.graph.nodes.map((n) => ({
@@ -187,6 +188,19 @@ export function Canvas({
           if (c.source === c.target) return onNotice?.('같은 부품끼리는 이을 수 없습니다.')
           if (state.graph.edges.some((e) => e.from === c.source && e.to === c.target)) return onNotice?.('이미 같은 방향으로 이어져 있습니다.')
           dispatch({ type: 'connect', from: c.source, to: c.target })
+        }}
+        connectionRadius={36}
+        onConnectEnd={(event, conn) => {
+          // 점에 정확히 놓은 경우는 onConnect가 처리한다. 여기서는 부품 몸통이나 빈 곳에 놓은 경우를 돕는다.
+          if (conn.isValid || !conn.fromNode) return
+          const pt = 'changedTouches' in event ? event.changedTouches[0] : event
+          const over = document.elementFromPoint(pt.clientX, pt.clientY)?.closest('.react-flow__node')
+          const targetId = over?.getAttribute('data-id')
+          if (!targetId) return onNotice?.('화살표는 다른 부품 위에 놓아 주세요. 놓은 곳에 부품이 없습니다.')
+          const [from, to] = conn.fromHandle?.type === 'target' ? [targetId, conn.fromNode.id] : [conn.fromNode.id, targetId]
+          if (from === to) return onNotice?.('같은 부품끼리는 이을 수 없습니다.')
+          if (alreadyConnected(state, from, to)) return onNotice?.('이미 같은 방향으로 이어져 있습니다.')
+          dispatch({ type: 'connect', from, to })
         }}
         onNodeDragStop={(_e, _n, dragged) => {
           const positions: Record<string, { x: number; y: number }> = {}

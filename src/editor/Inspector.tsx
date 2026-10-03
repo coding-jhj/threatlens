@@ -44,6 +44,8 @@ export function Inspector({ node, others, links, onChange, onConnect, onRemoveLi
           </label>
         ))}
       </div>
+      <details className="tl-inspector__more">
+        <summary>화살표 관리 (키보드로 잇기, 삭제)</summary>
       {others.length > 0 && (
         <div className="tl-inspector__connect">
           <label>
@@ -82,6 +84,7 @@ export function Inspector({ node, others, links, onChange, onConnect, onRemoveLi
           ))}
         </ul>
       )}
+      </details>
     </section>
   )
 }

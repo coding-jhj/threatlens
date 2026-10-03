@@ -33,6 +33,7 @@ test('키보드로 화살표 삭제: 속성 창의 삭제 버튼, 부품은 Dele
   const edges = await page.locator('.react-flow__edge').count()
   await page.locator('.react-flow__node:has-text("AI 에이전트")').focus()
   await page.keyboard.press('Enter')
+  await page.getByText('화살표 관리').click()
   await page.getByRole('button', { name: /^화살표 삭제/ }).first().press('Enter')
   await expect(page.locator('.react-flow__edge')).toHaveCount(edges - 1)
   const nodes = await page.locator('.react-flow__node').count()

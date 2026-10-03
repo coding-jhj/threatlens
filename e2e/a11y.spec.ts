@@ -11,6 +11,7 @@ test('키보드만으로: 부품 추가 → 속성 선택 → 화살표 잇기 �
   await page.locator('.react-flow__node:has-text("웹 페이지")').focus()
   await page.keyboard.press('Enter')
   await expect(page.locator('.tl-inspector')).toBeVisible()
+  await page.getByText('화살표 관리').click()
   await page.getByLabel(/키보드로 잇기/).selectOption({ index: 1 })
   await page.getByRole('button', { name: '화살표 추가' }).press('Enter')
   await expect(page.locator('.react-flow__edge')).toHaveCount(1)

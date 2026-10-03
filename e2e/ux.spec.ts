@@ -68,3 +68,76 @@ test('속성 창의 체크 칸에서 Ctrl+Z는 부품 되돌리기를 건드리�
   await page.keyboard.press('Control+z')
   await expect(nodes(page)).toHaveCount(5)
 })
+
+async function twoParts(page: import('@playwright/test').Page) {
+  await page.getByRole('button', { name: '웹 페이지 추가' }).click()
+  await page.getByRole('button', { name: 'AI 에이전트 추가' }).click()
+  const web = page.locator('.react-flow__node:has-text("웹 페이지")')
+  const ai = page.locator('.react-flow__node:has-text("AI 에이전트")')
+  const drag = async (loc: typeof web, x: number, y: number) => {
+    const b = (await loc.boundingBox())!
+    await page.mouse.move(b.x + 60, b.y + 12)
+    await page.mouse.down()
+    await page.mouse.move(x, y, { steps: 6 })
+    await page.mouse.up()
+  }
+  await drag(web, 330, 200)
+  await drag(ai, 720, 320)
+  await page.mouse.click(600, 120)
+  return { web, ai }
+}
+
+const edgeCount = (page: import('@playwright/test').Page) => page.locator('.react-flow__edge').count()
+
+for (const [label, dx] of [
+  ['점에 정확히', 0],
+  ['점에서 15px 벗어나게', -15],
+  ['점에서 30px 벗어나게', -30],
+] as const) {
+  test(`연결: 화살표를 ${label} 놓아도 이어진다`, async ({ page }) => {
+    await openApp(page)
+    const { web, ai } = await twoParts(page)
+    const s = (await web.locator('.react-flow__handle.source').boundingBox())!
+    const t = (await ai.locator('.react-flow__handle.target').boundingBox())!
+    await page.mouse.move(s.x + s.width / 2, s.y + s.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(t.x + t.width / 2 + dx, t.y + t.height / 2, { steps: 10 })
+    await page.mouse.up()
+    await expect.poll(() => edgeCount(page)).toBe(1)
+  })
+}
+
+test('연결: 부품 몸통 가운데에 놓아도 이어진다', async ({ page }) => {
+  await openApp(page)
+  const { web, ai } = await twoParts(page)
+  const s = (await web.locator('.react-flow__handle.source').boundingBox())!
+  const b = (await ai.boundingBox())!
+  await page.mouse.move(s.x + s.width / 2, s.y + s.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 10 })
+  await page.mouse.up()
+  await expect.poll(() => edgeCount(page)).toBe(1)
+})
+
+test('연결 실패: 빈 곳에 놓으면 이유를 알려 준다', async ({ page }) => {
+  await openApp(page)
+  const { web } = await twoParts(page)
+  const s = (await web.locator('.react-flow__handle.source').boundingBox())!
+  await page.mouse.move(s.x + s.width / 2, s.y + s.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(520, 560, { steps: 10 })
+  await page.mouse.up()
+  await expect(page.getByRole('status')).toContainText('다른 부품 위에 놓아 주세요')
+  expect(await edgeCount(page)).toBe(0)
+})
+
+test('속성 창이 캔버스를 가리지 않는다: 선택해도 캔버스 높이의 절반 이하', async ({ page }) => {
+  await openApp(page)
+  await loadSample(page, '메일 비서')
+  await page.locator('.react-flow__node').first().click()
+  const r = await page.evaluate(() => ({
+    i: document.querySelector('.tl-inspector')!.getBoundingClientRect().height,
+    c: document.querySelector('.tl-canvas')!.getBoundingClientRect().height,
+  }))
+  expect(r.i).toBeLessThanOrEqual(r.c * 0.3)
+})

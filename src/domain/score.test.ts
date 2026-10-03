@@ -16,7 +16,7 @@ const rule = (id: string, severity: Rule['severity'], when: string[], fixes: Rul
   fixes,
   basis: [{ source: 'unverified' }],
 })
-const fx = (id: string, score: number, sets?: Rule['fixes'][number]['sets']) => ({ id, label: id, score, ...(sets ? { sets } : {}) })
+const fx = (id: string, score: number, sets?: Rule['fixes'][number]['sets']) => ({ id, label: id, score, effort: 'low' as const, ...(sets ? { sets } : {}) })
 
 /** AI 노드 하나 + 이웃 노드에 속성 */
 const g = (attrs: Graph['nodes'][number]['attributes']): Graph => ({

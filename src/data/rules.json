@@ -14,17 +14,20 @@
         "id": "human_approval",
         "label": "전송 전 사람 승인 단계 추가",
         "score": -30,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "least_privilege",
         "label": "도구 권한 최소화",
-        "score": -20
+        "score": -20,
+        "effort": "low"
       },
       {
         "id": "source_label",
         "label": "입력 출처를 AI에게 구분해서 전달",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -60,17 +63,20 @@
       {
         "id": "split_trifecta",
         "label": "3요소 중 하나를 다른 AI·권한으로 분리",
-        "score": -35
+        "score": -35,
+        "effort": "high"
       },
       {
         "id": "recipient_allowlist",
         "label": "전송 대상 허용 목록",
-        "score": -20
+        "score": -20,
+        "effort": "low"
       },
       {
         "id": "human_approval",
         "label": "전송 전 사람 승인 단계 추가",
         "score": -20,
+        "effort": "mid",
         "sets": "human.approval"
       }
     ],
@@ -111,17 +117,20 @@
       {
         "id": "split_roles",
         "label": "읽기·변경·실행 역할을 AI별로 분리",
-        "score": -30
+        "score": -30,
+        "effort": "high"
       },
       {
         "id": "sandbox",
         "label": "실행은 격리된 샌드박스에서",
-        "score": -25
+        "score": -25,
+        "effort": "high"
       },
       {
         "id": "human_approval",
         "label": "변경·실행 전 사람 승인 단계 추가",
         "score": -15,
+        "effort": "mid",
         "sets": "human.approval"
       }
     ],
@@ -153,17 +162,20 @@
         "id": "human_approval",
         "label": "변경 전 사람 승인 단계 추가",
         "score": -25,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "undo_log",
         "label": "변경 내역 기록과 되돌리기",
-        "score": -15
+        "score": -15,
+        "effort": "mid"
       },
       {
         "id": "scope_limit",
         "label": "변경 가능한 범위 제한",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -193,17 +205,20 @@
       {
         "id": "masking",
         "label": "전송 전 민감정보 마스킹",
-        "score": -25
+        "score": -25,
+        "effort": "mid"
       },
       {
         "id": "private_model",
         "label": "사내·전용 모델 사용",
-        "score": -30
+        "score": -30,
+        "effort": "high"
       },
       {
         "id": "vendor_terms",
         "label": "업체 보관기간·학습 미사용 조건 확인",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -233,17 +248,20 @@
       {
         "id": "log_masking",
         "label": "로그 저장 전 마스킹",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "retention",
         "label": "보관기간 제한",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       },
       {
         "id": "log_access",
         "label": "로그 접근 권한 제한",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -273,17 +291,20 @@
       {
         "id": "review_before_write",
         "label": "저장소에 쓰기 전 검수",
-        "score": -25
+        "score": -25,
+        "effort": "mid"
       },
       {
         "id": "source_isolation",
         "label": "출처 표시와 격리 저장",
-        "score": -15
+        "score": -15,
+        "effort": "mid"
       },
       {
         "id": "change_history",
         "label": "변경 이력 보관",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -318,17 +339,20 @@
       {
         "id": "sandbox",
         "label": "실행은 격리된 샌드박스에서",
-        "score": -35
+        "score": -35,
+        "effort": "high"
       },
       {
         "id": "network_block",
         "label": "실행 환경의 외부 네트워크 차단",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "human_approval",
         "label": "실행 전 사람 승인 단계 추가",
         "score": -15,
+        "effort": "mid",
         "sets": "human.approval"
       }
     ],
@@ -364,18 +388,21 @@
       {
         "id": "range_check",
         "label": "값 범위·변화율 검사",
-        "score": -25
+        "score": -25,
+        "effort": "low"
       },
       {
         "id": "interlock",
         "label": "안전 인터록은 AI 밖에서 유지",
         "score": -30,
+        "effort": "high",
         "sets": "interlock.external"
       },
       {
         "id": "human_confirm",
         "label": "제어 명령 전 담당자 확인",
         "score": -15,
+        "effort": "mid",
         "sets": "human.approval"
       }
     ],
@@ -412,17 +439,20 @@
         "id": "interlock",
         "label": "안전 인터록(SIS)을 AI·기본 제어와 분리된 독립 구성으로 유지",
         "score": -35,
+        "effort": "high",
         "sets": "interlock.external"
       },
       {
         "id": "command_allowlist",
         "label": "제어 명령 허용 목록",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "human_confirm",
         "label": "제어 명령 전 담당자 확인",
         "score": -15,
+        "effort": "mid",
         "sets": "human.approval"
       }
     ],
@@ -468,22 +498,26 @@
       {
         "id": "deidentify",
         "label": "공정 조건·수치 비식별화",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "private_model",
         "label": "사내 모델 사용",
-        "score": -25
+        "score": -25,
+        "effort": "high"
       },
       {
         "id": "field_allowlist",
         "label": "전송 항목 허용 목록",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       },
       {
         "id": "vendor_no_reuse",
         "label": "벤더의 운영 데이터 재사용·학습 금지 설정과 계약",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -515,17 +549,20 @@
         "id": "human_confirm",
         "label": "제어 명령 전 담당자 확인",
         "score": -30,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "change_limit",
         "label": "1회 변경폭·속도 제한",
-        "score": -25
+        "score": -25,
+        "effort": "mid"
       },
       {
         "id": "safe_state",
         "label": "AI 성능·안전 지표 기준 미달 시 비AI 제어로 복귀",
-        "score": -15
+        "score": -15,
+        "effort": "high"
       }
     ],
     "basis": [
@@ -560,17 +597,20 @@
       {
         "id": "separate_setpoint",
         "label": "설정값 변경 경로를 문서 읽는 AI와 분리",
-        "score": -30
+        "score": -30,
+        "effort": "high"
       },
       {
         "id": "range_check",
         "label": "변경 전 허용 범위 검사",
-        "score": -20
+        "score": -20,
+        "effort": "low"
       },
       {
         "id": "change_alert",
         "label": "변경 기록과 담당자 알림",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -600,17 +640,20 @@
       {
         "id": "user_scoped_access",
         "label": "질문자 권한 기준으로 접근 범위 제한",
-        "score": -25
+        "score": -25,
+        "effort": "mid"
       },
       {
         "id": "output_filter",
         "label": "답변 출력 검사",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "source_label",
         "label": "입력 출처를 AI에게 구분해서 전달",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -645,18 +688,21 @@
       {
         "id": "read_only",
         "label": "변경 권한 제거 또는 읽기 전용 전환",
-        "score": -30
+        "score": -30,
+        "effort": "low"
       },
       {
         "id": "human_approval",
         "label": "변경 전 사람 승인 단계 추가",
         "score": -20,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "backup",
         "label": "백업과 되돌리기",
-        "score": -15
+        "score": -15,
+        "effort": "mid"
       }
     ],
     "basis": [
@@ -696,17 +742,20 @@
       {
         "id": "filter_before_store",
         "label": "저장 전 필터링",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "memory_label",
         "label": "기억 영역에 출처 표시",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       },
       {
         "id": "memory_cleanup",
         "label": "기억 주기적 점검·삭제",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -737,17 +786,20 @@
         "id": "human_approval",
         "label": "중요한 결과는 사람 확인 후 사용",
         "score": -25,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "output_validation",
         "label": "출력 형식·값 검증",
-        "score": -15
+        "score": -15,
+        "effort": "mid"
       },
       {
         "id": "source_cite",
         "label": "답변에 근거 출처 표기",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -778,17 +830,20 @@
       {
         "id": "split_agents",
         "label": "입력 처리 AI와 도구 AI 분리",
-        "score": -35
+        "score": -35,
+        "effort": "high"
       },
       {
         "id": "least_privilege",
         "label": "도구 권한 최소화",
-        "score": -20
+        "score": -20,
+        "effort": "low"
       },
       {
         "id": "human_approval",
         "label": "변경·전송 전 사람 승인 단계 추가",
         "score": -15,
+        "effort": "mid",
         "sets": "human.approval"
       }
     ],
@@ -830,12 +885,14 @@
       {
         "id": "show_full_content",
         "label": "승인 화면에 전송 내용 전체 표시",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       },
       {
         "id": "show_recipient",
         "label": "수신자 도메인과 첨부 표시",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -865,17 +922,20 @@
       {
         "id": "vendor_opt_out",
         "label": "업체의 보관·학습 사용 옵션 끄기",
-        "score": -25
+        "score": -25,
+        "effort": "low"
       },
       {
         "id": "masking",
         "label": "저장 전 마스킹",
-        "score": -15
+        "score": -15,
+        "effort": "mid"
       },
       {
         "id": "retention",
         "label": "보관기간 제한",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -905,17 +965,20 @@
       {
         "id": "no_sensitive_in_sandbox",
         "label": "실행 환경에 민감정보 미전달",
-        "score": -25
+        "score": -25,
+        "effort": "mid"
       },
       {
         "id": "network_block",
         "label": "실행 환경의 외부 네트워크 차단",
-        "score": -25
+        "score": -25,
+        "effort": "mid"
       },
       {
         "id": "exec_log_review",
         "label": "실행 로그 점검",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -947,17 +1010,20 @@
         "id": "human_approval",
         "label": "전송 전 사람 승인 단계 추가",
         "score": -30,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "recipient_allowlist",
         "label": "전송 대상 허용 목록",
-        "score": -25
+        "score": -25,
+        "effort": "low"
       },
       {
         "id": "auto_block",
         "label": "민감정보 자동 탐지 후 전송 차단",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       }
     ],
     "basis": [
@@ -992,17 +1058,20 @@
       {
         "id": "per_user_store",
         "label": "사용자별 저장소 분리",
-        "score": -25
+        "score": -25,
+        "effort": "high"
       },
       {
         "id": "scoped_write",
         "label": "쓰기 시 권한 구분",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "scan_before_write",
         "label": "저장 전 민감정보 검사",
-        "score": -10
+        "score": -10,
+        "effort": "mid"
       }
     ],
     "basis": [
@@ -1038,17 +1107,20 @@
         "id": "human_approval",
         "label": "전송 전 사람 승인 단계 추가",
         "score": -25,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "recipient_allowlist",
         "label": "전송 대상 허용 목록",
-        "score": -20
+        "score": -20,
+        "effort": "low"
       },
       {
         "id": "rate_limit",
         "label": "전송 횟수 제한",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -1079,17 +1151,20 @@
         "id": "human_approval",
         "label": "실행 전 사람 승인 단계 추가",
         "score": -30,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "sandbox",
         "label": "격리된 샌드박스에서 실행",
-        "score": -25
+        "score": -25,
+        "effort": "high"
       },
       {
         "id": "command_allowlist",
         "label": "실행 가능한 명령 허용 목록",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       }
     ],
     "basis": [
@@ -1119,17 +1194,20 @@
       {
         "id": "split_tools",
         "label": "읽기·변경·전송 도구 분리",
-        "score": -25
+        "score": -25,
+        "effort": "high"
       },
       {
         "id": "scoped_keys",
         "label": "도구별 최소 권한 키 사용",
-        "score": -20
+        "score": -20,
+        "effort": "mid"
       },
       {
         "id": "call_log",
         "label": "도구 호출 기록 보관",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [
@@ -1154,17 +1232,20 @@
       {
         "id": "internal_validation",
         "label": "변경은 사내 서비스가 검증 후 실행",
-        "score": -30
+        "score": -30,
+        "effort": "mid"
       },
       {
         "id": "field_allowlist",
         "label": "변경 가능한 항목 허용 목록",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       },
       {
         "id": "human_approval",
         "label": "변경 전 사람 승인 단계 추가",
         "score": -15,
+        "effort": "mid",
         "sets": "human.approval"
       }
     ],
@@ -1196,17 +1277,20 @@
         "id": "human_approval",
         "label": "저장소 변경 검수 단계 추가",
         "score": -25,
+        "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "change_history",
         "label": "변경 이력과 되돌리기",
-        "score": -15
+        "score": -15,
+        "effort": "low"
       },
       {
         "id": "source_label",
         "label": "변경 출처 표시",
-        "score": -10
+        "score": -10,
+        "effort": "low"
       }
     ],
     "basis": [

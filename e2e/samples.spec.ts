@@ -20,6 +20,7 @@ for (const s of SAMPLES) {
     await expect(threatTitle(page)).toHaveText(`발견된 위협 ${s.findings}개`)
 
     // 2) 첫 위협 카드를 펼치면 대응 체크가 보이고, 체크하면 점수가 내려간다
+    await page.getByRole('tab', { name: /^위협/ }).click()
     await page.locator('.tl-threat__head').first().click()
     const fix = page.locator('.tl-threat__body input[type=checkbox]').first()
     await fix.check()

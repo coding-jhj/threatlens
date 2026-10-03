@@ -14,7 +14,7 @@ const rule = (id: string, basis: Rule['basis'], when: string[]): Rule => ({
   category: 'data-leak',
   severity: 'high',
   when,
-  fixes: [{ id: 'f', label: 'f', score: -10 }],
+  fixes: [{ id: 'f', label: 'f', score: -10, effort: 'low' }],
   basis,
 })
 

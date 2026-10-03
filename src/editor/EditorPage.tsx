@@ -258,6 +258,8 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           activeKey={activeFinding ? activeKey : null}
           onToggleActive={(k) => setActiveKey((cur) => (cur === k ? null : k))}
           onToggleFix={toggleFix}
+          onApplyKeys={(keys) => setApplied((prev) => new Set([...prev, ...keys]))}
+          onClearApplied={() => setApplied(new Set())}
         />
       </div>
       <footer className="tl-status">

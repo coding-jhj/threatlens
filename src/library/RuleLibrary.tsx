@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { RULES } from '../data'
 import { ATTRIBUTES } from '../domain/attributes'
-import { CATEGORIES, CATEGORY_LABEL, parseCondition, type BasisSource, type Rule } from '../domain/rules'
+import { CATEGORIES, CATEGORY_LABEL, EFFORT_LABEL, parseCondition, type BasisSource, type Rule } from '../domain/rules'
 import { Chip, SeverityChip } from '../ui/components'
 import { formatDelta } from '../ui/severity'
 import { countByCategory, filterRules, type CategoryFilter } from './filter'
@@ -54,6 +54,7 @@ function RuleCard({ rule }: { rule: Rule }) {
         {rule.fixes.map((f) => (
           <li key={f.id}>
             <span>{f.label}</span>
+            <span className="tl-lib__effort">난이도 {EFFORT_LABEL[f.effort]}</span>
             <span className="tl-lib__delta">{formatDelta(f.score)}</span>
           </li>
         ))}

@@ -1,9 +1,10 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
-import { expect, test, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { RULES } from '../data'
 import { analyze } from '../domain/analyze'
 import { appliedKey } from '../domain/engine'
 import type { Graph } from '../domain/graph'
+import { planActions } from '../domain/plan'
 import { scoreGraph } from '../domain/score'
 import { ThreatPanel } from './ThreatPanel'
 import { findingKey, highlightEdges, pruneApplied } from './threat'
@@ -48,6 +49,7 @@ test('pruneApplied: 지워진 노드의 체크만 버리고, 변화 없으면 �
   expect([...pruneApplied(new Set([keep, drop]), graph)]).toEqual([keep])
 })
 
+let openThreats = true
 const renderPanel = (over: Partial<Parameters<typeof ThreatPanel>[0]> = {}) => {
   const applied = over.applied ?? new Set<string>()
   const analysis = analyze(graph, RULES, applied)
@@ -62,9 +64,13 @@ const renderPanel = (over: Partial<Parameters<typeof ThreatPanel>[0]> = {}) => {
     activeKey: null,
     onToggleActive: vi.fn(),
     onToggleFix: vi.fn(),
+    onApplyKeys: vi.fn(),
+    onClearApplied: vi.fn(),
     ...over,
   }
   render(<ThreatPanel {...props} />)
+  // 기본 화면은 "행동 계획" 탭이므로, 위협 카드를 보는 시험은 "위협" 탭으로 옮긴다
+  if (props.hasAi && openThreats) fireEvent.click(screen.getByRole('tab', { name: /^위협/ }))
   return props
 }
 
@@ -106,4 +112,44 @@ test('ThreatPanel: 대응 적용 시 대응 전→후 점수와 감소 칩', () 
 test('ThreatPanel: 대응 전후가 같으면 감소 칩이 없다', () => {
   renderPanel()
   expect(screen.queryByText(/^−\d+$/)).toBeNull()
+})
+
+describe('ThreatPanel: 행동 계획 탭', () => {
+  const open = () => {
+    openThreats = false
+    const p = renderPanel()
+    openThreats = true
+    return p
+  }
+
+  test('처음 열면 행동 계획 탭이 선택되어 있고 가장 먼저 막을 위험과 대응 목록이 보인다', () => {
+    open()
+    expect(screen.getByRole('tab', { name: '행동 계획', selected: true })).toBeTruthy()
+    expect(screen.getByRole('region', { name: '가장 먼저 막을 위험' })).toBeTruthy()
+    expect(screen.getByRole('list').querySelectorAll('li').length).toBeGreaterThan(0)
+  })
+
+  test('[대응 N개 적용]을 누르면 계획의 모든 키가 onApplyKeys로 전달된다', () => {
+    const p = open()
+    fireEvent.click(screen.getByRole('button', { name: /^대응 \d+개 적용/ }))
+    const keys = (p.onApplyKeys as ReturnType<typeof vi.fn>).mock.calls[0][0] as string[]
+    expect(keys.length).toBeGreaterThanOrEqual(3)
+    const applied = new Set(keys)
+    expect(scoreGraph(graph, RULES, applied).overall).toBe(planActions(graph, RULES).after)
+  })
+
+  test('경로 보기 버튼은 onToggleActive(가장 위험한 위협의 키)를 부른다', () => {
+    const p = open()
+    fireEvent.click(screen.getByRole('button', { name: '캔버스에서 경로 보기' }))
+    expect(p.onToggleActive).toHaveBeenCalledTimes(1)
+  })
+
+  test('적용한 대응이 있으면 개수와 [모두 해제]가 보이고, 누르면 onClearApplied', () => {
+    openThreats = false
+    const p = renderPanel({ applied: new Set([appliedKey('b', 'R-01', 'human_approval')]) })
+    openThreats = true
+    expect(screen.getByText(/적용한 대응 1개/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: '모두 해제' }))
+    expect(p.onClearApplied).toHaveBeenCalled()
+  })
 })

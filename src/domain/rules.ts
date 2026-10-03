@@ -20,10 +20,17 @@ export interface Basis {
   url?: string
 }
 
+export const EFFORTS = ['low', 'mid', 'high'] as const
+export type Effort = (typeof EFFORTS)[number]
+/** 사람이 정한 난이도. low=설정·문구 수준, mid=작은 개발이나 운영 절차 추가, high=구조를 바꾸거나 별도 구성이 필요 */
+export const EFFORT_LABEL: Record<Effort, string> = { low: '쉬움', mid: '보통', high: '어려움' }
+export const EFFORT_WEIGHT: Record<Effort, number> = { low: 1, mid: 2, high: 3 }
+
 export interface Fix {
   id: string
   label: string
   score: number
+  effort: Effort
   sets?: AttributeId
 }
 
@@ -96,6 +103,7 @@ function validateOne(raw: unknown, index: number, errors: string[]): void {
       if (ids.has(f.id)) err(`fixes에 중복된 id가 있습니다: ${f.id}`)
       ids.add(f.id)
       if (!Number.isInteger(f.score) || (f.score as number) >= 0) err(`fix ${f.id}의 score는 음의 정수여야 합니다`)
+      if (!(EFFORTS as readonly unknown[]).includes(f.effort)) err(`fix ${f.id}의 effort는 ${EFFORTS.join(', ')} 중 하나여야 합니다`)
       if (f.sets !== undefined && !(typeof f.sets === 'string' && isAttributeId(f.sets))) err(`fix ${f.id}의 sets가 알 수 없는 속성입니다`)
     }
   }

@@ -1,5 +1,5 @@
 import { ReactFlowProvider, useReactFlow } from '@xyflow/react'
-import { useMemo, useRef, useState, type ChangeEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode } from 'react'
 import { RULES } from '../data'
 import { analyze } from '../domain/analyze'
 import { isAiNode } from '../domain/graph'
@@ -45,6 +45,16 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [fileMenuOpen, setFileMenuOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (!menuOpen && !fileMenuOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      setMenuOpen(false)
+      setFileMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [menuOpen, fileMenuOpen])
   const today = () => reportDate(new Date().toISOString())
 
   const copyLink = async () => {
@@ -164,7 +174,14 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
               {notice}
             </div>
           )}
-          {selected && <Inspector node={selected} onChange={(attributes) => dispatch({ type: 'setAttributes', nodeId: selected.id, attributes })} />}
+          {selected && (
+            <Inspector
+              node={selected}
+              others={state.graph.nodes.filter((n) => n.id !== selected.id)}
+              onChange={(attributes) => dispatch({ type: 'setAttributes', nodeId: selected.id, attributes })}
+              onConnect={(to) => dispatch({ type: 'connect', from: selected.id, to })}
+            />
+          )}
         </div>
         <ThreatPanel
           graph={state.graph}

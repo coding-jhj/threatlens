@@ -1,17 +1,38 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Button } from '../ui/components'
 import './editor.css'
 
 export function Onboarding({ onClose, onSample }: { onClose: () => void; onSample: () => void }) {
+  const box = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    const opener = document.activeElement as HTMLElement | null
+    const focusables = () => [...(box.current?.querySelectorAll<HTMLElement>('button, a[href], input, select, [tabindex]:not([tabindex="-1"])') ?? [])]
+    focusables()[0]?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') return onClose()
+      if (e.key !== 'Tab') return
+      const list = focusables()
+      if (list.length === 0) return
+      const first = list[0]
+      const last = list[list.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      opener?.focus?.()
+    }
   }, [onClose])
 
   return (
     <div className="tl-modal" role="dialog" aria-modal="true" aria-labelledby="tl-onb-title">
-      <div className="tl-modal__box">
+      <div className="tl-modal__box" ref={box}>
         <h2 id="tl-onb-title">처음이신가요? 3단계면 됩니다</h2>
         <ol className="tl-onb__steps">
           <li>

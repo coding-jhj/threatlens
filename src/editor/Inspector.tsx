@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import { ATTRIBUTES, ATTRIBUTE_IDS, type AttributeId } from '../domain/attributes'
 import { getPart } from '../domain/parts'
 import { Icon } from '../ui/Icon'
 import type { EditorNode } from './model'
 import './editor.css'
 
-export function Inspector({ node, onChange }: { node: EditorNode; onChange: (attributes: AttributeId[]) => void }) {
+export function Inspector({ node, others, onChange, onConnect }: { node: EditorNode; others: EditorNode[]; onChange: (attributes: AttributeId[]) => void; onConnect: (to: string) => void }) {
+  const [target, setTarget] = useState('')
   const part = getPart(node.partId)
   if (!part) return null
   const toggle = (id: AttributeId, on: boolean) => {
@@ -29,6 +31,32 @@ export function Inspector({ node, onChange }: { node: EditorNode; onChange: (att
           </label>
         ))}
       </div>
+      {others.length > 0 && (
+        <div className="tl-inspector__connect">
+          <label>
+            키보드로 잇기: 이 부품에서 화살표를 보낼 곳
+            <select value={target} onChange={(e) => setTarget(e.target.value)}>
+              <option value="">부품 선택</option>
+              {others.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {getPart(o.partId)?.label ?? o.partId} ({o.id})
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type="button"
+            className="tl-btn tl-btn--secondary"
+            disabled={!target}
+            onClick={() => {
+              onConnect(target)
+              setTarget('')
+            }}
+          >
+            화살표 추가
+          </button>
+        </div>
+      )}
     </section>
   )
 }

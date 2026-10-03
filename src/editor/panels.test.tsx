@@ -10,32 +10,32 @@ import { Summary } from './Summary'
 const node = (attributes: EditorNode['attributes']): EditorNode => ({ id: 'n1', partId: 'ai_agent', attributes, x: 0, y: 0 })
 
 test('Inspector: 속성 12개가 모두 체크박스로 나온다', () => {
-  render(<Inspector node={node([])} onChange={() => {}} />)
+  render(<Inspector node={node([])} others={[]} onConnect={() => {}} onChange={() => {}} />)
   expect(screen.getAllByRole('checkbox')).toHaveLength(12)
 })
 
 test('Inspector: 현재 속성이 체크되어 있다', () => {
-  render(<Inspector node={node(['tool.exec'])} onChange={() => {}} />)
+  render(<Inspector node={node(['tool.exec'])} others={[]} onConnect={() => {}} onChange={() => {}} />)
   expect((screen.getByRole('checkbox', { name: /코드·명령을 실행/ }) as HTMLInputElement).checked).toBe(true)
   expect((screen.getByRole('checkbox', { name: /믿을 수 없는 입력을 읽음/ }) as HTMLInputElement).checked).toBe(false)
 })
 
 test('Inspector: 체크하면 정의 순서대로 정렬된 속성 목록으로 onChange', () => {
   const fn = vi.fn()
-  render(<Inspector node={node(['tool.exec'])} onChange={fn} />)
+  render(<Inspector node={node(['tool.exec'])} others={[]} onConnect={() => {}} onChange={fn} />)
   fireEvent.click(screen.getByRole('checkbox', { name: /믿을 수 없는 입력을 읽음/ }))
   expect(fn).toHaveBeenCalledWith(['input.untrusted', 'tool.exec'])
 })
 
 test('Inspector: 체크를 풀면 해당 속성만 빠진다', () => {
   const fn = vi.fn()
-  render(<Inspector node={node(['input.untrusted', 'tool.exec'])} onChange={fn} />)
+  render(<Inspector node={node(['input.untrusted', 'tool.exec'])} others={[]} onConnect={() => {}} onChange={fn} />)
   fireEvent.click(screen.getByRole('checkbox', { name: /코드·명령을 실행/ }))
   expect(fn).toHaveBeenCalledWith(['input.untrusted'])
 })
 
 test('Inspector: 대응 속성에는 "대응" 표시', () => {
-  render(<Inspector node={node([])} onChange={() => {}} />)
+  render(<Inspector node={node([])} others={[]} onConnect={() => {}} onChange={() => {}} />)
   expect(screen.getAllByText('대응')).toHaveLength(2)
 })
 

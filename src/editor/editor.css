@@ -88,3 +88,24 @@
 .tl-canvas__empty div.tl-canvas__start { pointer-events: auto; max-width: 400px; text-align: left; }
 .tl-canvas__start .tl-samples { margin-top: 12px; }
 .tl-toast { position: absolute; z-index: 8; left: 50%; top: 56px; transform: translateX(-50%); padding: 8px 14px; border: 1px solid var(--amber); border-radius: var(--radius-sm); background: var(--amber-bg); color: var(--amber); font-size: 12px; }
+
+/* 반응형: 글자가 세로로 꺾이지 않도록 하고, 좁은 화면에서는 패널을 줄이거나 아래로 내린다 */
+.tl-header .tl-btn, .tl-nav a, .tl-toolbar .tl-btn, .tl-summary { white-space: nowrap; }
+.tl-toolbar { flex-wrap: wrap; right: 64px; }
+@media (max-width: 1100px) {
+  .tl-header { height: auto; min-height: 56px; flex-wrap: wrap; gap: 8px 16px; padding: 8px 16px; }
+  .tl-palette { width: 184px; padding: 12px; }
+  .tl-threats { width: 300px; }
+}
+@media (max-width: 900px) {
+  .tl-editor { flex-direction: column; }
+  .tl-palette { width: 100%; flex-direction: row; gap: 8px; padding: 8px 12px; overflow: auto hidden; border-right: 0; border-bottom: 1px solid var(--line); }
+  .tl-palette__group, .tl-palette__foot { display: none; }
+  .tl-palette__item { width: auto; flex: none; margin: 0; }
+  .tl-palette__grip { display: none; }
+  .tl-canvas { min-height: 320px; }
+  .tl-threats { width: 100%; flex: none; max-height: 40%; border-left: 0; border-top: 1px solid var(--line); }
+}
+.tl-inspector__connect { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; }
+.tl-inspector__connect label { display: flex; align-items: center; gap: 8px; }
+.tl-inspector__connect select { height: 32px; padding: 0 8px; background: var(--panel-2); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-sm); font: inherit; }

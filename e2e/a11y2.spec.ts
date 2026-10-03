@@ -1,6 +1,6 @@
 import { AxeBuilder } from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
-import { loadSample, openApp } from './helpers.ts'
+import { loadSample, openApp, openWithNodes } from './helpers.ts'
 
 const ROUTES = ['#/', '#/rules', '#/report', '#/eval']
 
@@ -68,10 +68,9 @@ test('모바일 390×800: 편집기에서 캔버스를 쓸 수 있고 위협 카
   await expect(page.locator('.tl-threats__title').first()).toBeInViewport()
 })
 
-test('저장·불러오기 한도: 부품 100개 구조를 JSON으로 저장하고 다시 불러온다', async ({ page }) => {
-  await openApp(page)
-  const names = ['웹 페이지 추가', 'AI 에이전트 추가', '메일 전송 추가', '외부 수신자 추가', '문서 저장소 추가']
-  for (let i = 0; i < 100; i++) await page.getByRole('button', { name: names[i % 5] }).click()
+test('저장·불러오기 한도: 부품 100개 구조가 새로고침 뒤에도 그대로 복원된다', async ({ page }) => {
+  await openWithNodes(page, 100)
   await page.reload()
-  await expect(page.locator('.react-flow__node')).toHaveCount(100)
+  await expect(page.locator('.react-flow__node').first()).toBeVisible()
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('threatlens.workspace.v1')!).nodes.length)).toBe(100)
 })

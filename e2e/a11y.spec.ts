@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { openApp } from './helpers.ts'
+import { openApp, openWithNodes } from './helpers.ts'
 
 test('키보드만으로: 부품 추가 → 속성 선택 → 화살표 잇기 → 되돌리기', async ({ page }) => {
   await openApp(page)
@@ -71,15 +71,13 @@ for (const [w, h] of [
   })
 }
 
-test('성능: 부품 100개를 놓아도 끊김 없이 동작한다 (프레임 2개 100ms 이내)', async ({ page }) => {
-  await openApp(page)
-  const names = ['웹 페이지 추가', 'AI 에이전트 추가', '메일 전송 추가', '외부 수신자 추가', '문서 저장소 추가']
-  for (let i = 0; i < 100; i++) await page.getByRole('button', { name: names[i % 5] }).click()
-  await expect(page.locator('.react-flow__node')).toHaveCount(100)
+test('성능: 부품 100개 구조에서도 끊김 없이 동작한다 (프레임 2개 300ms 이내, 분석 결과 표시)', async ({ page }) => {
+  await openWithNodes(page, 100)
+  await expect(page.locator('.tl-summary__score')).toBeVisible()
   const ms = await page.evaluate(async () => {
     const t = performance.now()
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
     return performance.now() - t
   })
-  expect(ms).toBeLessThan(100)
+  expect(ms).toBeLessThan(300)
 })

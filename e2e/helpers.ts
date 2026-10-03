@@ -31,3 +31,20 @@ export async function connect(page: Page, from: string, to: string) {
   await page.mouse.move(t.x + t.width / 2, t.y + t.height / 2, { steps: 8 })
   await page.mouse.up()
 }
+
+/** 부품 n개짜리 구조를 자동 저장 칸에 미리 넣고 연다 (수백 번 클릭하지 않아도 되도록) */
+export async function openWithNodes(page: Page, n: number) {
+  const parts = ['web_page', 'ai_agent', 'mail_tool', 'external_party', 'doc_store']
+  const saved = {
+    version: 1,
+    nodes: Array.from({ length: n }, (_, i) => ({ id: `n${i + 1}`, part: parts[i % 5], attributes: [], x: (i % 10) * 240, y: Math.floor(i / 10) * 130 })),
+    edges: Array.from({ length: n - 1 }, (_, i) => ({ id: `e${i + 1}`, from: `n${i + 1}`, to: `n${i + 2}` })),
+    applied: [],
+  }
+  await page.addInitScript((text) => {
+    localStorage.setItem('threatlens.onboarded.v1', '1')
+    localStorage.setItem('threatlens.workspace.v1', text)
+  }, JSON.stringify(saved))
+  await page.goto('/#/')
+  await expect(page.locator('.react-flow__node').first()).toBeVisible()
+}

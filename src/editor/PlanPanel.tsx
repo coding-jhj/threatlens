@@ -2,11 +2,14 @@ import { useMemo } from 'react'
 import type { Analysis } from '../domain/analyze'
 import type { Graph } from '../domain/graph'
 import { getPart } from '../domain/parts'
+import type { HazardLevels } from '../domain/hazard'
 import { planActions } from '../domain/plan'
-import { EFFORT_LABEL, type Rule } from '../domain/rules'
+import { EFFORT_LABEL, type Hazard, type Rule } from '../domain/rules'
 import { scoreGraph } from '../domain/score'
 import { Button, Chip, SeverityChip } from '../ui/components'
+import { HazardTable, RiskDiamond } from './RiskDiamond'
 import { scoreTone } from './scoreTone'
+import { StoryLines } from './StoryLines'
 import { findingKey } from './threat'
 
 interface Props {
@@ -14,6 +17,8 @@ interface Props {
   rules: readonly Rule[]
   applied: ReadonlySet<string>
   analysis: Analysis
+  levels: HazardLevels
+  activeHazard: Hazard | null
   activeKey: string | null
   onToggleActive: (key: string) => void
   onApplyKeys: (keys: string[]) => void
@@ -22,7 +27,7 @@ interface Props {
 
 const partLabel = (graph: Graph, nodeId: string) => getPart(graph.nodes.find((n) => n.id === nodeId)?.partId ?? '')?.label ?? '?'
 
-export function PlanPanel({ graph, rules, applied, analysis, activeKey, onToggleActive, onApplyKeys, onClearApplied }: Props) {
+export function PlanPanel({ graph, rules, applied, analysis, levels, activeHazard, activeKey, onToggleActive, onApplyKeys, onClearApplied }: Props) {
   const plan = useMemo(() => planActions(graph, rules, applied), [graph, rules, applied])
   const score = useMemo(() => scoreGraph(graph, rules, applied), [graph, rules, applied])
   const ruleById = useMemo(() => new Map(rules.map((r) => [r.id, r])), [rules])
@@ -48,6 +53,7 @@ export function PlanPanel({ graph, rules, applied, analysis, activeKey, onToggle
           </div>
           <div className="tl-plan__toptitle">{topRule.title}</div>
           <p className="tl-plan__where">대상: {partLabel(graph, top.nodeId)}</p>
+          <StoryLines story={topRule.story} />
           <Button className="tl-plan__show" aria-pressed={activeKey === topKey} onClick={() => onToggleActive(topKey)}>
             {activeKey === topKey ? '캔버스 표시 끄기' : '캔버스에서 경로 보기'}
           </Button>
@@ -103,6 +109,11 @@ export function PlanPanel({ graph, rules, applied, analysis, activeKey, onToggle
           추천할 대응을 모두 적용했습니다. 남은 {plan.after}점은 대응을 다 해도 남는 위험(위협마다 최소 10%)입니다.
         </p>
       )}
+
+      <section className="tl-plan__hz" aria-label="위험 마름모">
+        <RiskDiamond levels={levels} size={132} labels active={activeHazard} />
+        <HazardTable levels={levels} active={activeHazard} />
+      </section>
 
       {applied.size > 0 && (
         <div className="tl-plan__applied">

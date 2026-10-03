@@ -11,6 +11,17 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   chem: '화공 특화',
 }
 
+/** 위험 마름모의 네 칸. 규칙마다 사람이 "주된 위험의 성격"으로 하나를 지정한다 */
+export const HAZARDS = ['inject', 'leak', 'misuse', 'plant'] as const
+export type Hazard = (typeof HAZARDS)[number]
+export const HAZARD_LABEL: Record<Hazard, string> = { inject: '주입', leak: '유출', misuse: '오용', plant: '설비' }
+export const HAZARD_HINT: Record<Hazard, string> = {
+  inject: '믿을 수 없는 글이 AI를 조종하거나 오염시킴',
+  leak: '정보가 밖이나 다른 사람에게 나감',
+  misuse: 'AI의 권한이 확인·분리 없이 잘못 쓰임',
+  plant: 'AI의 판단이 물리 설비에 영향을 줌',
+}
+
 export const BASIS_SOURCES = ['OWASP-LLM', 'MITRE-ATLAS', 'MITRE-ATTACK-ICS', 'CISA-AI-OT', 'IEC-61511', 'unverified'] as const
 export type BasisSource = (typeof BASIS_SOURCES)[number]
 
@@ -43,7 +54,10 @@ export interface Rule {
   id: string
   title: string
   summary: string
+  /** 공격 시나리오 3줄: 원인 → AI가 하는 일 → 결과 */
+  story: [string, string, string]
   category: Category
+  hazard: Hazard
   severity: Severity
   when: string[]
   fixes: Fix[]
@@ -71,6 +85,8 @@ function validateOne(raw: unknown, index: number, errors: string[]): void {
   if (!isStr(raw.id) || !/^R-\d{2}$/.test(raw.id)) err('id는 "R-01" 형식이어야 합니다')
   if (!isStr(raw.title)) err('title이 비어 있습니다')
   if (!isStr(raw.summary)) err('summary가 비어 있습니다')
+  if (!Array.isArray(raw.story) || raw.story.length !== 3 || !raw.story.every(isStr)) err('story는 비어 있지 않은 문장 3개여야 합니다')
+  if (!(HAZARDS as readonly unknown[]).includes(raw.hazard)) err(`hazard는 ${HAZARDS.join(', ')} 중 하나여야 합니다`)
   if (!(CATEGORIES as readonly unknown[]).includes(raw.category)) err(`category는 ${CATEGORIES.join(', ')} 중 하나여야 합니다`)
   if (!['high', 'medium', 'low'].includes(raw.severity as string)) err('severity는 high, medium, low 중 하나여야 합니다')
 

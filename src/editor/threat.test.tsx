@@ -4,10 +4,11 @@ import { RULES } from '../data'
 import { analyze } from '../domain/analyze'
 import { appliedKey } from '../domain/engine'
 import type { Graph } from '../domain/graph'
+import { hazardLevels } from '../domain/hazard'
 import { planActions } from '../domain/plan'
 import { scoreGraph } from '../domain/score'
 import { ThreatPanel } from './ThreatPanel'
-import { findingKey, highlightEdges, pruneApplied } from './threat'
+import { findingKey, highlightEdges, pathBadges, pruneApplied } from './threat'
 
 const graph: Graph = {
   nodes: [
@@ -64,6 +65,8 @@ const renderPanel = (over: Partial<Parameters<typeof ThreatPanel>[0]> = {}) => {
     activeKey: null,
     onToggleActive: vi.fn(),
     onToggleFix: vi.fn(),
+    levels: hazardLevels(graph, RULES, applied),
+    activeHazard: null,
     onApplyKeys: vi.fn(),
     onClearApplied: vi.fn(),
     ...over,
@@ -126,7 +129,8 @@ describe('ThreatPanel: 행동 계획 탭', () => {
     open()
     expect(screen.getByRole('tab', { name: '행동 계획', selected: true })).toBeTruthy()
     expect(screen.getByRole('region', { name: '가장 먼저 막을 위험' })).toBeTruthy()
-    expect(screen.getByRole('list').querySelectorAll('li').length).toBeGreaterThan(0)
+    expect(document.querySelectorAll('.tl-plan__step').length).toBeGreaterThan(0)
+    expect(screen.getByRole('img', { name: /^위험 마름모/ })).toBeTruthy()
   })
 
   test('[대응 N개 적용]을 누르면 계획의 모든 키가 onApplyKeys로 전달된다', () => {
@@ -152,4 +156,24 @@ describe('ThreatPanel: 행동 계획 탭', () => {
     fireEvent.click(screen.getByRole('button', { name: '모두 해제' }))
     expect(p.onClearApplied).toHaveBeenCalled()
   })
+})
+
+test('pathBadges: 선택 없으면 빈 객체, 선택하면 경로를 따라 1부터 번호가 붙고 경로 밖 부품은 없다', () => {
+  const an = analyze(graph, RULES)
+  expect(pathBadges(an, null)).toEqual({})
+  const f = an.findings.find((x) => x.ruleId === 'R-01')!
+  expect(pathBadges(an, f)).toEqual({ a: 1, b: 2, c: 3, d: 4 })
+})
+
+test('pathBadges: 지나는 경로가 없으면 대상 AI와 조건을 만든 부품에 번호를 붙인다', () => {
+  const g: Graph = {
+    nodes: [
+      { id: 'b', partId: 'ai_agent', attributes: ['tool.write', 'tool.exec'] },
+      { id: 'x', partId: 'doc_store', attributes: [] },
+    ],
+    edges: [{ id: 'e1', from: 'b', to: 'x' }],
+  }
+  const an = analyze(g, RULES)
+  const f = an.findings.find((x) => x.ruleId === 'R-03')!
+  expect(pathBadges(an, f)).toEqual({ b: 1 })
 })

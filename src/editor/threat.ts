@@ -22,3 +22,16 @@ export function pruneApplied(applied: ReadonlySet<string>, graph: Graph): Readon
   const kept = [...applied].filter((k) => ids.has(k.split('|')[0]))
   return kept.length === applied.size ? applied : new Set(kept)
 }
+
+/**
+ * 위협 카드를 눌렀을 때 캔버스 부품에 붙일 번호 (부품 id → 1부터).
+ * 그 위협이 걸린 경로를 입력에서 출구 순서로 따라가며 매기고, 경로가 없으면 위협 대상 AI와 조건을 만든 부품에 매긴다.
+ */
+export function pathBadges(analysis: Analysis, active: Finding | null): Record<string, number> {
+  if (!active) return {}
+  const paths = analysis.paths.filter((p) => p.nodeIds.includes(active.nodeId) && p.ruleIds.includes(active.ruleId))
+  const order = paths.length > 0 ? paths.flatMap((p) => p.nodeIds) : [...new Set([active.nodeId, ...Object.values(active.sources).flat()])]
+  const badges: Record<string, number> = {}
+  for (const id of order) if (!(id in badges)) badges[id] = Object.keys(badges).length + 1
+  return badges
+}

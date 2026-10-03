@@ -53,6 +53,7 @@ export function Canvas({
   onClearAll,
   active = true,
   fitSignal = 0,
+  badges,
 }: {
   state: EditorState
   dispatch: (a: Action) => void
@@ -64,6 +65,7 @@ export function Canvas({
   onClearAll?: () => void
   active?: boolean
   fitSignal?: number
+  badges?: Readonly<Record<string, number>>
 }) {
   const theme = useTheme()
   const riskMarker = useMemo(() => ({ type: MarkerType.ArrowClosed, width: 18, height: 18, color: RISK_COLOR[theme] }), [theme])
@@ -71,6 +73,11 @@ export function Canvas({
   const [nodes, setNodes] = useState<PartFlowNode[]>(() => toFlowNodes(state, []))
   const [edges, setEdges] = useState<Edge[]>(() => toFlowEdges(state, []))
   const [layoutTick, setLayoutTick] = useState(0)
+  const hasBadges = !!badges && Object.keys(badges).length > 0
+  const shownNodes = useMemo(
+    () => (hasBadges ? nodes.map((n) => ({ ...n, data: { ...n.data, badge: badges![n.id], dim: badges![n.id] === undefined } })) : nodes),
+    [nodes, badges, hasBadges],
+  )
   const shownEdges = useMemo(
     () => (riskEdgeIds && riskEdgeIds.size > 0 ? edges.map((e) => (riskEdgeIds.has(e.id) ? { ...e, className: 'tl-risk', markerEnd: riskMarker } : e)) : edges),
     [edges, riskEdgeIds, riskMarker],
@@ -188,7 +195,7 @@ export function Canvas({
         </div>
       )}
       <ReactFlow
-        nodes={nodes}
+        nodes={shownNodes}
         edges={shownEdges}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}

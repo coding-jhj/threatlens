@@ -5,6 +5,7 @@ import { analyze } from '../domain/analyze'
 import { isAiNode } from '../domain/graph'
 import { getPart } from '../domain/parts'
 import { scoreGraph } from '../domain/score'
+import { hazardLevels } from '../domain/hazard'
 import { Button } from '../ui/components'
 import { SAMPLES, type Sample } from '../samples/samples'
 import { Brand, ThemeToggle } from '../AppNav'
@@ -16,7 +17,7 @@ import { Palette } from './Palette'
 import { SampleList } from './SampleMenu'
 import { Summary } from './Summary'
 import { ThreatPanel } from './ThreatPanel'
-import { findingKey, highlightEdges } from './threat'
+import { findingKey, highlightEdges, pathBadges } from './threat'
 import { downloadText, reportDate } from '../report/report'
 import { parseSaved, serialize, shareHash } from '../share/serialize'
 import type { Workspace } from '../workspace'
@@ -35,6 +36,9 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
   const score = useMemo(() => scoreGraph(state.graph, RULES, applied).overall, [state.graph, applied])
   const before = useMemo(() => scoreGraph(state.graph, RULES).overall, [state.graph])
   const activeFinding = analysis.findings.find((f) => findingKey(f) === activeKey) ?? null
+  const levels = useMemo(() => hazardLevels(state.graph, RULES, applied), [state.graph, applied])
+  const activeHazard = activeFinding ? (RULES.find((r) => r.id === activeFinding.ruleId)?.hazard ?? null) : null
+  const badges = useMemo(() => pathBadges(analysis, activeFinding), [analysis, activeFinding])
   const riskEdgeIds = useMemo(() => highlightEdges(state.graph, analysis, activeFinding), [state.graph, analysis, activeFinding])
 
   const toggleFix = (key: string, on: boolean) =>
@@ -150,7 +154,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
         <Brand />
         {nav}
         <div style={{ flex: 1 }} />
-        <Summary score={score} analysis={analysis} hasAi={hasAi} />
+        <Summary score={score} analysis={analysis} hasAi={hasAi} levels={levels} activeHazard={activeHazard} />
         <ThemeToggle />
         <Button onClick={() => setShowHelp(true)}>사용법</Button>
       </header>
@@ -166,6 +170,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
             onClearAll={clearAll}
             active={active}
             fitSignal={fitSignal}
+            badges={badges}
             toolbarExtra={
               <>
                 <Button onClick={() => setMenuOpen((o) => !o)} aria-expanded={menuOpen}>
@@ -258,6 +263,8 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           activeKey={activeFinding ? activeKey : null}
           onToggleActive={(k) => setActiveKey((cur) => (cur === k ? null : k))}
           onToggleFix={toggleFix}
+          levels={levels}
+          activeHazard={activeHazard}
           onApplyKeys={(keys) => setApplied((prev) => new Set([...prev, ...keys]))}
           onClearApplied={() => setApplied(new Set())}
         />

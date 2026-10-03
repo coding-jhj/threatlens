@@ -48,6 +48,10 @@ const TEXT_PAIRS: [string, string, number][] = [
   ['status-ink', 'status-bg', 7],
   ['accent-ink', 'accent', 4.5],
   ['line-strong', 'panel', 3],
+  ['hz-inject', 'panel', 3],
+  ['hz-leak', 'panel', 3],
+  ['hz-misuse', 'panel', 3],
+  ['hz-plant', 'panel', 3],
 ]
 
 describe.each([

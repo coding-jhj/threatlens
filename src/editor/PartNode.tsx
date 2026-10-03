@@ -6,7 +6,7 @@ import { PartSymbol } from './PartSymbol'
 import { partTag } from './partTag'
 import './editor.css'
 
-export type PartFlowNode = Node<{ partId: string; attributes: AttributeId[] }, 'part'>
+export type PartFlowNode = Node<{ partId: string; attributes: AttributeId[]; badge?: number; dim?: boolean }, 'part'>
 
 const SHORT: Record<AttributeId, string> = {
   'input.untrusted': '믿을 수 없는 입력',
@@ -28,7 +28,12 @@ export function PartNode({ id, data, selected }: NodeProps<PartFlowNode>) {
   const part = getPart(data.partId)
   if (!part) return null
   return (
-    <div className={`tl-node tl-node--${part.kind}${selected ? ' tl-node--selected' : ''}`}>
+    <div className={`tl-node tl-node--${part.kind}${selected ? ' tl-node--selected' : ''}${data.dim ? ' tl-node--dim' : ''}`}>
+      {data.badge !== undefined && (
+        <span className="tl-node__badge" role="img" aria-label={`위협 경로 ${data.badge}번째 부품`}>
+          {data.badge}
+        </span>
+      )}
       <span className="tl-node__tag" aria-hidden>
         {partTag(part.kind, id)}
       </span>

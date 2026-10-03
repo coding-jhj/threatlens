@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import type { Analysis } from '../domain/analyze'
 import { appliedKey, type Finding } from '../domain/engine'
+import type { HazardLevels } from '../domain/hazard'
 import type { Graph } from '../domain/graph'
 import { getPart } from '../domain/parts'
-import { CATEGORY_LABEL, type Rule } from '../domain/rules'
+import { CATEGORY_LABEL, type Hazard, type Rule } from '../domain/rules'
 import { Card, Chip, FixRow, SeverityChip } from '../ui/components'
 import { PlanPanel } from './PlanPanel'
+import { StoryLines } from './StoryLines'
 import { scoreTone } from './scoreTone'
 import { findingKey } from './threat'
 import './editor.css'
@@ -21,6 +23,8 @@ interface Props {
   activeKey: string | null
   onToggleActive: (key: string) => void
   onToggleFix: (key: string, on: boolean) => void
+  levels: HazardLevels
+  activeHazard: Hazard | null
   onApplyKeys: (keys: string[]) => void
   onClearApplied: () => void
 }
@@ -30,7 +34,7 @@ const partLabel = (graph: Graph, nodeId: string) => {
   return (n && getPart(n.partId)?.label) ?? '?'
 }
 
-export function ThreatPanel({ graph, analysis, rules, applied, before, after, hasAi, activeKey, onToggleActive, onToggleFix, onApplyKeys, onClearApplied }: Props) {
+export function ThreatPanel({ graph, analysis, rules, applied, before, after, hasAi, activeKey, onToggleActive, onToggleFix, levels, activeHazard, onApplyKeys, onClearApplied }: Props) {
   const [tab, setTab] = useState<'plan' | 'threats'>('plan')
   const ruleById = new Map(rules.map((r) => [r.id, r]))
   const delta = after - before
@@ -85,6 +89,8 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
             rules={rules}
             applied={applied}
             analysis={analysis}
+            levels={levels}
+            activeHazard={activeHazard}
             activeKey={activeKey}
             onToggleActive={onToggleActive}
             onApplyKeys={onApplyKeys}
@@ -113,6 +119,7 @@ export function ThreatPanel({ graph, analysis, rules, applied, before, after, ha
               </button>
               {open && (
                 <div className="tl-threat__body">
+                  <StoryLines story={rule.story} />
                   <p className="tl-threat__summary">{rule.summary}</p>
                   <div className="tl-threat__sub">이렇게 막을 수 있습니다</div>
                   <div className="tl-threat__fixes">

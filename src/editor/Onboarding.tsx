@@ -46,6 +46,15 @@ export function Onboarding({ onClose, onSample }: { onClose: () => void; onSampl
           </li>
         </ol>
 
+        <h3 className="tl-onb__sub">조작 요약</h3>
+        <ul className="tl-onb__keys">
+          <li><b>삭제</b> 부품·화살표를 클릭하고 Delete 또는 [선택 삭제]. 전부 지우려면 [모두 지우기]</li>
+          <li><b>취소</b> Ctrl+Z (다시 실행은 Ctrl+Shift+Z). [예시 불러오기]·[모두 지우기]도 되돌릴 수 있습니다</li>
+          <li><b>여러 개 선택</b> Ctrl+A(전체), 또는 Shift를 누른 채 드래그</li>
+          <li><b>화살표</b> 오른쪽 점을 끌어 다른 부품의 점 또는 부품 위에 놓습니다</li>
+          <li><b>화면 이동·확대</b> 빈 곳을 끌면 이동, 마우스 휠로 확대·축소</li>
+        </ul>
+
         <div className="tl-onb__arrow">
           <svg width="260" height="64" viewBox="0 0 260 64" role="img" aria-label="웹 페이지에서 AI 에이전트로 향하는 화살표 예시">
             <rect x="2" y="12" width="90" height="40" rx="8" fill="none" stroke="currentColor" />

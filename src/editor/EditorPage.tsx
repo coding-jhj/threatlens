@@ -116,8 +116,26 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
   const addAtCenter = (partId: string) => {
     const pane = document.querySelector('.tl-canvas')?.getBoundingClientRect()
     const center = pane ? screenToFlowPosition({ x: pane.left + pane.width / 2, y: pane.top + pane.height / 2 }) : { x: 200, y: 200 }
-    const jitter = (state.graph.nodes.length % 6) * 24
-    dispatch({ type: 'addNode', partId, x: Math.round(center.x - 88 + jitter), y: Math.round(center.y - 30 + jitter) })
+    const W = 200
+    const H = 100
+    const base = { x: Math.round(center.x - 88), y: Math.round(center.y - 30) }
+    const free = (x: number, y: number) => state.graph.nodes.every((n) => Math.abs(n.x - x) >= W || Math.abs(n.y - y) >= H)
+    // 가운데에서 바깥으로 격자를 훑어 겹치지 않는 첫 자리를 쓴다
+    let spot = base
+    search: for (let ring = 0; ring < 12; ring++) {
+      for (let dy = -ring; dy <= ring; dy++) {
+        for (let dx = -ring; dx <= ring; dx++) {
+          if (Math.max(Math.abs(dx), Math.abs(dy)) !== ring) continue
+          const x = base.x + dx * W
+          const y = base.y + dy * H
+          if (free(x, y)) {
+            spot = { x, y }
+            break search
+          }
+        }
+      }
+    }
+    dispatch({ type: 'addNode', partId, x: spot.x, y: spot.y })
   }
 
   return (
@@ -128,9 +146,6 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
         <div style={{ flex: 1 }} />
         <Summary score={score} analysis={analysis} hasAi={hasAi} />
         <Button onClick={() => setShowHelp(true)}>사용법</Button>
-        <Button variant="primary" disabled>
-          분석 다시 실행
-        </Button>
       </header>
       <div className="tl-editor">
         <Palette onAdd={addAtCenter} />
@@ -185,6 +200,11 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
             </div>
           )}
           <input ref={fileInput} type="file" accept=".json,application/json" hidden onChange={importJson} aria-label="JSON 파일 선택" />
+          {state.graph.nodes.length > 0 && (
+            <div className="tl-canvas__keys" aria-hidden>
+              삭제: 부품 클릭 후 Delete · 취소: Ctrl+Z · 전체 선택: Ctrl+A · 여러 개 선택: Shift+드래그 · 화면 이동: 빈 곳 드래그
+            </div>
+          )}
           {notice && (
             <div className="tl-toast" role="status">
               {notice}

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { loadSample, nav, openApp, score, threatTitle } from './helpers.ts'
+import { loadSample, goTo, openApp, score, threatTitle } from './helpers.ts'
 
 // 규칙·점수를 바꾸면 이 표도 함께 바뀐다 (src/samples/samples.test.tsx와 같은 값)
 const SAMPLES = [
@@ -28,13 +28,13 @@ for (const s of SAMPLES) {
     await expect(page.locator('.tl-threats__compare')).toContainText(`대응 전 ${s.score}`)
 
     // 3) 보고서에 같은 대응 전 점수가 나오고, 대응 후는 더 낮다
-    await nav(page, '보고서').click()
+    await goTo(page, '보고서')
     await expect(page.locator('.tl-report')).toBeVisible()
     await expect(page.locator('.tl-report__scores')).toContainText(String(s.score))
     await expect(page.locator('.tl-report')).toContainText(`발견된 위협 ${s.findings}개 · 적용한 대응 1개`)
 
     // 4) 편집기로 돌아와도 구조와 대응이 그대로다
-    await nav(page, '위협 지도').click()
+    await goTo(page, '위협 지도')
     await expect(threatTitle(page)).toHaveText(new RegExp(`발견된 위협 \\d+개`))
     expect(Number(await score(page).innerText())).toBeLessThan(s.score)
 

@@ -17,8 +17,15 @@ export async function loadSample(page: Page, title: string) {
   await expect(page.locator('.react-flow__node').first()).toBeVisible()
 }
 
-export function nav(page: Page, name: string) {
-  return page.getByRole('navigation', { name: '화면 이동' }).getByRole('link', { name })
+/**
+ * 상단 메뉴로 화면을 옮기고, 옮겨질 때까지 기다린다.
+ * 편집기는 다른 화면에서도 숨겨진 채 남아 있어서, 기다리지 않고 바로 다음 링크를 누르면
+ * 곧 숨겨질 편집기 쪽 링크를 잡아 클릭이 멈출 수 있다.
+ */
+export async function goTo(page: Page, name: string) {
+  await page.getByRole('navigation', { name: '화면 이동' }).getByRole('link', { name }).click()
+  if (name === '위협 지도') await expect(page.locator('.tl-palette')).toBeVisible()
+  else await expect(page.locator('.tl-palette')).toBeHidden()
 }
 
 /** 부품 오른쪽 점에서 다음 부품 왼쪽 점으로 끌어 화살표를 잇는다 */

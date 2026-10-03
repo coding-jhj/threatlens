@@ -141,3 +141,34 @@ test('속성 창이 캔버스를 가리지 않는다: 선택해도 캔버스 높
   }))
   expect(r.i).toBeLessThanOrEqual(r.c * 0.3)
 })
+
+test('부품을 연달아 추가해도 서로 겹치지 않는다', async ({ page }) => {
+  await openApp(page)
+  for (let i = 0; i < 8; i++) await page.getByRole('button', { name: 'AI 모델 추가' }).click()
+  const boxes = await nodes(page).evaluateAll((els) => els.map((e) => e.getBoundingClientRect()).map((r) => ({ l: r.left, t: r.top, r: r.right, b: r.bottom })))
+  expect(boxes).toHaveLength(8)
+  for (let i = 0; i < boxes.length; i++)
+    for (let j = i + 1; j < boxes.length; j++) {
+      const a = boxes[i]
+      const c = boxes[j]
+      const overlap = a.l < c.r && c.l < a.r && a.t < c.b && c.t < a.b
+      expect(overlap, `부품 ${i}와 ${j}가 겹침`).toBe(false)
+    }
+})
+
+test('죽은 버튼이 없다: "분석 다시 실행"은 없고, 조작 힌트와 속성 설명이 보인다', async ({ page }) => {
+  await openApp(page)
+  await expect(page.getByRole('button', { name: '분석 다시 실행' })).toHaveCount(0)
+  await loadSample(page, '메일 비서')
+  await expect(page.getByText('삭제: 부품 클릭 후 Delete')).toBeVisible()
+  await page.locator('.react-flow__node:has-text("AI 에이전트")').click()
+  await page.getByText('속성 설명').click()
+  await expect(page.getByText('질문과 자료가 외부 업체의 AI 서버로 전달됩니다.')).toBeVisible()
+})
+
+test('사용법 창에 조작 요약(삭제·취소·선택·화살표)이 있다', async ({ page }) => {
+  await openApp(page)
+  await page.getByRole('button', { name: '사용법' }).click()
+  const box = page.getByRole('dialog')
+  for (const w of ['삭제', '취소', '여러 개 선택', '화살표']) await expect(box).toContainText(w)
+})

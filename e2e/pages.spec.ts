@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { nav, openApp } from './helpers.ts'
+import { goTo, openApp } from './helpers.ts'
 
 test('규칙 라이브러리: 28개 → 화공 5개 → "인터록" 검색 2개, 없는 검색어는 안내', async ({ page }) => {
   await openApp(page, '#/rules')
@@ -30,7 +30,7 @@ test('평가표: 숫자와 한계가 숨김없이 보인다', async ({ page }) =
 test('화면 이동: 상단 메뉴로 네 화면을 오가도 편집기 구조가 남는다', async ({ page }) => {
   await openApp(page)
   await page.getByRole('button', { name: /메일 비서/ }).click()
-  for (const name of ['규칙 라이브러리', '보고서', '평가표']) await nav(page, name).click()
-  await nav(page, '위협 지도').click()
+  for (const name of ['규칙 라이브러리', '보고서', '평가표']) await goTo(page, name)
+  await goTo(page, '위협 지도')
   await expect(page.locator('.react-flow__node')).toHaveCount(5)
 })

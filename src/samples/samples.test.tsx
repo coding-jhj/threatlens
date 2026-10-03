@@ -71,7 +71,8 @@ test('Onboarding: 3단계와 화살표 방향 설명, Esc로 닫힘', () => {
   render(<Onboarding onClose={() => closed++} onSample={() => {}} />)
   expect(screen.getByRole('dialog')).toBeTruthy()
   expect(screen.getByText(/화살표는 정보·명령이 흐르는 방향/)).toBeTruthy()
-  expect(screen.getAllByRole('listitem')).toHaveLength(3)
+  expect(document.querySelectorAll('.tl-onb__steps > li')).toHaveLength(3)
+  expect(document.querySelectorAll('.tl-onb__keys > li').length).toBeGreaterThanOrEqual(5)
   act(() => {
     fireEvent.keyDown(window, { key: 'Escape' })
   })

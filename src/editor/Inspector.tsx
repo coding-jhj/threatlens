@@ -37,13 +37,24 @@ export function Inspector({ node, others, links, onChange, onConnect, onRemoveLi
       </div>
       <div className="tl-inspector__grid">
         {ATTRIBUTES.map((a) => (
-          <label key={a.id} className="tl-inspector__item">
+          <label key={a.id} className="tl-inspector__item" title={a.hint}>
             <input type="checkbox" checked={node.attributes.includes(a.id)} onChange={(e) => toggle(a.id, e.target.checked)} />
             {a.label}
             {a.kind === 'mitigation' && <span className="tl-inspector__tag">대응</span>}
           </label>
         ))}
       </div>
+      <details className="tl-inspector__more">
+        <summary>속성 설명 (각 항목이 무슨 뜻인지)</summary>
+        <dl className="tl-inspector__defs">
+          {ATTRIBUTES.map((a) => (
+            <div key={a.id}>
+              <dt>{a.label}</dt>
+              <dd>{a.hint}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
       <details className="tl-inspector__more">
         <summary>화살표 관리 (키보드로 잇기, 삭제)</summary>
       {others.length > 0 && (

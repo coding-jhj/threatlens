@@ -1,0 +1,85 @@
+{
+  "base": {
+    "nodes": [
+      { "key": "user", "part": "user" },
+      { "key": "ai", "part": "ai_agent" }
+    ],
+    "edges": [["user", "ai"]]
+  },
+  "questions": [
+    {
+      "id": "outsider",
+      "text": "모르는 사람(고객·외부인)이 직접 질문을 입력하나요?",
+      "hint": "사내 직원만 쓰면 아니오입니다.",
+      "yes": { "attrs": [{ "node": "user", "attr": "input.untrusted" }] }
+    },
+    {
+      "id": "readfiles",
+      "text": "AI가 외부 파일이나 웹 페이지를 읽나요?",
+      "hint": "첨부 파일, 받은 문서, 인터넷 검색 결과 등입니다.",
+      "yes": {
+        "nodes": [
+          { "key": "doc", "part": "upload_doc" },
+          { "key": "web", "part": "web_page" }
+        ],
+        "edges": [["doc", "ai"], ["web", "ai"]]
+      }
+    },
+    {
+      "id": "sensitive",
+      "text": "AI가 고객 정보나 사내 기밀 자료에 접근하나요?",
+      "hint": "개인정보, 계약서, 내부 규정 등 새어 나가면 곤란한 자료입니다.",
+      "yes": {
+        "nodes": [{ "key": "store", "part": "doc_store" }],
+        "edges": [["store", "ai"]],
+        "attrs": [{ "node": "ai", "attr": "data.sensitive" }]
+      }
+    },
+    {
+      "id": "send",
+      "text": "AI가 메일이나 메시지를 밖으로 보낼 수 있나요?",
+      "hint": "자동 메일 발송, 알림 전송 등입니다.",
+      "yes": {
+        "nodes": [
+          { "key": "mail", "part": "mail_tool" },
+          { "key": "ext", "part": "external_party" }
+        ],
+        "edges": [["ai", "mail"], ["mail", "ext"]]
+      }
+    },
+    {
+      "id": "exec",
+      "text": "AI가 코드나 명령을 실행하나요?",
+      "hint": "스크립트 실행, 터미널 명령, 코드 샌드박스 등입니다.",
+      "yes": {
+        "nodes": [{ "key": "code", "part": "code_exec" }],
+        "edges": [["ai", "code"]]
+      }
+    },
+    {
+      "id": "approval",
+      "text": "중요한 동작 전에 사람이 확인하고 승인하나요?",
+      "hint": "보내기·변경·실행 전에 사람이 눌러야 진행되면 예입니다.",
+      "yes": { "attrs": [{ "node": "ai", "attr": "human.approval" }] }
+    },
+    {
+      "id": "plant",
+      "text": "AI가 공장·설비의 센서를 읽거나 설비를 제어하나요?",
+      "hint": "화공 공정, 반응기, 밸브·펌프 등입니다.",
+      "yes": {
+        "nodes": [
+          { "key": "sensor", "part": "sensor" },
+          { "key": "ctl", "part": "control_api" },
+          { "key": "plc", "part": "plc" }
+        ],
+        "edges": [["sensor", "ai"], ["ai", "ctl"], ["ctl", "plc"]]
+      }
+    },
+    {
+      "id": "interlock",
+      "text": "AI와 별개로 동작하는 안전 장치(독립 인터록)가 따로 있나요?",
+      "hint": "설비에 연결하지 않는다면 아니오로 두세요. 있다고 답하려면 실제로 AI·기본 제어와 분리돼 있어야 합니다.",
+      "yes": { "attrs": [{ "node": "ai", "attr": "interlock.external" }] }
+    }
+  ]
+}

@@ -214,3 +214,7 @@
 .tl-plan__hint { margin: 4px 0 0; font-size: var(--fs-xs); color: var(--muted); }
 h2.tl-plan__kicker { margin: 0; }
 h2.tl-plan__h:focus { outline: none; }
+.tl-wiz__bar { width: 100%; height: 8px; margin: 0 0 14px; }
+.tl-wiz__q { margin: 0 0 6px; font-size: var(--fs-md); line-height: 1.6; }
+.tl-wiz__hint { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--muted); }
+.tl-wiz__q + .tl-wiz__hint { margin-top: 4px; }

@@ -10,8 +10,10 @@ import { Button } from '../ui/components'
 import { SAMPLES, type Sample } from '../samples/samples'
 import { Brand, ThemeToggle } from '../AppNav'
 import { Canvas } from './Canvas'
+import type { EditorGraph } from './model'
 import { Inspector } from './Inspector'
 import { Onboarding } from './Onboarding'
+import { Wizard } from './Wizard'
 import { hasOnboarded, markOnboarded } from './onboardingStore'
 import { Palette } from './Palette'
 import { SampleList } from './SampleMenu'
@@ -49,6 +51,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
       return next
     })
   const [showHelp, setShowHelp] = useState(() => !hasOnboarded())
+  const [showWizard, setShowWizard] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [fileMenuOpen, setFileMenuOpen] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
@@ -107,6 +110,16 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
     setMenuOpen(false)
     closeHelp()
     flash(`"${s.title}" 예시를 불러왔습니다. 되돌리려면 Ctrl+Z 또는 [되돌리기]를 누르세요.`)
+  }
+  const openWizardGraph = (graph: EditorGraph) => {
+    dispatch({ type: 'replace', graph })
+    refit()
+    setApplied(new Set())
+    setSelectedId(null)
+    setActiveKey(null)
+    setShowWizard(false)
+    closeHelp()
+    flash('질문으로 만든 구조를 열었습니다. 되돌리려면 Ctrl+Z 또는 [되돌리기]를 누르세요.')
   }
   const clearAll = () => {
     if (state.graph.nodes.length === 0) return
@@ -176,6 +189,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
             badges={badges}
             toolbarExtra={
               <>
+                <Button onClick={() => setShowWizard(true)}>질문으로 시작</Button>
                 <Button onClick={() => setMenuOpen((o) => !o)} aria-expanded={menuOpen}>
                   예시 불러오기
                 </Button>
@@ -184,7 +198,14 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
                 </Button>
               </>
             }
-            emptyExtra={<SampleList onPick={loadSample} />}
+            emptyExtra={
+              <>
+                <Button variant="primary" onClick={() => setShowWizard(true)}>
+                  질문 8개로 시작
+                </Button>
+                <SampleList onPick={loadSample} />
+              </>
+            }
           />
           {menuOpen && (
             <div className="tl-samplemenu" role="menu" aria-label="예시 구조">
@@ -290,7 +311,8 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
           부품 {state.graph.nodes.length} · 연결 {state.graph.edges.length}
         </div>
       </footer>
-      {showHelp && <Onboarding onClose={closeHelp} onSample={() => loadSample(SAMPLES.find((x) => x.id === 'mail-assistant')!)} />}
+      {showWizard && <Wizard onClose={() => setShowWizard(false)} onOpen={openWizardGraph} />}
+      {showHelp && <Onboarding onWizard={() => { setShowHelp(false); markOnboarded(); setShowWizard(true) }} onClose={closeHelp} onSample={() => loadSample(SAMPLES.find((x) => x.id === 'mail-assistant')!)} />}
     </>
   )
 }

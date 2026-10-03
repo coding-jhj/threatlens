@@ -1,34 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useModal } from './useModal'
 import { Button } from '../ui/components'
 import './editor.css'
 
-export function Onboarding({ onClose, onSample }: { onClose: () => void; onSample: () => void }) {
-  const box = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const opener = document.activeElement as HTMLElement | null
-    const focusables = () => [...(box.current?.querySelectorAll<HTMLElement>('button, a[href], input, select, [tabindex]:not([tabindex="-1"])') ?? [])]
-    focusables()[0]?.focus()
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') return onClose()
-      if (e.key !== 'Tab') return
-      const list = focusables()
-      if (list.length === 0) return
-      const first = list[0]
-      const last = list[list.length - 1]
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault()
-        last.focus()
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault()
-        first.focus()
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      opener?.focus?.()
-    }
-  }, [onClose])
+export function Onboarding({ onClose, onSample, onWizard }: { onClose: () => void; onSample: () => void; onWizard?: () => void }) {
+  const box = useModal(onClose)
 
   return (
     <div className="tl-modal" role="dialog" aria-modal="true" aria-labelledby="tl-onb-title">
@@ -73,6 +48,7 @@ export function Onboarding({ onClose, onSample }: { onClose: () => void; onSampl
           <Button variant="primary" onClick={onSample}>
             예시로 시작 (메일 비서)
           </Button>
+          {onWizard && <Button onClick={onWizard}>질문 8개로 시작</Button>}
           <Button onClick={onClose}>직접 그리기</Button>
         </div>
       </div>

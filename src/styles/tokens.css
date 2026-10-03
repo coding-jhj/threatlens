@@ -24,10 +24,10 @@
   --grid-major: #d3dad8;
   --status-bg: #14202b;
   --status-ink: #eef1ef;
-  --hz-inject: #1f5fbf;
-  --hz-leak: #d9650b;
-  --hz-misuse: #7a4fc2;
-  --hz-plant: #0e8f7e;
+  --hz-inject: #15337f;
+  --hz-leak: #cf5a00;
+  --hz-misuse: #c02ad0;
+  --hz-plant: #168a78;
   --focus: 0 0 0 3px rgba(31, 95, 191, 0.45);
   --overlay: rgba(20, 32, 43, 0.55);
   /* 보고서는 화면 테마와 상관없이 종이처럼 인쇄한다 */
@@ -80,10 +80,10 @@
   --grid-major: #1f2f37;
   --status-bg: #070e13;
   --status-ink: #e6edf0;
-  --hz-inject: #4f86d8;
-  --hz-leak: #cc7733;
-  --hz-misuse: #9c7be0;
-  --hz-plant: #28a290;
+  --hz-inject: #4a78b8;
+  --hz-leak: #d0653a;
+  --hz-misuse: #d6a0ff;
+  --hz-plant: #6fe0c8;
   --focus: 0 0 0 3px rgba(107, 155, 227, 0.6);
   --overlay: rgba(0, 0, 0, 0.7);
 }

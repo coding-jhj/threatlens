@@ -32,7 +32,7 @@
       {
         "id": "source_label",
         "label": "입력 출처를 AI에게 구분해서 전달",
-        "score": -15,
+        "score": -10,
         "effort": "low"
       }
     ],
@@ -118,11 +118,11 @@
   {
     "id": "R-03",
     "title": "쓰기와 실행 권한을 한 AI가 모두 갖고 있습니다",
-    "summary": "변경 권한과 실행 권한이 함께 있으면 한 번의 오판이 시스템 전체 변경으로 이어집니다.",
+    "summary": "변경 권한과 실행 권한이 함께 있으면 한 번의 오판이 연쇄적인 변경으로 이어집니다.",
     "story": [
       "AI가 잘못 판단하거나 조종당해 변경과 실행을 이어서 요청합니다.",
-      "한 AI가 데이터를 바꾸는 권한과 명령을 실행하는 권한을 모두 갖고 있어 중간에 막을 곳이 없습니다.",
-      "잘못된 변경이 곧바로 실행되어 시스템 전체로 번질 수 있습니다."
+      "한 AI가 데이터를 바꾸는 권한과 명령을 실행하는 권한을 모두 갖고 있어 오판이 연쇄되기 쉽습니다.",
+      "잘못된 변경이 곧바로 실행되어 여러 곳으로 번질 수 있습니다."
     ],
     "category": "tool-abuse",
     "hazard": "misuse",
@@ -141,7 +141,7 @@
       {
         "id": "sandbox",
         "label": "실행은 격리된 샌드박스에서",
-        "score": -25,
+        "score": -15,
         "effort": "high"
       },
       {
@@ -305,11 +305,6 @@
         "source": "OWASP-LLM",
         "ref": "LLM02:2025 Sensitive Information Disclosure",
         "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
-      },
-      {
-        "source": "MITRE-ATLAS",
-        "ref": "AML.T0057 LLM Data Leakage (ATLAS v5.6.0 데이터 기준)",
-        "url": "https://atlas.mitre.org/"
       }
     ]
   },
@@ -320,7 +315,7 @@
     "story": [
       "공격자나 믿을 수 없는 문서가 거짓 내용이나 숨은 명령을 AI의 입력에 섞어 넣습니다.",
       "AI가 그 내용을 문서 저장소에 그대로 씁니다.",
-      "이후 모든 사용자의 답변이 오염된 문서를 근거로 만들어집니다."
+      "이후 그 문서를 검색해 쓰는 답변이 오염된 내용을 근거로 만들어집니다."
     ],
     "category": "store-log",
     "hazard": "inject",
@@ -442,8 +437,8 @@
       {
         "id": "range_check",
         "label": "값 범위·변화율 검사",
-        "score": -25,
-        "effort": "low"
+        "score": -15,
+        "effort": "mid"
       },
       {
         "id": "interlock",
@@ -458,6 +453,12 @@
         "score": -15,
         "effort": "mid",
         "sets": "human.approval"
+      },
+      {
+        "id": "sensor_crosscheck",
+        "label": "중복 센서·물리 모델과 교차 검증",
+        "score": -25,
+        "effort": "mid"
       }
     ],
     "basis": [
@@ -498,22 +499,28 @@
       {
         "id": "interlock",
         "label": "안전 인터록(SIS)을 AI·기본 제어와 분리된 독립 구성으로 유지",
-        "score": -35,
+        "score": -30,
         "effort": "high",
         "sets": "interlock.external"
       },
       {
         "id": "command_allowlist",
         "label": "제어 명령 허용 목록",
-        "score": -20,
+        "score": -15,
         "effort": "mid"
       },
       {
         "id": "human_confirm",
         "label": "제어 명령 전 담당자 확인",
-        "score": -15,
+        "score": -10,
         "effort": "mid",
         "sets": "human.approval"
+      },
+      {
+        "id": "advisory_only",
+        "label": "AI는 권고만 하고 제어 쓰기 경로 제거(운전원이 직접 실행)",
+        "score": -35,
+        "effort": "high"
       }
     ],
     "basis": [
@@ -620,20 +627,26 @@
       {
         "id": "human_confirm",
         "label": "제어 명령 전 담당자 확인",
-        "score": -30,
+        "score": -25,
         "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "change_limit",
         "label": "1회 변경폭·속도 제한",
-        "score": -25,
+        "score": -20,
         "effort": "mid"
       },
       {
         "id": "safe_state",
         "label": "AI 성능·안전 지표 기준 미달 시 비AI 제어로 복귀",
-        "score": -15,
+        "score": -10,
+        "effort": "high"
+      },
+      {
+        "id": "advisory_only",
+        "label": "AI는 권고만 하고 제어 쓰기 경로 제거(운전원이 직접 실행)",
+        "score": -35,
         "effort": "high"
       }
     ],
@@ -675,20 +688,33 @@
       {
         "id": "separate_setpoint",
         "label": "설정값 변경 경로를 문서 읽는 AI와 분리",
-        "score": -30,
+        "score": -25,
         "effort": "high"
       },
       {
         "id": "range_check",
         "label": "변경 전 허용 범위 검사",
-        "score": -20,
-        "effort": "low"
+        "score": -15,
+        "effort": "mid"
       },
       {
         "id": "change_alert",
         "label": "변경 기록과 담당자 알림",
         "score": -10,
         "effort": "low"
+      },
+      {
+        "id": "human_confirm",
+        "label": "설정값 변경 전 담당자 확인",
+        "score": -10,
+        "effort": "mid",
+        "sets": "human.approval"
+      },
+      {
+        "id": "advisory_only",
+        "label": "AI는 권고만 하고 제어 쓰기 경로 제거(운전원이 직접 실행)",
+        "score": -30,
+        "effort": "high"
       }
     ],
     "basis": [
@@ -711,7 +737,7 @@
     "story": [
       "공격자가 문서나 질문에 '내부 정보를 답변에 써라'는 명령을 숨깁니다.",
       "민감정보에 접근할 수 있는 AI가 그 명령을 따라 정보를 답변에 넣습니다.",
-      "원래 볼 수 없는 사람이 답변에서 민감정보를 보게 됩니다."
+      "질문자나 문서 작성자가 원래 접근 권한이 없던 정보를 답변에서 보게 될 수 있습니다."
     ],
     "category": "prompt-injection",
     "hazard": "leak",
@@ -730,13 +756,13 @@
       {
         "id": "output_filter",
         "label": "답변 출력 검사",
-        "score": -20,
+        "score": -15,
         "effort": "mid"
       },
       {
         "id": "source_label",
         "label": "입력 출처를 AI에게 구분해서 전달",
-        "score": -15,
+        "score": -10,
         "effort": "low"
       }
     ],
@@ -824,7 +850,7 @@
     "summary": "믿을 수 없는 입력이 기억·로그에 저장되면, 나중 대화에서 같은 숨은 지시가 다시 작동합니다.",
     "story": [
       "공격자의 숨은 명령이 담긴 입력이 대화 기록이나 기억에 저장됩니다.",
-      "나중 대화에서 AI가 저장된 내용을 다시 불러와 읽습니다.",
+      "AI가 저장된 대화나 기억을 다시 불러오는 구조라면 그 내용을 읽습니다.",
       "같은 명령이 시간이 지난 뒤 다른 대화에서 다시 작동합니다."
     ],
     "category": "store-log",
@@ -874,7 +900,7 @@
     "story": [
       "믿을 수 없는 입력이 AI의 답변을 틀리게 만듭니다.",
       "사람 확인 없이 그 답변이 다음 단계의 입력이나 결정에 그대로 쓰입니다.",
-      "잘못된 결과가 업무 전체로 퍼집니다."
+      "잘못된 결과가 다음 단계로 이어집니다."
     ],
     "category": "prompt-injection",
     "hazard": "inject",
@@ -920,11 +946,11 @@
   {
     "id": "R-18",
     "title": "읽고·쓰고·보낼 수 있는 AI가 믿을 수 없는 입력을 처리합니다",
-    "summary": "입력, 변경, 전송 권한이 한 AI에 모여 있어 숨은 지시 한 번의 피해 범위가 가장 넓습니다.",
+    "summary": "입력, 변경, 전송 권한이 한 AI에 모여 있어 숨은 지시 한 번의 피해 범위가 넓습니다.",
     "story": [
       "공격자가 AI가 읽는 글에 숨은 명령을 적어 둡니다.",
       "읽기, 변경, 전송 권한을 모두 가진 AI가 그 명령을 수행합니다.",
-      "정보 유출과 데이터 변경이 함께 일어날 수 있어 피해 범위가 가장 넓습니다."
+      "정보 유출과 데이터 변경이 함께 일어날 수 있어 피해 범위가 넓습니다."
     ],
     "category": "prompt-injection",
     "hazard": "inject",
@@ -984,7 +1010,7 @@
     "summary": "민감정보를 보내는 승인 단계가 있어도 승인 화면에 내용이 충분히 보이지 않으면 확인이 형식에 그칩니다.",
     "story": [
       "AI가 민감정보를 외부로 보내기 전에 사람 승인 단계를 거칩니다.",
-      "승인 화면에 보낼 내용이 충분히 보이지 않아 승인하는 사람은 '승인' 버튼만 누르게 됩니다.",
+      "승인 화면에 보낼 내용이 충분히 보이지 않으면 승인하는 사람은 '승인' 버튼만 누르게 됩니다.",
       "승인이 형식에 그쳐서 잘못된 전송도 그대로 나갑니다."
     ],
     "category": "data-leak",
@@ -1028,7 +1054,7 @@
     "summary": "외부 업체 모델을 쓰면서 대화를 저장하면, 업체와 우리 쪽 두 곳에 기록이 남아 유출 지점이 늘어납니다.",
     "story": [
       "사용자가 외부 업체 모델에 대화를 보냅니다.",
-      "대화가 업체 쪽에도, 우리 로그에도 저장됩니다.",
+      "대화가 업체 쪽 설정에 따라 업체에도, 우리 로그에도 저장됩니다.",
       "정보가 남는 곳이 두 군데가 되어 어느 쪽에서든 유출될 수 있습니다."
     ],
     "category": "data-leak",
@@ -1041,8 +1067,8 @@
     "fixes": [
       {
         "id": "vendor_opt_out",
-        "label": "업체의 보관·학습 사용 옵션 끄기",
-        "score": -25,
+        "label": "업체의 보관·학습 사용 옵션 끄기(가능한 경우)",
+        "score": -20,
         "effort": "low"
       },
       {
@@ -1148,7 +1174,7 @@
       {
         "id": "recipient_allowlist",
         "label": "전송 대상 허용 목록",
-        "score": -25,
+        "score": -20,
         "effort": "low"
       },
       {
@@ -1182,7 +1208,7 @@
     "summary": "AI가 쓴 내용이 사용자 구분 없이 저장되면 다른 사용자의 질문에 민감정보가 섞여 나옵니다.",
     "story": [
       "한 사용자와의 대화 중 AI가 민감정보가 든 내용을 저장소에 씁니다.",
-      "저장소에 사용자 구분이 없어 모든 사용자가 같은 저장소를 검색합니다.",
+      "저장소에 사용자 구분이 없다면 모든 사용자가 같은 저장소를 검색합니다.",
       "다른 사용자의 질문에 그 민감정보가 섞여 나옵니다."
     ],
     "category": "data-leak",
@@ -1200,9 +1226,9 @@
         "effort": "high"
       },
       {
-        "id": "scoped_write",
-        "label": "쓰기 시 권한 구분",
-        "score": -20,
+        "id": "scoped_retrieval",
+        "label": "검색 시 질문자 권한으로 결과 거르기",
+        "score": -25,
         "effort": "mid"
       },
       {
@@ -1300,14 +1326,14 @@
       {
         "id": "human_approval",
         "label": "실행 전 사람 승인 단계 추가",
-        "score": -30,
+        "score": -20,
         "effort": "mid",
         "sets": "human.approval"
       },
       {
         "id": "sandbox",
         "label": "격리된 샌드박스에서 실행",
-        "score": -25,
+        "score": -30,
         "effort": "high"
       },
       {
@@ -1335,7 +1361,7 @@
     "title": "보내기와 변경을 한 도구 묶음이 처리합니다",
     "summary": "전송과 변경 권한이 한 도구 묶음에 있으면 권한이 필요 이상으로 커져 사고 범위가 넓어집니다.",
     "story": [
-      "AI가 한 번의 요청으로 보내기와 바꾸기를 모두 하려 합니다.",
+      "AI가 오판하거나 조종당해 전송과 변경을 이어서 요청합니다.",
       "같은 도구 묶음에 전송과 변경 권한이 함께 있어 필요한 것보다 큰 권한으로 동작합니다.",
       "사고가 났을 때 영향 범위가 넓어지고 원인을 가려내기 어려워집니다."
     ],
@@ -1419,8 +1445,8 @@
       },
       {
         "source": "OWASP-LLM",
-        "ref": "LLM03:2025 Supply Chain",
-        "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+        "ref": "LLM05:2025 Improper Output Handling",
+        "url": "https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/"
       }
     ]
   },
@@ -1450,7 +1476,7 @@
       },
       {
         "id": "change_history",
-        "label": "변경 이력과 되돌리기",
+        "label": "변경 이력 보관",
         "score": -15,
         "effort": "low"
       },

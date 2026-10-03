@@ -31,8 +31,8 @@ for (const s of SAMPLES) {
     // 3) 보고서에 같은 대응 전 점수가 나오고, 대응 후는 더 낮다
     await goTo(page, '보고서')
     await expect(page.locator('.tl-report')).toBeVisible()
-    await expect(page.locator('.tl-report__scores')).toContainText(String(s.score))
-    await expect(page.locator('.tl-report')).toContainText(`발견된 위협 ${s.findings}개 · 적용한 대응 1개`)
+    await expect(page.locator('.tl-report__title')).toContainText(String(s.score))
+    await expect(page.locator('.tl-report')).toContainText(`${s.findings}개 · 적용한 대응 1개`)
 
     // 4) 편집기로 돌아와도 구조와 대응이 그대로다
     await goTo(page, '위협 지도')

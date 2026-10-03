@@ -6,6 +6,7 @@ import type { Graph } from '../domain/graph'
 import { EMPTY_STATE } from '../editor/model'
 import type { Workspace } from '../workspace'
 import { buildReport, nodeNames, reportDate, reportToMarkdown } from './report'
+import { BASIS_SOURCES } from '../domain/rules'
 import ReportPage from './ReportPage'
 
 const graph: Graph = {
@@ -89,7 +90,7 @@ test('ReportPage: 보고서 본문이 렌더링되고 점수가 보인다', () =
   render(<ReportPage ws={ws(graph)} />)
   expect(screen.getByRole('article', { name: '위협 분석 보고서' })).toBeTruthy()
   expect(screen.getAllByText('55').length).toBeGreaterThan(0)
-  expect(screen.getByText(/발견된 위협 8개/)).toBeTruthy()
+  expect(screen.getAllByText(/위협 8개/).length).toBeGreaterThan(0)
 })
 
 test('ReportPage: Markdown 저장 버튼은 파일명 threatlens-report-날짜.md 로 내려받는다', () => {
@@ -109,4 +110,69 @@ test('ReportPage: PDF 버튼은 인쇄 창을 연다', () => {
   fireEvent.click(screen.getByRole('button', { name: /PDF로 저장/ }))
   expect(print).toHaveBeenCalled()
   vi.unstubAllGlobals()
+})
+
+test('buildReport v2: 요약 문단·마름모·행동 계획·도면이 채워진다', () => {
+  const r = buildReport(graph, RULES, new Set(), NOW)
+  expect(r.summary).toContain('위협 8개를 찾았습니다')
+  expect(r.summary).toContain('위험 점수는 55점')
+  expect(Object.values(r.levels).some((v) => v > 0)).toBe(true)
+  expect(r.steps.length).toBeGreaterThan(0)
+  expect(r.steps.length).toBeLessThanOrEqual(5)
+  expect(r.steps.map((s) => s.order)).toEqual(r.steps.map((_, i) => i + 1))
+  expect(r.steps.every((s) => s.after <= s.before && ['쉬움', '보통', '어려움'].includes(s.effort))).toBe(true)
+  expect(r.steps[0].before).toBe(55)
+  expect(r.diagram.nodes).toHaveLength(4)
+  expect(r.diagram.edges).toHaveLength(3)
+  expect(r.diagram.edges.every((e) => e.risk)).toBe(true)
+  expect(r.diagram.width).toBeGreaterThan(0)
+  expect(r.diagram.height).toBeGreaterThan(0)
+})
+
+test('buildReport v2: 사외 부품과 잇는 연결은 경계를 넘는 연결로 표시된다', () => {
+  const g: Graph = {
+    nodes: [
+      { id: 'b', partId: 'ai_agent', attributes: [] },
+      { id: 's', partId: 'model_server', attributes: ['model.external', 'zone.outside'] },
+    ],
+    edges: [{ id: 'e1', from: 'b', to: 's' }],
+  }
+  const r = buildReport(g, RULES, new Set(), NOW)
+  expect(r.crossCount).toBe(1)
+  expect(r.diagram.edges[0].cross).toBe(true)
+  expect(r.diagram.nodes.find((n) => n.id === 's')!.outside).toBe(true)
+  expect(r.connections[0]).toContain('(신뢰 경계를 넘음)')
+  expect(r.summary).toContain('신뢰 경계를 넘습니다')
+})
+
+test('buildReport v2: 위협마다 공격 시나리오 3줄이 있다', () => {
+  const r = buildReport(graph, RULES, new Set(), NOW)
+  expect(r.findings.every((f) => f.story.length === 3 && f.story.every((s) => s.length > 0))).toBe(true)
+})
+
+test('reportToMarkdown v2: 행동 계획 표·마름모 표·시나리오·한계 문구 포함', () => {
+  const md = reportToMarkdown(buildReport(graph, RULES, new Set(), NOW))
+  expect(md).toContain('## 행동 계획')
+  expect(md).toContain('| 순서 | 대응 | 대상 | 난이도 | 해결하는 위협 | 예상 점수 |')
+  expect(md).toContain('| 주입 | 유출 | 오용 | 설비 |')
+  expect(md).toContain('이런 일이 벌어질 수 있습니다:')
+  expect(md).toContain('1. 원인:')
+  expect(md).toContain('HAZOP')
+})
+
+test('링크 유효성: 모든 규칙의 근거 URL은 https이고, 보고서 근거 링크도 https만 쓴다', () => {
+  for (const r of RULES) for (const b of r.basis) if (b.source !== 'unverified') expect(b.url?.startsWith('https://')).toBe(true)
+  expect(BASIS_SOURCES.length).toBeGreaterThan(0)
+  const md = reportToMarkdown(buildReport(graph, RULES, new Set(), NOW))
+  const urls = [...md.matchAll(/\]\((https?:[^)]+)\)/g)].map((m) => m[1])
+  expect(urls.length).toBeGreaterThan(0)
+  expect(urls.every((u) => u.startsWith('https://'))).toBe(true)
+})
+
+test('ReportPage v2: 도면·행동 계획·위험 마름모가 보인다', () => {
+  render(<ReportPage ws={ws(graph)} />)
+  expect(screen.getByRole('img', { name: /구조 도면: 4개 부품과 3개 연결/ })).toBeTruthy()
+  expect(screen.getByRole('columnheader', { name: '예상 점수' })).toBeTruthy()
+  expect(screen.getByRole('img', { name: /위험 마름모/ })).toBeTruthy()
+  expect(screen.getAllByRole('list', { name: '이런 일이 벌어질 수 있습니다' }).length).toBe(8)
 })

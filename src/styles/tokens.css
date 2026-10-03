@@ -36,6 +36,13 @@
   --print-muted: #4a5a66;
   --print-line: #c9d1d3;
   --print-link: #1f5fbf;
+  --print-red: #c62828;
+  --print-amber: #a35a00;
+  --print-fill: #f3f6f7;
+  --print-hz-inject: #15337f;
+  --print-hz-leak: #cf5a00;
+  --print-hz-misuse: #c02ad0;
+  --print-hz-plant: #168a78;
 
   --font-sans: 'IBM Plex Sans KR', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;

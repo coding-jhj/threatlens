@@ -28,7 +28,7 @@ function Inner({ nav, ws, active }: { nav: ReactNode; ws: Workspace; active: boo
   const { screenToFlowPosition } = useReactFlow()
 
   const [activeKey, setActiveKey] = useState<string | null>(null)
-  const [fitSignal, setFitSignal] = useState(0)
+  const [fitSignal, setFitSignal] = useState(() => (state.graph.nodes.length > 0 ? 1 : 0))
   const refit = () => setFitSignal((n) => n + 1)
 
   const analysis = useMemo(() => analyze(state.graph, RULES, applied), [state.graph, applied])

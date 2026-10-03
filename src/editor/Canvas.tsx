@@ -230,7 +230,6 @@ export function Canvas({
         minZoom={0.3}
         maxZoom={1.8}
         colorMode={theme}
-        fitView
         fitViewOptions={{ padding: 0.2 }}
       >
         <Background id="minor" variant={BackgroundVariant.Lines} gap={24} lineWidth={1} color="var(--grid-minor)" />

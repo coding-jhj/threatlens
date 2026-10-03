@@ -58,3 +58,15 @@ for (const theme of ['light', 'dark'] as const) {
     expect(r.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' | ')}`)).toEqual([])
   })
 }
+
+test('자동 저장된 구조를 열어도 모든 부품이 화면 안에 들어온다', async ({ page }) => {
+  const { openWithNodes } = await import('./helpers.ts')
+  await openWithNodes(page, 8)
+  await page.waitForTimeout(400)
+  const pane = (await page.locator('.react-flow').boundingBox())!
+  const boxes = await page.locator('.react-flow__node').evaluateAll((els) => els.map((e) => e.getBoundingClientRect()).map((r) => ({ l: r.left, r: r.right })))
+  for (const b of boxes) {
+    expect(b.l).toBeGreaterThanOrEqual(pane.x - 1)
+    expect(b.r).toBeLessThanOrEqual(pane.x + pane.width + 1)
+  }
+})

@@ -3,8 +3,8 @@ import { getPart } from '../domain/parts'
 import type { EditorGraph } from '../editor/model'
 
 export const FORMAT_VERSION = 1
-export const MAX_NODES = 60
-export const MAX_EDGES = 200
+export const MAX_NODES = 100
+export const MAX_EDGES = 400
 export const MAX_TEXT = 200_000
 
 export interface Saved {

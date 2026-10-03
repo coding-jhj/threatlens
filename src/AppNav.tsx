@@ -28,7 +28,7 @@ export function Brand() {
       <span className="tl-logo__mark">
         <Icon name="shield" size={18} />
       </span>
-      ThreatLens
+      <span className="tl-logo__text">ThreatLens</span>
     </div>
   )
 }

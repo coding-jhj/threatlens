@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode 
 import { RULES } from '../data'
 import { analyze } from '../domain/analyze'
 import { isAiNode } from '../domain/graph'
+import { getPart } from '../domain/parts'
 import { scoreGraph } from '../domain/score'
 import { Button } from '../ui/components'
 import { SAMPLES, type Sample } from '../samples/samples'
@@ -180,6 +181,13 @@ function Inner({ nav, ws }: { nav: ReactNode; ws: Workspace }) {
               others={state.graph.nodes.filter((n) => n.id !== selected.id)}
               onChange={(attributes) => dispatch({ type: 'setAttributes', nodeId: selected.id, attributes })}
               onConnect={(to) => dispatch({ type: 'connect', from: selected.id, to })}
+              links={state.graph.edges
+                .filter((e) => e.from === selected.id || e.to === selected.id)
+                .map((e) => {
+                  const name = (id: string) => getPart(state.graph.nodes.find((n) => n.id === id)?.partId ?? '')?.label ?? id
+                  return { id: e.id, text: `${name(e.from)} → ${name(e.to)}` }
+                })}
+              onRemoveLink={(id) => dispatch({ type: 'remove', nodeIds: [], edgeIds: [id] })}
             />
           )}
         </div>

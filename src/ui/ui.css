@@ -1,6 +1,6 @@
 .tl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 16px; border-radius: var(--radius-sm); border: 1px solid transparent; font-size: 13px; font-weight: 600; }
 .tl-btn--primary { background: var(--accent); color: var(--accent-ink); }
-.tl-btn--secondary { background: transparent; color: var(--text); border-color: var(--line); font-weight: 500; }
+.tl-btn--secondary { background: transparent; color: var(--text); border-color: var(--line-strong); font-weight: 500; }
 .tl-btn--inverse { background: var(--text); color: var(--accent-ink); }
 .tl-btn--lg { height: 40px; }
 .tl-btn:disabled { opacity: .45; cursor: not-allowed; }

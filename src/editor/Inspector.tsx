@@ -5,7 +5,16 @@ import { Icon } from '../ui/Icon'
 import type { EditorNode } from './model'
 import './editor.css'
 
-export function Inspector({ node, others, onChange, onConnect }: { node: EditorNode; others: EditorNode[]; onChange: (attributes: AttributeId[]) => void; onConnect: (to: string) => void }) {
+interface Props {
+  node: EditorNode
+  others: EditorNode[]
+  links: { id: string; text: string }[]
+  onChange: (attributes: AttributeId[]) => void
+  onConnect: (to: string) => void
+  onRemoveLink: (edgeId: string) => void
+}
+
+export function Inspector({ node, others, links, onChange, onConnect, onRemoveLink }: Props) {
   const [target, setTarget] = useState('')
   const part = getPart(node.partId)
   if (!part) return null
@@ -56,6 +65,18 @@ export function Inspector({ node, others, onChange, onConnect }: { node: EditorN
             화살표 추가
           </button>
         </div>
+      )}
+      {links.length > 0 && (
+        <ul className="tl-inspector__links" aria-label="이 부품에 이어진 화살표">
+          {links.map((l) => (
+            <li key={l.id}>
+              <span>{l.text}</span>
+              <button type="button" className="tl-btn tl-btn--secondary" onClick={() => onRemoveLink(l.id)} aria-label={`화살표 삭제: ${l.text}`}>
+                삭제
+              </button>
+            </li>
+          ))}
+        </ul>
       )}
     </section>
   )

@@ -28,7 +28,7 @@ export function PartNode({ data, selected }: NodeProps<PartFlowNode>) {
   if (!part) return null
   return (
     <div className={`tl-node${selected ? ' tl-node--selected' : ''}`}>
-      <Handle type="target" position={Position.Left} aria-label="들어오는 연결" />
+      <Handle type="target" position={Position.Left} aria-hidden />
       <div className="tl-node__head">
         <span className="tl-node__icon">
           <Icon name={part.icon} size={20} />
@@ -45,7 +45,7 @@ export function PartNode({ data, selected }: NodeProps<PartFlowNode>) {
           ))}
         </div>
       )}
-      <Handle type="source" position={Position.Right} aria-label="나가는 연결" />
+      <Handle type="source" position={Position.Right} aria-hidden />
     </div>
   )
 }

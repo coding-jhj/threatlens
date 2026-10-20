@@ -37,12 +37,15 @@ export type Effort = (typeof EFFORTS)[number]
 export const EFFORT_LABEL: Record<Effort, string> = { low: '쉬움', mid: '보통', high: '어려움' }
 export const EFFORT_WEIGHT: Record<Effort, number> = { low: 1, mid: 2, high: 3 }
 
+/** 공학적 대응(AI 밖에서 강제되는 센서·로직·최종요소 분리, 허용 목록, 네트워크 분리 등)에만 붙인다.
+ * 보호계층 원칙(IEC 61511 등)상 관리적 대응(사람 확인·기록)보다 신뢰도가 높아, 행동 계획에서 우선한다. */
 export interface Fix {
   id: string
   label: string
   score: number
   effort: Effort
   sets?: AttributeId
+  controlType?: 'engineering'
 }
 
 export interface Condition {
@@ -121,6 +124,7 @@ function validateOne(raw: unknown, index: number, errors: string[]): void {
       if (!Number.isInteger(f.score) || (f.score as number) >= 0) err(`fix ${f.id}의 score는 음의 정수여야 합니다`)
       if (!(EFFORTS as readonly unknown[]).includes(f.effort)) err(`fix ${f.id}의 effort는 ${EFFORTS.join(', ')} 중 하나여야 합니다`)
       if (f.sets !== undefined && !(typeof f.sets === 'string' && isAttributeId(f.sets))) err(`fix ${f.id}의 sets가 알 수 없는 속성입니다`)
+      if (f.controlType !== undefined && f.controlType !== 'engineering') err(`fix ${f.id}의 controlType은 "engineering"만 가능합니다`)
     }
   }
 

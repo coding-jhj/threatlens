@@ -9,6 +9,8 @@ export interface FixGroup {
   fixId: string
   label: string
   effort: Effort
+  /** 공학적 대응이면 'engineering'. 행동 계획에서 관리적 대응보다 우선한다 */
+  controlType?: 'engineering'
   /** 이 묶음을 적용할 때 켜지는 대응 키들 */
   keys: string[]
   ruleIds: string[]
@@ -44,7 +46,7 @@ export function candidateGroups(graph: Graph, rules: readonly Rule[], applied: R
       const key = appliedKey(f.nodeId, f.ruleId, fx.id)
       if (applied.has(key)) continue
       const gid = `${f.nodeId}|${fx.id}|${fx.label}`
-      const g = groups.get(gid) ?? { nodeId: f.nodeId, fixId: fx.id, label: fx.label, effort: fx.effort, keys: [], ruleIds: [] }
+      const g = groups.get(gid) ?? { nodeId: f.nodeId, fixId: fx.id, label: fx.label, effort: fx.effort, controlType: fx.controlType, keys: [], ruleIds: [] }
       if (EFFORT_WEIGHT[fx.effort] > EFFORT_WEIGHT[g.effort]) g.effort = fx.effort
       g.keys.push(key)
       if (!g.ruleIds.includes(f.ruleId)) g.ruleIds.push(f.ruleId)
@@ -59,6 +61,10 @@ export const withGroups = (applied: ReadonlySet<string>, groups: readonly FixGro
 /**
  * 행동 계획: 지금 상태에서 "다음 한 개"를 탐욕으로 limit번 고른다.
  * 가치 = 점수 감소량 ÷ 난이도 가중치(쉬움 1, 보통 2, 어려움 3). 점수는 화면 점수식을 그대로 쓴다.
+ * 단, 1번째 할 일만큼은 공학적 대응(controlType: 'engineering')이 있으면 그것부터 고른다 — 보호계층
+ * 원칙상 사람이 매번 확인하는 절차보다 AI 밖에서 강제되는 분리·허용목록이 더 믿을 수 있는 "맨 먼저
+ * 세울 층"이기 때문이다. 2번째부터는 다시 순수 효율로 고른다 — 행동 계획 전체를 공학적 대응으로만
+ * 채우면 정작 점수를 더 못 낮추게 돼(관리적 대응이 사소하지 않은 효과를 낼 때도 많다), 실효성이 떨어진다.
  * 동점이면 감소량이 큰 것, 그래도 같으면 키 순서로 정해 결과가 항상 같게 한다.
  */
 export function planActions(graph: Graph, rules: readonly Rule[], applied: ReadonlySet<string> = new Set(), limit = 3): Plan {
@@ -68,6 +74,7 @@ export function planActions(graph: Graph, rules: readonly Rule[], applied: Reado
   const steps: PlanStep[] = []
 
   while (steps.length < limit) {
+    const preferEngineering = steps.length === 0
     const base = unrounded(scoreGraph(graph, rules, cur), graph)
     let best: { g: FixGroup; gain: number; value: number; next: Set<string> } | null = null
     for (const g of candidateGroups(graph, rules, cur)) {
@@ -77,10 +84,14 @@ export function planActions(graph: Graph, rules: readonly Rule[], applied: Reado
       const total = base.sum - now.sum
       if (gain <= 1e-9 && total <= 1e-9) continue
       const value = (gain + 0.001 * total) / EFFORT_WEIGHT[g.effort]
+      const rank = preferEngineering && g.controlType === 'engineering' ? 0 : 1
+      const bestRank = best ? (preferEngineering && best.g.controlType === 'engineering' ? 0 : 1) : 1
       const better =
         !best ||
-        value > best.value + 1e-12 ||
-        (Math.abs(value - best.value) <= 1e-12 && (gain > best.gain + 1e-12 || (Math.abs(gain - best.gain) <= 1e-12 && g.keys[0] < best.g.keys[0])))
+        rank < bestRank ||
+        (rank === bestRank &&
+          (value > best.value + 1e-12 ||
+            (Math.abs(value - best.value) <= 1e-12 && (gain > best.gain + 1e-12 || (Math.abs(gain - best.gain) <= 1e-12 && g.keys[0] < best.g.keys[0])))))
       if (better) best = { g, gain, value, next }
     }
     if (!best) break

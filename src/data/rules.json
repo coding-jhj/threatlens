@@ -438,14 +438,16 @@
         "id": "range_check",
         "label": "값 범위·변화율·품질 플래그·갱신 시각 검사(AI 밖의 고정 코드 또는 DCS에서 수행)",
         "score": -15,
-        "effort": "mid"
+        "effort": "mid",
+        "controlType": "engineering"
       },
       {
         "id": "interlock",
         "label": "독립 안전 인터록(SIS) 확보 또는 확인(AI·기본 제어와 분리된 센서·로직·최종요소, SIL은 위험성 평가에 따름)",
         "score": -30,
         "effort": "high",
-        "sets": "interlock.external"
+        "sets": "interlock.external",
+        "controlType": "engineering"
       },
       {
         "id": "human_confirm",
@@ -501,13 +503,15 @@
         "label": "독립 안전 인터록(SIS) 확보 또는 확인(AI·기본 제어와 분리된 센서·로직·최종요소, SIL은 위험성 평가에 따름)",
         "score": -30,
         "effort": "high",
-        "sets": "interlock.external"
+        "sets": "interlock.external",
+        "controlType": "engineering"
       },
       {
         "id": "command_allowlist",
         "label": "제어 명령 허용 목록(AI 앱이 아닌 DCS/PLC 또는 게이트웨이에서 강제)",
         "score": -15,
-        "effort": "mid"
+        "effort": "mid",
+        "controlType": "engineering"
       },
       {
         "id": "human_confirm",
@@ -520,7 +524,8 @@
         "id": "advisory_only",
         "label": "AI는 권고만 하고 제어 쓰기 경로 제거(운전원이 직접 실행)",
         "score": -35,
-        "effort": "high"
+        "effort": "high",
+        "controlType": "engineering"
       }
     ],
     "basis": [
@@ -635,19 +640,22 @@
         "id": "change_limit",
         "label": "1회 변경폭·속도 제한(AI가 아닌 DCS/PLC에서 강제)",
         "score": -20,
-        "effort": "mid"
+        "effort": "mid",
+        "controlType": "engineering"
       },
       {
         "id": "safe_state",
         "label": "AI와 독립된 감시가 AI 이상을 감지하면 AI 쓰기를 차단하고 기존 제어(BPCS)·수동 운전으로 복귀(SIS를 대체하지 않음)",
         "score": -10,
-        "effort": "high"
+        "effort": "high",
+        "controlType": "engineering"
       },
       {
         "id": "advisory_only",
         "label": "AI는 권고만 하고 제어 쓰기 경로 제거(운전원이 직접 실행)",
         "score": -35,
-        "effort": "high"
+        "effort": "high",
+        "controlType": "engineering"
       }
     ],
     "basis": [
@@ -689,13 +697,15 @@
         "id": "separate_setpoint",
         "label": "설정값 변경은 문서를 읽는 AI와 분리된 별도 경로·권한으로만 가능(문서 처리 AI에는 쓰기 자격 증명 미부여)",
         "score": -25,
-        "effort": "high"
+        "effort": "high",
+        "controlType": "engineering"
       },
       {
         "id": "range_check",
         "label": "변경 전 허용 범위 검사(LLM 판단이 아닌 고정 코드 또는 DCS 설정값 제한으로 강제)",
         "score": -15,
-        "effort": "mid"
+        "effort": "mid",
+        "controlType": "engineering"
       },
       {
         "id": "change_alert",
@@ -714,7 +724,8 @@
         "id": "advisory_only",
         "label": "AI는 권고만 하고 제어 쓰기 경로 제거(운전원이 직접 실행)",
         "score": -30,
-        "effort": "high"
+        "effort": "high",
+        "controlType": "engineering"
       }
     ],
     "basis": [
@@ -1927,13 +1938,15 @@
         "id": "network_segmentation",
         "label": "설비망과 외부망을 분리",
         "score": -35,
-        "effort": "high"
+        "effort": "high",
+        "controlType": "engineering"
       },
       {
         "id": "command_allowlist",
         "label": "허용된 제어 명령만 통과",
         "score": -15,
-        "effort": "mid"
+        "effort": "mid",
+        "controlType": "engineering"
       },
       {
         "id": "human_confirm",

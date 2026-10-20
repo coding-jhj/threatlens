@@ -442,7 +442,7 @@
       },
       {
         "id": "interlock",
-        "label": "안전 인터록(SIS)은 AI·기본 제어와 분리하고, 전용 독립 센서를 사용",
+        "label": "독립 안전 인터록(SIS) 확보 또는 확인(AI·기본 제어와 분리된 센서·로직·최종요소, SIL은 위험성 평가에 따름)",
         "score": -30,
         "effort": "high",
         "sets": "interlock.external"
@@ -498,7 +498,7 @@
     "fixes": [
       {
         "id": "interlock",
-        "label": "독립 SIS 확보 또는 확인(AI·기본 제어와 분리된 센서·로직·최종요소, SIL은 위험성 평가에 따름)",
+        "label": "독립 안전 인터록(SIS) 확보 또는 확인(AI·기본 제어와 분리된 센서·로직·최종요소, SIL은 위험성 평가에 따름)",
         "score": -30,
         "effort": "high",
         "sets": "interlock.external"

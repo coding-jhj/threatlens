@@ -15,10 +15,11 @@ export function Summary({ score, analysis, hasAi, levels, activeHazard = null }:
         {hasAi ? score : '–'}
       </div>
       <div>
-        <div className="tl-summary__label" title="0~100의 참고 지표입니다. 사고 확률이 아닙니다.">
-          위험 점수<span className="tl-sr"> (0~100점 참고 지표, 사고 확률 아님)</span>
+        <div className="tl-summary__label">
+          위험 점수
           <span aria-hidden> /100</span>
         </div>
+        {hasAi && <div className="tl-summary__note">확률이 아닌 참고 지표입니다</div>}
         <div className="tl-summary__chips">
           {hasAi ? (
             <>

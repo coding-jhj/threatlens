@@ -58,6 +58,7 @@
 .tl-summary__label { font-size: var(--fs-xs); font-weight: 600; }
 .tl-summary__chips { display: flex; gap: 6px; margin-top: 4px; }
 .tl-summary__hint { font-size: var(--fs-xs); color: var(--muted); }
+.tl-summary__note { font-size: var(--fs-xs); color: var(--muted); }
 
 .tl-threats { width: 360px; flex: none; display: flex; flex-direction: column; background: var(--panel); border-left: 1px solid var(--line); min-height: 0; }
 .tl-threats__head { padding: 14px 16px; border-bottom: 1px solid var(--line); }
@@ -164,7 +165,7 @@
   .tl-header { padding: 8px 12px; gap: 6px 10px; }
   .tl-logo__text { display: none; }
   .tl-nav a { padding: 0 8px; }
-  .tl-summary__hint, .tl-inspector__hint { display: none; }
+  .tl-summary__hint, .tl-inspector__hint, .tl-summary__note { display: none; }
   .tl-editor { overflow-y: auto; }
   .tl-canvas { flex: none; width: 100%; height: 56vh; min-height: 300px; }
   .tl-threats { max-height: none; overflow: visible; }

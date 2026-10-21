@@ -10,7 +10,9 @@
 ![규칙](https://img.shields.io/badge/규칙-40개-1f5fbf)
 ![서버](https://img.shields.io/badge/서버-없음-2e7d32)
 
-### [👉 바로 써보기](https://coding-jhj.github.io/threatlens/)
+### [👉 바로 써보기](https://threatlens-peach.vercel.app/)
+
+GitHub Pages: https://coding-jhj.github.io/threatlens/ (같은 내용, 둘 다 서비스 중)
 
 <img src="docs/img/plan.png" alt="ThreatLens 편집기: 위협 경로와 행동 계획" width="900">
 
@@ -53,7 +55,7 @@
 
 ## 예시로 먼저 보기
 
-[앱](https://coding-jhj.github.io/threatlens/)에서 **예시 불러오기**를 누르면 5가지 구조가 열립니다.
+[앱](https://threatlens-peach.vercel.app/)에서 **예시 불러오기**를 누르면 5가지 구조가 열립니다.
 
 | 예시 | 점수 | 위협 |
 |---|---|---|

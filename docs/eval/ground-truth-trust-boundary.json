@@ -1,0 +1,59 @@
+{
+  "status": "ai-written-no-human-review",
+  "about": "신뢰 경계 규칙(R-35~37, R-39)은 예시 5종(ground-truth.json 대상) 중 어디에서도 발동하지 않아 평가할 수 없었다(plan.md 8번 항목). 이를 메우기 위해 사외 업체가 원격으로 설비 제어까지 닿는 구조 1개를 평가 전용으로 따로 만들고(src/eval/trust-boundary.ts, 마법사·예시 메뉴에는 없음), 그 구조에 대한 정답 위협 목록을 AI(Claude)가 공개 표준만 보고 작성했다. groundTruth.test.ts의 '정답 목록: 구조가 예시 5개와 일치한다' 불변식을 지키기 위해 ground-truth.json 본체가 아니라 이 별도 파일에 둔다.",
+  "limits": "면허를 가진 보안·공정안전 전문가의 검수가 아니다. 구조 1개로 신뢰 경계 규칙 4개를 모두 발동시키도록 의도적으로 설계했으므로, 느슨한 재현율 수치는 '쉬운' 구조에서 나온 결과라는 점을 감안해야 한다.",
+  "sources_checked": [
+    { "name": "OWASP Top 10 for LLM Applications 2025", "url": "https://genai.owasp.org/llm-top-10/", "fetched": true, "note": "ground-truth.json과 동일 — LLM01·LLM02·LLM06·LLM10 항목 제목 재확인." },
+    { "name": "ATT&CK ICS T0886 Remote Services", "url": "https://attack.mitre.org/techniques/T0886/", "fetched": true, "note": "원격 서비스(VPN·원격 접속)를 통해 ICS 네트워크에 들어오는 기법. 개별 페이지 확인." },
+    { "name": "ATT&CK ICS T0831 Manipulation of Control", "url": "https://attack.mitre.org/techniques/T0831/", "fetched": true, "note": "ground-truth.json과 동일 소스 재사용." },
+    { "name": "CISA 등 공동 지침 Principles for the Secure Integration of AI in OT (2025.12)", "url": "https://www.cyber.gov.au/business-government/secure-design/operational-technology-environments/principles-for-the-secure-integration-of-artificial-intelligence-in-operational-technology", "fetched": true, "note": "ground-truth.json과 동일 — 사람 없는 AI의 OT 능동 제어 제한 문장." }
+  ],
+  "structures": {
+    "vendor-remote-control": {
+      "threats": [
+        {
+          "id": "GT-vendor-remote-control-1",
+          "statement": "사외 유지보수 업체와의 원격 연결을 통해 민감정보가 회사 밖으로 넘어갑니다.",
+          "tags": ["LLM02"],
+          "why": "사외(zone.outside) 업체 연결이 민감정보에 접근하는 AI에 바로 닿아 신뢰 경계를 넘습니다.",
+          "severity_guess": "high"
+        },
+        {
+          "id": "GT-vendor-remote-control-2",
+          "statement": "사외 연결이 있는 이 AI가 믿을 수 없는 웹 콘텐츠까지 함께 받아, 신뢰 경계를 넘는 연결과 입력 신뢰 문제가 겹칩니다.",
+          "tags": ["LLM01"],
+          "why": "신뢰 경계를 넘는 연결과 믿을 수 없는 입력이 같은 AI에 모여, 사외에서 들어온 지시가 섞여 들어갈 여지가 커집니다.",
+          "severity_guess": "high"
+        },
+        {
+          "id": "GT-vendor-remote-control-3",
+          "statement": "사외로 나가는 전송이 사람 승인 단계 없이 그대로 실행됩니다.",
+          "tags": ["LLM06"],
+          "why": "승인 단계(human.approval)에 해당하는 부품이 구조에 없고, AI가 외부 API로 보낼 수 있는 경로가 있습니다.",
+          "severity_guess": "high"
+        },
+        {
+          "id": "GT-vendor-remote-control-4",
+          "statement": "사외 연결을 통해 들어온 명령이 그대로 설비 제어(PLC·DCS)까지 닿습니다.",
+          "tags": ["T0886"],
+          "why": "원격 서비스 경로로 ICS에 접근하는 알려진 공격 기법과 같은 모양입니다 — 사외 연결과 설비 제어 연결이 한 AI에 모여 있습니다.",
+          "severity_guess": "high"
+        },
+        {
+          "id": "GT-vendor-remote-control-5",
+          "statement": "독립된 안전 인터록이나 담당자 확인 없이 설비가 제어됩니다.",
+          "tags": ["OT-HUMAN-OVERSIGHT", "SIS-INDEPENDENCE"],
+          "why": "구조에 SIS 독립 확인(interlock.external)도, 사람 승인도 없는 상태로 제어 API가 PLC에 바로 이어집니다.",
+          "severity_guess": "high"
+        },
+        {
+          "id": "GT-vendor-remote-control-6",
+          "statement": "설비 제어 명령을 누가 언제 보냈는지 감사 기록이 남지 않습니다.",
+          "tags": ["T0831"],
+          "why": "감사 기록(audit.log)에 해당하는 대응이 구조에 없고, 제어 명령이 설비 설정을 직접 바꿉니다.",
+          "severity_guess": "medium"
+        }
+      ]
+    }
+  }
+}

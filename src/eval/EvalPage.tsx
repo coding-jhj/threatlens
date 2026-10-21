@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import addRaw from '../../docs/eval/ground-truth-additions.json?raw'
+import tbRaw from '../../docs/eval/ground-truth-trust-boundary.json?raw'
 import raw from '../../docs/eval/ground-truth.json?raw'
 import { RULES } from '../data'
 import { Chip } from '../ui/components'
 import { SAMPLES } from '../samples/samples'
 import { evaluateAll, ratio, type GroundTruth, type GtThreat } from './evaluate'
+import { TRUST_BOUNDARY_SAMPLE } from './trust-boundary'
 import './eval.css'
 
 const GT = JSON.parse(raw) as GroundTruth
@@ -13,6 +15,7 @@ const GT2: GroundTruth = {
   ...GT,
   structures: Object.fromEntries(Object.entries(GT.structures).map(([id, s]) => [id, { ...s, threats: [...s.threats, ...(ADD[id]?.threats ?? [])] }])),
 }
+const GT_TB = JSON.parse(tbRaw) as GroundTruth
 const STATUS_LABEL: Record<string, string> = { 'confirmed-no-edits': '확정, 수정 없음' }
 const TAG_TITLE: Record<string, string> = {
   LLM01: 'OWASP LLM01 프롬프트 주입',
@@ -62,6 +65,7 @@ function Stat({ label, n, d, hint }: { label: string; n: number; d: number; hint
 export default function EvalPage() {
   const result = useMemo(() => evaluateAll(SAMPLES, RULES, GT), [])
   const v2 = useMemo(() => evaluateAll(SAMPLES, RULES, GT2), [])
+  const tb = useMemo(() => evaluateAll([TRUST_BOUNDARY_SAMPLE], RULES, GT_TB), [])
   const [showStrict, setShowStrict] = useState(false)
   const missed = result.structures.flatMap((s) => s.threats.filter((t) => !t.found).map((t) => ({ s, t })))
   const looseOnly = result.structures.flatMap((s) => s.threats.filter((t) => t.found && !t.strict).map((t) => ({ s, t })))
@@ -91,6 +95,13 @@ export default function EvalPage() {
       <p className="tl-eval__muted" aria-label="규칙 확장 전후">
         <b>규칙 28개 → 40개(G6) 전후 비교</b>, 정답표(v1)는 그대로 두었습니다: 재현율 느슨 21/29 (72%) → {result.found}/{result.threatTotal} ({pct(result.found, result.threatTotal)}), 엄격 15/29 (52%) → {result.strict}/{result.threatTotal} ({pct(result.strict, result.threatTotal)}), 경보 적중률 29/32 (91%) → {result.matchedFired}/{result.comparable} ({pct(result.matchedFired, result.comparable)}). 새 규칙 12개 중 정답표와 겹친 것은 8개이고, 나머지 3개(R-32, R-33, R-40, 구조별 발동 4건)는 정답표에 해당 위협이 없어 <b>정답표 확장 필요</b>로 분류합니다. 오탐으로 단정하지 않습니다.
       </p>
+
+      <section className="tl-eval__source" role="note" aria-label="신뢰 경계 규칙 평가">
+        <Chip tone="medium">예시 5종 외 평가 전용 구조 1개</Chip> 신뢰 경계 규칙(R-35~37, R-39)은 위 예시 5종 어디에서도 발동하지 않아 평가하지 못했습니다. 사외 업체가 원격으로 설비 제어까지 닿는 구조를
+        평가 전용으로 따로 만들어(마법사·예시 메뉴에는 없음) 정답 위협 {tb.threatTotal}개를 AI가 작성했습니다: 재현율 느슨 {pct(tb.found, tb.threatTotal)} ({tb.found}/{tb.threatTotal}), 엄격{' '}
+        {pct(tb.strict, tb.threatTotal)} ({tb.strict}/{tb.threatTotal}). R-35·R-36·R-37·R-39 모두 이 구조에서 발동을 확인했습니다. 위 5개 구조의 표·숫자에는 포함하지 않았습니다 — 이 구조는 신뢰 경계
+        규칙만 겨냥해 의도적으로 만든 구조라 일반 구조와 같은 기준으로 섞지 않았습니다.
+      </section>
 
       <h2>구조별 결과</h2>
       <div className="tl-eval__scroll">

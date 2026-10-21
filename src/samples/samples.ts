@@ -9,9 +9,10 @@ export interface Sample {
   graph: EditorGraph
 }
 
-type NodeSpec = readonly [key: string, partId: string, extra?: readonly AttributeId[]]
+export type NodeSpec = readonly [key: string, partId: string, extra?: readonly AttributeId[]]
 
-function build(nodes: readonly NodeSpec[], edges: readonly (readonly [string, string])[]): EditorGraph {
+/** 평가 전용 구조(예: src/eval)에서도 같은 방식으로 그래프를 만들도록 내보낸다 */
+export function build(nodes: readonly NodeSpec[], edges: readonly (readonly [string, string])[]): EditorGraph {
   const ids = new Map(nodes.map(([key], i) => [key, `n${i + 1}`]))
   const graph: EditorGraph = {
     nodes: nodes.map(([key, partId, extra = []], i) => ({

@@ -19,12 +19,12 @@ test('보고서: 구조가 없으면 안내와 위협 지도 링크', async ({ p
 
 test('평가표: 숫자와 한계가 숨김없이 보인다', async ({ page }) => {
   await openApp(page, '#/eval')
-  await expect(page.locator('.tl-eval__stats')).toContainText('76%')
-  await expect(page.locator('.tl-eval__stats')).toContainText('55%')
-  await expect(page.locator('.tl-eval__stats')).toContainText('84%')
-  await expect(page.getByRole('heading', { name: '놓친 위협 (7개)' })).toBeVisible()
+  await expect(page.locator('.tl-eval__stats')).toContainText('79%')
+  await expect(page.locator('.tl-eval__stats')).toContainText('59%')
+  await expect(page.locator('.tl-eval__stats')).toContainText('86%')
+  await expect(page.getByRole('heading', { name: '놓친 위협 (6개)' })).toBeVisible()
   await expect(page.getByText('정답 작성: AI')).toBeVisible()
-  await expect(page.getByRole('list', { name: '놓친 위협' }).getByRole('listitem')).toHaveCount(7)
+  await expect(page.getByRole('list', { name: '놓친 위협' }).getByRole('listitem')).toHaveCount(6)
 })
 
 test('화면 이동: 상단 메뉴로 네 화면을 오가도 편집기 구조가 남는다', async ({ page }) => {

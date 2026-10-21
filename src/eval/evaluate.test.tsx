@@ -87,25 +87,27 @@ test('evaluateAll: 태그 없는 규칙은 적중률 계산에서 빠지고 따�
   expect([r.comparable, r.untagged]).toEqual([0, 1])
 })
 
+// G9(2026-10-21): 엔진을 전이적 도달성으로 고친 뒤 code-agent에서 R-01 등 5개 규칙이 더 발동해
+// 재현율이 올랐다(found 22→23, strict 16→17, comparable 44→49, matchedFired 37→42).
 test('실제 규칙·정답으로 잰 결과가 고정되어 있다 (규칙이나 정답을 바꾸면 이 값이 바뀐다)', () => {
   const r = evaluateAll(SAMPLES, RULES, JSON.parse(raw) as GroundTruth)
-  expect([r.threatTotal, r.found, r.strict, r.comparable, r.matchedFired, r.untagged]).toEqual([29, 22, 16, 44, 37, 0])
+  expect([r.threatTotal, r.found, r.strict, r.comparable, r.matchedFired, r.untagged]).toEqual([29, 23, 17, 49, 42, 0])
   expect(r.structures.map((s) => [s.id, s.foundCount, s.strictCount])).toEqual([
     ['doc-qa', 3, 3],
     ['support-bot', 5, 5],
-    ['code-agent', 5, 2],
+    ['code-agent', 6, 3],
     ['mail-assistant', 4, 4],
     ['process-assistant', 5, 2],
   ])
 })
 
-test('EvalPage: 요약 숫자, 놓친 위협 7개, 정답에 없는 경보 7개를 그대로 보여준다', () => {
+test('EvalPage: 요약 숫자, 놓친 위협 6개, 정답에 없는 경보 7개를 그대로 보여준다', () => {
   render(<EvalPage />)
-  expect(screen.getByText('76%')).toBeTruthy()
-  expect(screen.getByText('55%')).toBeTruthy()
-  expect(screen.getByText('84%')).toBeTruthy()
-  expect(screen.getByRole('heading', { name: '놓친 위협 (7개)' })).toBeTruthy()
-  expect(within(screen.getByRole('list', { name: '놓친 위협' })).getAllByRole('listitem')).toHaveLength(7)
+  expect(screen.getByText('79%')).toBeTruthy()
+  expect(screen.getByText('59%')).toBeTruthy()
+  expect(screen.getByText('86%')).toBeTruthy()
+  expect(screen.getByRole('heading', { name: '놓친 위협 (6개)' })).toBeTruthy()
+  expect(within(screen.getByRole('list', { name: '놓친 위협' })).getAllByRole('listitem')).toHaveLength(6)
   expect(screen.getByRole('heading', { name: '정답에 없는 경보 (7개)' })).toBeTruthy()
   expect(screen.getByText(/정답 작성: AI/)).toBeTruthy()
   expect(screen.getByText(/사람 전문가의 검수는 거치지 않았습니다/)).toBeTruthy()

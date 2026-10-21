@@ -5,9 +5,9 @@ import { loadSample, openApp, score } from './helpers.ts'
 test('자동 저장: 새로고침해도 구조가 남는다', async ({ page }) => {
   await openApp(page)
   await loadSample(page, '코드 에이전트')
-  await expect(score(page)).toHaveText('69')
+  await expect(score(page)).toHaveText('81')
   await page.reload()
-  await expect(score(page)).toHaveText('69')
+  await expect(score(page)).toHaveText('81')
   await expect(page.locator('.react-flow__node')).toHaveCount(6)
 })
 

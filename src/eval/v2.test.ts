@@ -26,11 +26,12 @@ test('보충 정답: 구조 이름과 id, 태그 형식이 맞는다', () => {
   }
 })
 
+// G9(2026-10-21): 엔진을 전이적 도달성으로 고친 뒤 v1/v2 재현율이 올랐다(아래 숫자 참고).
 test('v1 수치는 그대로이고, 보충 7개를 넣으면 재현율이 어떻게 달라지는지 고정한다', () => {
   const a = evaluateAll(SAMPLES, RULES, v1)
   const b = evaluateAll(SAMPLES, RULES, v2)
-  expect([a.threatTotal, a.found, a.strict]).toEqual([29, 22, 16])
+  expect([a.threatTotal, a.found, a.strict]).toEqual([29, 23, 17])
   expect(b.threatTotal).toBe(36)
-  expect([b.found, b.strict]).toEqual([27, 21]) // 느슨 75%, 엄격 58%
-  expect(b.matchedFired).toBe(39)
+  expect([b.found, b.strict]).toEqual([28, 22]) // 느슨 78%, 엄격 61%
+  expect(b.matchedFired).toBe(44)
 })

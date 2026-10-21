@@ -5,7 +5,7 @@ import { loadSample, goTo, openApp, score, threatTitle } from './helpers.ts'
 const SAMPLES = [
   { title: '사내 문서 질의응답 봇', score: 30, findings: 5, id: 'doc-qa' },
   { title: '고객상담 챗봇', score: 67, findings: 13, id: 'support-bot' },
-  { title: '코드 에이전트', score: 69, findings: 11, id: 'code-agent' },
+  { title: '코드 에이전트', score: 81, findings: 16, id: 'code-agent' },
   { title: '메일 비서', score: 55, findings: 8, id: 'mail-assistant' },
   { title: '공정 운전 보조', score: 54, findings: 7, id: 'process-assistant' },
 ] as const

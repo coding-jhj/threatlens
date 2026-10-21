@@ -57,7 +57,7 @@ test('평가표: 용어 설명, 태그 설명(abbr), 접힘 상태, v2 수치가
   await openApp(page, '#/eval')
   await expect(page.getByRole('heading', { level: 2, name: '용어' })).toBeVisible()
   expect(await page.locator('abbr[title^="OWASP LLM"]').count()).toBeGreaterThan(0)
-  await expect(page.locator('p', { hasText: 'v2 기준' })).toContainText('재현율 느슨 75%')
+  await expect(page.locator('p', { hasText: 'v2 기준' })).toContainText('재현율 느슨 78%')
   const toggle = page.getByRole('button', { name: /엄격 기준으로는 못 찾은 위협/ })
   await expect(toggle).toHaveAttribute('aria-controls', 'tl-strict-list')
   await expect(page.getByText('confirmed-no-edits')).toHaveCount(0)

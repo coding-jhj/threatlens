@@ -1,5 +1,5 @@
 import type { AttributeId } from './attributes'
-import { isAiNode, neighborIds, type Graph } from './graph'
+import { isAiNode, reachableIds, type Graph } from './graph'
 import { parseCondition, type Rule } from './rules'
 import type { Severity } from '../ui/severity'
 
@@ -23,23 +23,27 @@ export const appliedKey = (nodeId: string, ruleId: string, fixId: string) => `${
 const SEVERITY_ORDER: Record<Severity, number> = { high: 0, medium: 1, low: 2 }
 
 /**
- * 규칙 평가. 각 AI 노드마다 "자기 속성 + 바로 이어진 노드들의 속성"을 모아 조건을 확인한다.
+ * 규칙 평가. 각 AI 노드마다 "자기 속성 + 간선을 타고 도달 가능한 모든 노드의 속성"을 모아 조건을 확인한다.
+ * (예전에는 바로 이어진 노드까지만 봤으나, 중간에 속성 없는 통로 부품이 끼면 신뢰 경계·제어 접근 같은
+ * 위험을 놓치는 결함이 있어 전이적 도달성으로 바꿨다 — docs/process-safety-review.md "2차 교차검증" 참고)
  * applied에 든 대응책이 sets 속성을 가지면 그 AI 노드가 해당 속성을 갖는 것으로 본다.
  */
 export function evaluate(graph: Graph, rules: readonly Rule[], applied: ReadonlySet<string> = new Set()): Finding[] {
   const byId = new Map(graph.nodes.map((n) => [n.id, n]))
   const findings: Finding[] = []
-  const crossing = new Set(crossingEdgeIds(graph))
 
   for (const ai of graph.nodes.filter(isAiNode)) {
     const holders = new Map<AttributeId, string[]>()
     const add = (attr: AttributeId, nodeId: string) => holders.set(attr, [...(holders.get(attr) ?? []), nodeId])
     for (const a of ai.attributes) add(a, ai.id)
-    for (const nid of neighborIds(graph, ai.id)) {
+    for (const nid of reachableIds(graph, ai.id, (id) => {
+      const n = byId.get(id)
+      return !!n && isAiNode(n)
+    })) {
       const n = byId.get(nid)
       if (n) for (const a of n.attributes) add(a, n.id)
     }
-    if (graph.edges.some((e) => crossing.has(e.id) && (e.from === ai.id || e.to === ai.id))) add('boundary.cross', ai.id)
+    if (holders.has('zone.outside')) add('boundary.cross', ai.id)
     for (const rule of rules) {
       for (const fix of rule.fixes) {
         if (fix.sets && applied.has(appliedKey(ai.id, rule.id, fix.id)) && !holders.get(fix.sets)?.includes(ai.id)) add(fix.sets, ai.id)

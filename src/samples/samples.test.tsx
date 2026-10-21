@@ -26,6 +26,8 @@ test.each(SAMPLES.map((s) => [s.id, s] as const))('예시 %s: 구조가 올바�
   expect(new Set(xs).size).toBe(xs.length) // 자동 정렬되어 겹치지 않는다
 })
 
+// G9(2026-10-21): 엔진이 1-hop 이웃만 보던 것을 전이적 도달성으로 고쳐 code-agent의
+// 점수가 69→81로 올랐다(ai→exec→api 경로의 tool.send를 이제 인식). 다른 4개 예시는 그대로다.
 test('예시별 점수와 발동 규칙이 고정되어 있다 (규칙·점수 변경 감지용)', () => {
   const got = Object.fromEntries(
     SAMPLES.map((s) => [s.id, [scoreGraph(s.graph, RULES).overall, analyze(s.graph, RULES).findings.map((f) => f.ruleId).sort().join(',')]]),
@@ -33,7 +35,7 @@ test('예시별 점수와 발동 규칙이 고정되어 있다 (규칙·점수 �
   expect(got).toEqual({
     'doc-qa': [30, 'R-06,R-14,R-16,R-17,R-30'],
     'support-bot': [67, 'R-01,R-02,R-05,R-06,R-14,R-16,R-17,R-20,R-22,R-24,R-30,R-32,R-33'],
-    'code-agent': [69, 'R-03,R-04,R-07,R-08,R-15,R-17,R-25,R-28,R-29,R-31,R-34'],
+    'code-agent': [81, 'R-01,R-03,R-04,R-07,R-08,R-15,R-17,R-18,R-24,R-25,R-26,R-28,R-29,R-31,R-32,R-34'],
     'mail-assistant': [55, 'R-01,R-02,R-14,R-17,R-22,R-24,R-30,R-32'],
     'process-assistant': [54, 'R-04,R-09,R-10,R-12,R-34,R-38,R-40'],
   })

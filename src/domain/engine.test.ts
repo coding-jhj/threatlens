@@ -47,7 +47,7 @@ describe.each(RULES.map((r) => [r.id, r] as const))('%s', (_id, rule: Rule) => {
     expect(fired(g)).toContain(rule.id)
   })
 
-  test('한 칸 건너(2단계) 떨어진 노드의 속성은 세지 않음', () => {
+  test('한 칸 건너(2단계) 떨어진 노드의 속성도 셈 — 통로 노드를 거쳐도 전이적으로 도달 가능하면 반영 (G9: 1-hop 한계 수정)', () => {
     const g: Graph = {
       nodes: [
         { id: 'ai', partId: 'ai_agent', attributes: [] },
@@ -59,7 +59,25 @@ describe.each(RULES.map((r) => [r.id, r] as const))('%s', (_id, rule: Rule) => {
         ...positives.map((_, i) => ({ id: `ef${i}`, from: 'mid', to: `far${i}` })),
       ],
     }
-    expect(fired(g)).not.toContain(rule.id)
+    expect(fired(g)).toContain(rule.id)
+  })
+
+  test('다른 AI 노드를 거쳐야만 닿는 속성은 세지 않음 (한 AI가 다른 AI의 하위 도구까지 떠안지 않음)', () => {
+    const g: Graph = {
+      nodes: [
+        { id: 'ai', partId: 'ai_agent', attributes: [] },
+        { id: 'other-ai', partId: 'ai_model', attributes: [] },
+        ...positives.map((a, i) => ({ id: `far${i}`, partId: 'user', attributes: [a] })),
+      ],
+      edges: [
+        { id: 'e0', from: 'ai', to: 'other-ai' },
+        ...positives.map((_, i) => ({ id: `ef${i}`, from: 'other-ai', to: `far${i}` })),
+      ],
+    }
+    // far* 는 other-ai 바로 옆이라 other-ai 자신에게는 당연히 발동할 수 있다(별개 AI의 정당한 위험).
+    // 여기서 확인하려는 것은 그 발동이 'ai' 노드로는 넘어오지 않는다는 점이다.
+    const firedForAi = evaluate(g, RULES).filter((f) => f.nodeId === 'ai').map((f) => f.ruleId)
+    expect(firedForAi).not.toContain(rule.id)
   })
 })
 
